@@ -87,8 +87,8 @@ While each team member can take primary responsibility for one major feature, ev
 - UX/UI design (beginner level) 
 
 
-Ali: QA / Testing Analyst and Frontend developer
-Experience with HTML, CSS, Python, C++, and C
-A little bit of experience with Java
+### Ali: QA / Testing Analyst and Frontend developer
+- Experience with HTML, CSS, Python, C++, and C
+- A little bit of experience with Java
 
 
