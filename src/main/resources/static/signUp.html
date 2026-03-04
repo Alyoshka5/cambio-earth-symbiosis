@@ -7,24 +7,26 @@
     <title>Sign up</title>
 </head>
 <body>
-    <h1>Sign up</h1>
+    <img src="/images/CambioEarth_Primary.png" alt="Cambio Earth logo">
+    <h1>Symbiosis</h1>
+    <h2>Sign up</h2>
 
-    <form th:action="@{??????????!!!!!!}" method="post">
+    <form th:action="@{/signUp/createUser}" method="post">
 
         <legend>Create an account</legend>
         <div class="mb-3">
             <label for="input-name">Enter your name:</label>
-            <input type="input-text" class="name" name="name">
+            <input type="input-text" class="name" name="name" placeholder="Name">
         </div>
 
         <div class="mb-3">
             <label for="input-email">Enter an email:</label>
-            <input type="text" class="input-email" name="email">
+            <input type="text" class="input-email" name="email" placeholder="email@domain.com">
         </div>
 
         <div class="mb-3">
             <label for="input-pass">Enter a password:</label>
-            <input type="text" class="input-pass" name="password">
+            <input type="text" class="input-pass" name="password" placeholder="Password">
         </div>
 
         <button type="submit" class="btn btn-primary">Continue</button>
