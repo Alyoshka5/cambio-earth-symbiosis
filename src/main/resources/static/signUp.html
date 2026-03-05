@@ -15,18 +15,28 @@
 
         <legend>Create an account</legend>
         <div class="mb-3">
-            <label for="input-name">Enter your name:</label>
-            <input type="input-text" class="name" name="name" placeholder="Name">
+            <label for="input-name">Enter your first name:</label>
+            <input type="input-text" class="first-name" name="firstName" placeholder="First name">
+            <p class="first-name-error" style="display: none;">Must enter a first name</p>
+        </div>
+
+        <div class="mb-3">
+            <label for="input-name">Enter your last name:</label>
+            <input type="input-text" class="last-name" name="lastName" placeholder="Last name">
+            <p class="last-name-error" style="display: none;">Must enter a last name</p>
         </div>
 
         <div class="mb-3">
             <label for="input-email">Enter an email:</label>
             <input type="text" class="input-email" name="email" placeholder="email@domain.com">
+            <p class="email-blank-error" style="display: none;">Must enter an email</p>
+            <p class="email-invalid-error" style="display: none;">Email entered is invalid</p>
         </div>
 
         <div class="mb-3">
             <label for="input-pass">Enter a password:</label>
             <input type="text" class="input-pass" name="password" placeholder="Password">
+            <p class="password-error" style="display: none;">Must enter a password</p>
         </div>
 
         <button type="submit" class="btn btn-primary">Continue</button>
