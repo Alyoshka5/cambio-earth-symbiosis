@@ -8,7 +8,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 // TODO: Add private uid
 // TODO: Add private permissions (will this be enum or bool since its 2 options (they have or dont))
 
-
+@Entity
+@Table(name="users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
