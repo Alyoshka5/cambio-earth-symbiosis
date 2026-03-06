@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,7 +49,7 @@ public class UserController {
     @PostMapping("/auth/signup")
     public String register(@ModelAttribute RegisterUserDto registerUserDto) {
         authenticationService.signup(registerUserDto);
-        return "redirect:/auth/verify";
+        return "redirect:/auth/verify?email=" + registerUserDto.getEmail();
     }
     
     @GetMapping("/auth/login")
@@ -75,7 +76,8 @@ public class UserController {
     }
 
     @GetMapping("/auth/verify")
-    public String getVerificationPage() {
+    public String getVerificationPage(Model model, @RequestParam(name = "email", required = false) String email) {
+        model.addAttribute("email", email);
         return "verificationCode";
     }
 

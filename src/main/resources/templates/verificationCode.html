@@ -19,7 +19,8 @@
         <p>A 6-digit code has been sent to your email</p>
 
         <div class="code-inputs">
-            <form action="/auth/verify" method="post">
+            <form th:action="@{/auth/verify}" method="post">
+                <input type="email" name="email" th:value="${email}" hidden>
                 <input type="text" maxlength="1" name="first" id="first" data-next="second">
                 <input type="text" maxlength="1" name="second" id="second" data-next="third">
                 <input type="text" maxlength="1" name="third" id="third" data-next="fourth">
