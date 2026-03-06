@@ -53,10 +53,11 @@ header p {
     color: #243023;
     background-color: transparent;
     flex-shrink: 0;
+    cursor: pointer;
 }
 
 /* If a number is present (simulating the '3', '1', '2') */
-.rank:not(:empty) {
+.rank.filled {
     background-color: #a3cf71;
 }
 
