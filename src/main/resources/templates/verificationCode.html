@@ -33,7 +33,10 @@
 
         <div class="resend-block">
             <p>Haven't recieved the code?</p>
-            <a href="/auth/verify" class="resend-link">Resend it!</a>
+            <form th:action="@{/auth/resend}" method="post">
+                <input type="email" name="email" th:value="${email}" hidden>
+                <button type="submit" class="btn btn-secondary">Resend it!</button>
+            </form>
         </div>
     </div>
 

@@ -82,7 +82,7 @@ public class UserController {
     }
 
     @PostMapping("/auth/verify")
-    public String verifyCode(@ModelAttribute VerifyUserDto verifyUserDto, HttpServletResponse response) {
+    public String verifyCode(Model model, @ModelAttribute VerifyUserDto verifyUserDto, HttpServletResponse response) {
         try {
             authenticationService.verifyUser(verifyUserDto);
 
@@ -99,12 +99,14 @@ public class UserController {
             }
             return "redirect:/auth/signin";
         } catch (RuntimeException e) {
+            model.addAttribute("email", verifyUserDto.getEmail());
             return "verificationCode";
         }
     }
 
     @PostMapping("/auth/resend")
-    public String resendVerificationCode(@RequestParam String email) {
+    public String resendVerificationCode(Model model, @RequestParam String email) {
+        model.addAttribute("email", email);
         try {
             authenticationService.resendVerificationCode(email);
             return "verificationCode";
