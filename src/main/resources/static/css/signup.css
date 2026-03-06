@@ -1,0 +1,133 @@
+/* Background Layout */
+
+body {
+    background-color: #2b3930;
+    background-image: linear-gradient(
+        rgba(43,57,48,0.8),
+        rgba(43,57,48,0.8)
+    ),
+    url("https://media.istockphoto.com/id/1315811592/vector/green-forest-pine-trees-silhouette-landscape.jpg");
+
+    background-size: cover;
+    background-position: center bottom;
+
+    font-family: "Inter", sans-serif;
+    color: white;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    height: 100vh;
+    margin: 0;
+}
+
+
+/* Title */
+
+body::before {
+    content: "Symbiosis";
+    display: block;
+
+    font-size: 4rem;
+    font-weight: 500;
+
+    margin-bottom: 20px;
+}
+
+
+/* Form Container*/
+
+form {
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+}
+
+
+/* Legend */
+
+legend {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+legend + p {
+    font-size: 0.9rem;
+    color: #cccccc;
+    margin-bottom: 25px;
+}
+
+
+/* Input Fields */
+
+.mb-3 label {
+    display: none;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+
+    background: rgba(255,255,255,0.25);
+    border: 1px solid rgba(255,255,255,0.2);
+
+    border-radius: 8px;
+
+    padding: 12px 15px;
+    width: 100%;
+
+    color: white;
+}
+
+input::placeholder {
+    color: #dddddd;
+}
+
+
+/* Button */
+
+.btn-primary {
+    background-color: black !important;
+    border: none !important;
+
+    border-radius: 8px;
+
+    padding: 10px;
+
+    font-weight: 600;
+
+    width: 100%;
+    margin-top: 10px;
+}
+
+.btn-primary:hover {
+    background-color: #1a1a1a !important;
+}
+
+
+/*  Link to login */
+
+a {
+    color: #8be28b;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+
+/* Error Messages */
+
+.first-name-error,
+.last-name-error,
+.email-blank-error,
+.email-invalid-error,
+.password-error {
+    color: #ff6b6b;
+    font-size: 0.85rem;
+    margin-top: 5px;
+}
