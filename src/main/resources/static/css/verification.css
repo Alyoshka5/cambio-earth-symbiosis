@@ -1,0 +1,134 @@
+body {
+    background-color: #2b3930; 
+    /* Changed background-size to 100% auto to remove side padding */
+    background-image: linear-gradient(to bottom, rgba(43, 57, 48, 0.7), rgba(43, 57, 48, 0.7)), 
+                      url('https://media.istockphoto.com/id/1351811592/nl/vector/green-forest-pine-trees-silhouette-landscape.jpg?s=170667a&w=0&k=20&c=m1OI9tqQ4jRuveGFR548nG6NvZsONvAd5hDX--PvN4A='); 
+    background-size: 100% auto; 
+    background-position: bottom center;
+    background-repeat: no-repeat;
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden; /* Prevents scrollbars from background image scaling */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.verification-block {
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+    padding-bottom: 50px; 
+    z-index: 2;
+}
+
+/* Header & Logo */
+.simple-header {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    right: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cambio-logo {
+    height: 70px;
+    width: auto;
+}
+
+/* Updated Symbiosis: Heavier weight and White color */
+.app-name {
+    font-size: 3.8rem;
+    font-weight: 500; /* Made heavier as requested */
+    color: #ffffff;   /* Solid white */
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+/* Icons and Text */
+img[alt="Lock icon"] {
+    width: 90px;
+    margin-bottom: 25px;
+    filter: brightness(0);
+}
+
+/* Updated Heading: Light Green color */
+h2 {
+    font-weight: bold;
+    font-size: 1.9rem;
+    margin-bottom: 5px;
+    color: #bfdca7; /* Very light green to contrast with Symbiosis white */
+}
+
+h2, .verification-block h2 {
+    color: #bfdca7;
+}
+
+p {
+    font-size: 0.9rem;
+    color: #cccccc;
+}
+
+/* Verification Code Inputs */
+.code-inputs {
+    margin: 30px 0;
+}
+
+.code-inputs input[type="text"] {
+    width: 50px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 8px;
+    margin: 0 5px;
+    text-align: center;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.code-inputs input[type="text"]:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.4);
+    border-color: #ffffff;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: #000000 !important;
+    border: none !important;
+    width: 100%;
+    max-width: 350px;
+    padding: 12px;
+    margin-top: 25px;
+    border-radius: 8px !important;
+    font-weight: bold;
+}
+
+.resend-block {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+
+.resend-block p {
+    margin: 0;
+}
+
+.btn-secondary {
+    background: none !important;
+    border: none !important;
+    color: #a3d977 !important; /* Muted lime green */
+    padding: 0 !important;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.btn-secondary:hover {
+    text-decoration: underline;
+}
