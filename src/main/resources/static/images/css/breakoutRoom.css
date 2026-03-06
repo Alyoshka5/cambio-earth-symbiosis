@@ -1,0 +1,124 @@
+body {
+    background-color: #243023; /*background*/
+    color: #FFFFFF;
+    font-family: 'Inter', -apple-system, sans-serif;
+    margin: 0;
+    padding: 40px 20px;
+}
+
+.container {
+    max-width: 600px;
+    margin: auto;
+}
+
+header h1 {
+    font-weight: 300;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+
+header p {
+    color: #b0b0b0;
+    font-size: 0.95rem;
+    margin-bottom: 30px;
+}
+
+/* Session Cards */
+.session {
+    background-color: #313d2f; /* cards */
+    border: none;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: background-color 0.2s;
+}
+
+.session:has(details[open]) {
+    background-color: #3a4738; /* Highlight when expanded */
+}
+
+/* Ranking Circles */
+.rank {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: 2px solid #a3cf71; /* Lime green border */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #243023;
+    background-color: transparent;
+    flex-shrink: 0;
+}
+
+/* If a number is present (simulating the '3', '1', '2') */
+.rank:not(:empty) {
+    background-color: #a3cf71;
+}
+
+.session-content {
+    flex: 1;
+}
+
+/* Accordion Styling */
+summary {
+    list-style: none; /* Removes default arrow */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 400;
+}
+
+summary::after {
+    content: '\2304'; /* Downward chevron */
+    font-size: 1.5rem;
+    transition: transform 0.2s;
+}
+
+details[open] summary::after {
+    transform: rotate(180deg);
+}
+
+details p {
+    margin-top: 15px;
+    font-size: 0.85rem;
+    color: #cbd5c0;
+    line-height: 1.5;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 10px;
+}
+
+/* Buttons */
+.buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn {
+    flex: 1;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.buttons .btn-primary:first-child {
+    background-color: #000000; /* Log Out button */
+    color: white;
+}
+
+.buttons .btn-primary:last-child {
+    background-color: #8ab661; /* Submit button */
+    color: #243023;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
