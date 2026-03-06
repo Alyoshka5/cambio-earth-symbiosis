@@ -21,8 +21,6 @@ import com.cambio_earth.symbiosis.services.JwtService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 
-
-
 @Controller
 public class UserController {
     @Autowired UserRepository userRepository;
@@ -72,7 +70,7 @@ public class UserController {
 
             return "redirect:/breakout";
         } catch (RuntimeException e) {
-            return "signUp";
+            return "login";
         }
     }
 
