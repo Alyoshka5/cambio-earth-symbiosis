@@ -22,6 +22,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 
 
+
 @Controller
 public class UserController {
     @Autowired UserRepository userRepository;
@@ -113,5 +114,16 @@ public class UserController {
         } catch (RuntimeException e) {
             return "verificationCode";
         }
+    }
+
+    @PostMapping("/auth/logout")
+    public String logout(HttpServletResponse response) {
+        Cookie cookie = new Cookie("jwt-token", null);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        
+        return "redirect:/auth/login";
     }
 }
