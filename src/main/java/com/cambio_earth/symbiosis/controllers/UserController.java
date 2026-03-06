@@ -40,6 +40,12 @@ public class UserController {
         return "breakout-room-preferences";
     }
 
+    @GetMapping("/")
+    public String home() {
+        return "/auth/signup";
+    }
+    
+
     @GetMapping("/auth/signup")
     public String getSignUpPage() {
         return "signUp";
