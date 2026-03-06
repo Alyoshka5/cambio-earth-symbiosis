@@ -21,12 +21,12 @@
         <div class="code-inputs">
             <form th:action="@{/auth/verify}" method="post">
                 <input type="email" name="email" th:value="${email}" hidden>
-                <input type="text" maxlength="1" name="first" id="first" data-next="second">
-                <input type="text" maxlength="1" name="second" id="second" data-next="third">
-                <input type="text" maxlength="1" name="third" id="third" data-next="fourth">
-                <input type="text" maxlength="1" name="fourth" id="fourth" data-next="fifth">
-                <input type="text" maxlength="1" name="fifth" id="fifth" data-next="sixth">
-                <input type="text" maxlength="1" name="sixth" id="sixth" data-next="sixth">
+                <input type="text" maxlength="1" name="first" id="first" data-next="second" data-idx="0" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]">
+                <input type="text" maxlength="1" name="second" id="second" data-next="third" data-idx="1" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]">
+                <input type="text" maxlength="1" name="third" id="third" data-next="fourth" data-idx="2" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]">
+                <input type="text" maxlength="1" name="fourth" id="fourth" data-next="fifth" data-idx="3" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]">
+                <input type="text" maxlength="1" name="fifth" id="fifth" data-next="sixth" data-idx="4" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]">
+                <input type="text" maxlength="1" name="sixth" id="sixth" data-next="sixth" data-idx="5" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]">
                 <button type="submit" class="btn btn-primary">Continue</button>
             </form>
         </div>
@@ -39,6 +39,6 @@
             </form>
         </div>
     </div>
-
+<script th:src="@{/js/verificationCode.js}"></script>
 </body>
 </html>
