@@ -130,7 +130,9 @@ summary{
 </div>
 
 <div class="buttons">
-<button onclick="window.location.href='/logout'" class="btn btn-primary">Log Out</button>
+<form th:action="@{/auth/logout}" method="post">
+    <button type="submit" class="btn btn-secondary">Log Out</button>
+</form>
 <button onclick="window.location.href='/submit'" class="btn btn-primary">Submit</button>
 </div>
 
