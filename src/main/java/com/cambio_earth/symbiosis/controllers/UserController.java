@@ -1,24 +1,30 @@
 package com.cambio_earth.symbiosis.controllers;
 
-import org.springframework.http.ResponseEntity;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cambio_earth.symbiosis.dto.LoginUserDto;
 import com.cambio_earth.symbiosis.dto.RegisterUserDto;
 import com.cambio_earth.symbiosis.dto.VerifyUserDto;
 import com.cambio_earth.symbiosis.models.User;
-import com.cambio_earth.symbiosis.responses.LoginResponse;
+import com.cambio_earth.symbiosis.models.UserRepository;
 import com.cambio_earth.symbiosis.services.AuthenticationService;
 import com.cambio_earth.symbiosis.services.JwtService;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 
 
 @Controller
 public class UserController {
+    @Autowired UserRepository userRepository;
+
     private final JwtService jwtService;
 
     private final AuthenticationService authenticationService;
@@ -28,46 +34,80 @@ public class UserController {
         this.authenticationService = authenticationService;
     }
 
+    // TODO: move /breakout get mapping to different controller
+    @GetMapping("/breakout")
+    public String getBreakoutPreferencesPage() {
+        return "breakout-room-preferences";
+    }
+
     @GetMapping("/auth/signup")
-    public String getMethodName() {
+    public String getSignUpPage() {
         return "signUp";
     }
     
     @PostMapping("/auth/signup")
-    @ResponseBody
-    public ResponseEntity<User> register(@RequestBody RegisterUserDto registerUserDto) {
-        User registeredUser = authenticationService.signup(registerUserDto);
-        return ResponseEntity.ok(registeredUser);
+    public String register(@ModelAttribute RegisterUserDto registerUserDto) {
+        authenticationService.signup(registerUserDto);
+        return "redirect:/auth/verify";
+    }
+    
+    @GetMapping("/auth/login")
+    public String getLoginPage() {
+        return "login";
+    }
+    
+    @PostMapping("/auth/login")
+    public String authenticate(@ModelAttribute LoginUserDto loginUserDto, HttpServletResponse response){
+        try {
+            User authenticatedUser = authenticationService.authenticate(loginUserDto);
+            String jwtToken = jwtService.generateToken(authenticatedUser);
+    
+            Cookie cookie = new Cookie("jwt-token", jwtToken);
+            cookie.setHttpOnly(true);
+            cookie.setPath("/");
+            cookie.setMaxAge(3600);
+            response.addCookie(cookie);
+
+            return "redirect:/breakout";
+        } catch (RuntimeException e) {
+            return "signUp";
+        }
     }
 
-    @PostMapping("/auth/login")
-    @ResponseBody
-    public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDto loginUserDto){
-        User authenticatedUser = authenticationService.authenticate(loginUserDto);
-        String jwtToken = jwtService.generateToken(authenticatedUser);
-        LoginResponse loginResponse = new LoginResponse(jwtToken, jwtService.getExpirationTime());
-        return ResponseEntity.ok(loginResponse);
+    @GetMapping("/auth/verify")
+    public String getVerificationPage() {
+        return "verificationCode";
     }
 
     @PostMapping("/auth/verify")
-    @ResponseBody
-    public ResponseEntity<?> verifyUser(@RequestBody VerifyUserDto verifyUserDto) {
+    public String verifyCode(@ModelAttribute VerifyUserDto verifyUserDto, HttpServletResponse response) {
         try {
             authenticationService.verifyUser(verifyUserDto);
-            return ResponseEntity.ok("Account verified successfully");
+
+            Optional<User> optionalUser = userRepository.findByEmail(verifyUserDto.getEmail());
+            if (optionalUser.isPresent()) {
+                User user = optionalUser.get();
+                String jwtToken = jwtService.generateToken(user);
+
+                Cookie cookie = new Cookie("jwt-token", jwtToken);
+                cookie.setHttpOnly(true);
+                cookie.setPath("/");
+                response.addCookie(cookie);
+                return "redirect:/breakout";
+            }
+            return "redirect:/auth/signin";
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return "verificationCode";
         }
     }
 
     @PostMapping("/auth/resend")
-    @ResponseBody
-    public ResponseEntity<?> resendVerificationCode(@RequestParam String email) {
+    public String resendVerificationCode(@RequestParam String email) {
         try {
             authenticationService.resendVerificationCode(email);
-            return ResponseEntity.ok("Verification code sent");
+            return "verificationCode";
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return "verificationCode";
         }
     }
 }
