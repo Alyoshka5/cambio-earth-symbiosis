@@ -42,10 +42,11 @@ public class UserController {
 
     @GetMapping("/")
     public String home() {
-        return "/auth/signup";
+        return "redirect:/auth/signup";
     }
     
 
+    
     @GetMapping("/auth/signup")
     public String getSignUpPage() {
         return "signUp";
