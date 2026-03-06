@@ -13,8 +13,6 @@
     <h2>Sign up</h2>
 
     <form th:action="@{/auth/signup}" method="post">
-
-        <legend>Create an account</legend>
         <div class="mb-3">
             <label for="input-name">Enter your first name:</label>
             <input type="input-text" class="first-name" name="firstName" placeholder="First name">
@@ -29,14 +27,14 @@
 
         <div class="mb-3">
             <label for="input-email">Enter an email:</label>
-            <input type="text" class="input-email" name="email" placeholder="email@domain.com">
+            <input type="email" class="input-email" name="email" placeholder="email@domain.com">
             <p class="email-blank-error" style="display: none;">Must enter an email</p>
             <p class="email-invalid-error" style="display: none;">Email entered is invalid</p>
         </div>
 
         <div class="mb-3">
             <label for="input-pass">Enter a password:</label>
-            <input type="text" class="input-pass" name="password" placeholder="Password">
+            <input type="password" class="input-pass" name="password" placeholder="Password">
             <p class="password-error" style="display: none;">Must enter a password</p>
         </div>
 

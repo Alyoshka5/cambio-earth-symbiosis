@@ -25,9 +25,7 @@ body {
 
 
 /* Title */
-
-body::before {
-    content: "Symbiosis";
+h1 {
     display: block;
 
     font-size: 4rem;
@@ -36,6 +34,11 @@ body::before {
     margin-bottom: 20px;
 }
 
+/* image */
+img {
+    width: 400px;
+    margin-bottom: 50px;
+}
 
 /* Form Container*/
 
@@ -67,7 +70,7 @@ legend + p {
     display: none;
 }
 
-input[type="text"],
+input[type="input-text"],
 input[type="email"],
 input[type="password"] {
 
