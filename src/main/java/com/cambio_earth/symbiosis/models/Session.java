@@ -1,7 +1,9 @@
 package com.cambio_earth.symbiosis.models;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
@@ -38,6 +40,9 @@ public class Session {
 
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Participation> participations = new HashSet<>();
+
+    @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BreakoutBlockRanking> sessionRankings = new ArrayList<>();
 
     // Constructors
     public Session() {}
@@ -124,6 +129,14 @@ public class Session {
 
     public void setParticipations(Set<Participation> participations) {
         this.participations = participations;
+    }
+
+    public List<BreakoutBlockRanking> getSessionRankings() {
+        return sessionRankings;
+    }
+
+    public void setSessionRankings(List<BreakoutBlockRanking> sessionRankings) {
+        this.sessionRankings = sessionRankings;
     }
 }
 
