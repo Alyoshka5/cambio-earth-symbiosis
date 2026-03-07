@@ -1,12 +1,16 @@
 package com.cambio_earth.symbiosis.models;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -14,6 +18,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -51,6 +56,12 @@ public class User implements UserDetails {
     private String verificationCode;
     
     private LocalDateTime verificationCodeExpiresAt;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Participation> participations = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BreakoutBlockRanking> sessionRankings = new ArrayList<>();
 
     // Constructors
     public User() {}
@@ -93,6 +104,12 @@ public class User implements UserDetails {
 
     public LocalDateTime getVerificationCodeExpiresAt() { return verificationCodeExpiresAt; }
     public void setVerificationCodeExpiresAt(LocalDateTime verificationCodeExpiresAt) { this.verificationCodeExpiresAt = verificationCodeExpiresAt; }
+
+    public Set<Participation> getParticipations() { return participations; }
+    public void setParticipations(Set<Participation> participations) { this.participations = participations; }
+
+    public List<BreakoutBlockRanking> getSessionRankings() { return sessionRankings; }
+    public void setSessionRankings(List<BreakoutBlockRanking> sessionRankings) { this.sessionRankings = sessionRankings; }
 
     // Authentication
     @Override
