@@ -33,7 +33,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.userDetailsService = userDetailsService;
         this.handlerExceptionResolver = handlerExceptionResolver;
     }
-
+    @Override
+        protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+            String path = request.getServletPath();
+            return path.startsWith("/auth/") ||  
+                path.startsWith("/js/") ||
+                path.startsWith("/css/")  ||
+                path.startsWith("/images/") ||
+                path.equals("/favicon.ico") || path.equals("/");
+}
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain) throws ServletException, IOException {
         String jwt = null;
