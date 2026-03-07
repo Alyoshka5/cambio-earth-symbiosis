@@ -1,11 +1,15 @@
 package com.cambio_earth.symbiosis.models;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -31,6 +35,9 @@ public class Session {
 
     @NotBlank(message = "Must specify if the session is a breakout session")
     private boolean isBreakout;
+
+    @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Participation> participations = new HashSet<>();
 
     // Constructors
     public Session() {}
@@ -109,6 +116,14 @@ public class Session {
 
     public void setBreakout(boolean isBreakout) {
         this.isBreakout = isBreakout;
+    }
+
+    public Set<Participation> getParticipations() {
+        return participations;
+    }
+
+    public void setParticipations(Set<Participation> participations) {
+        this.participations = participations;
     }
 }
 
