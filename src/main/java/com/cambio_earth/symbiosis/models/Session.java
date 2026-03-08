@@ -18,7 +18,7 @@ import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name="sessions")
-public class Session {
+public class Session implements Comparable<Session> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -137,6 +137,12 @@ public class Session {
 
     public void setSessionRankings(List<BreakoutBlockRanking> sessionRankings) {
         this.sessionRankings = sessionRankings;
+    }
+
+    // Comparable
+    @Override
+    public int compareTo(Session otherSession) {
+        return this.getDatetime().compareTo(otherSession.getDatetime());
     }
 }
 
