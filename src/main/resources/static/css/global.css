@@ -1,0 +1,179 @@
+/* FONT IMPORTS (Jura & Inter) */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Jura:wght@300;400;500;600&display=swap');
+
+
+/* GLOBAL STYLE */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+    color: white;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+
+/* TYPOGRAPHY */
+
+h1, h2, h3, h4 {
+    font-weight: 500;
+    margin: 0;
+}
+
+p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+
+/* JURA FONT TITLES */
+
+.title-jura {
+    font-family: "Jura", sans-serif;
+}
+
+
+/* LINKS */
+
+a {
+    color: #8be28b;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+
+/* CONTAINER */
+
+.container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+
+/* IMAGES */
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+
+/* FORM STYLES */
+
+form {
+    width: 100%;
+}
+
+input {
+    font-family: inherit;
+    font-size: 14px;
+}
+
+input::placeholder {
+    color: #dddddd;
+}
+
+
+/* Shared input style used on signup/login */
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+
+    background: rgba(255,255,255,0.25);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+
+    padding: 12px 15px;
+    width: 100%;
+
+    color: white;
+    outline: none;
+
+    transition: border 0.2s ease, background 0.2s ease;
+}
+
+input:focus {
+    border: 1px solid rgba(255,255,255,0.4);
+    background: rgba(255,255,255,0.3);
+}
+
+
+/* BUTTONS */
+
+.btn {
+    border-radius: 8px;
+    padding: 12px 14px;
+
+    font-weight: 600;
+    font-family: inherit;
+
+    border: none;
+    cursor: pointer;
+
+    transition: opacity 0.2s ease, background 0.2s ease;
+
+    display: inline-block;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+
+/* Primary button used on login/signup */
+
+.btn-primary {
+    background-color: black;
+    color: white;
+}
+
+
+/* Secondary button */
+
+.btn-secondary {
+    background: none;
+    color: white;
+}
+
+
+/* ERROR MESSAGES */
+
+.first-name-error,
+.last-name-error,
+.email-blank-error,
+.email-invalid-error,
+.password-error {
+    color: #ff6b6b;
+    font-size: 0.85rem;
+    margin-top: 5px;
+}
+
+
+/* FLEX UTILITIES */
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
