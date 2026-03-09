@@ -1,68 +1,25 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="/css/breakoutRoom.css">
-<script src="/js/breakout-room-preferences.js" defer></script>
 <title>Breakout Preferences</title>
-<style>
 
-body{
-    font-family: Arial, sans-serif;
-    margin:0;
-    padding:20px;
-}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 
-.container{
-    max-width:700px;
-    margin:auto;
-}
+<!-- Global styles -->
 
-header{
-    margin-bottom:20px;
-}
+<link rel="stylesheet" href="/css/global.css">
 
-.session{
-    border:1px solid #ccc;
-    padding:15px;
-    margin-bottom:10px;
-    display:flex;
-    align-items:flex-start;
-    gap:15px;
-}
+<!-- Page specific styles -->
 
-.rank{
-    width:30px;
-    height:30px;
-    border-radius:50%;
-    border:1px solid black;
-    margin-top:5px;
-    cursor: pointer;
-}
+<link rel="stylesheet" href="/css/breakoutRoom.css">
 
-.session-content{
-    flex:1;
-}
+<script src="/js/breakout-room-preferences.js" defer></script>
 
-summary{
-    cursor:pointer;
-    font-weight:500;
-}
-
-.buttons{
-    display:flex;
-    justify-content:space-between;
-    margin-top:20px;
-}
-
-span{
-    color:#2c352c;
-}
-
-</style>
 </head>
 
 <body>
@@ -135,13 +92,21 @@ span{
 </div>
 
 <div class="buttons">
+
 <form th:action="@{/auth/logout}" method="post">
-    <button type="submit" class="btn btn-secondary">Log Out</button>
+<button type="submit" class="btn btn-secondary">
+Log Out
+</button>
 </form>
-<button onclick="window.location.href='/submit'" class="btn btn-primary">Submit</button>
+
+<button onclick="window.location.href='/submit'" class="btn btn-primary">
+Submit
+</button>
+
 </div>
 
 </div>
 
 </body>
+
 </html>
