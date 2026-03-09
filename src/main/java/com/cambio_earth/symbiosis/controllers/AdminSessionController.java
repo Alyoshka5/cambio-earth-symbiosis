@@ -24,13 +24,13 @@ public class AdminSessionController {
     @Autowired
     SessionRepository sessionRepository;
 
-    // AdminSessionForm.html 
+    // adminSessionForm.html 
 
     // Show blank form (create new)
     @GetMapping("/admin/sessions/new")
     public String getNewSessionForm(Model model) {
         model.addAttribute("session", new Session());
-        return "sessions/AdminSessionForm";
+        return "sessions/adminSessionForm";
     }
 
     // Show pre-filled form (edit existing)
@@ -38,7 +38,7 @@ public class AdminSessionController {
     public String getEditSessionForm(@PathVariable Long id, Model model) {
         Session session = sessionRepository.findById(id).orElseThrow();
         model.addAttribute("session", session);
-        return "sessions/AdminSessionForm";
+        return "sessions/adminSessionForm";
     }
 
     // Handle form submission (create or update)
