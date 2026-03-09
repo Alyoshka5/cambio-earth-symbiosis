@@ -1,7 +1,7 @@
 package com.cambio_earth.symbiosis.services;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,7 +26,7 @@ public class SessionService {
     @Autowired
     ParticipationRepository participationRepository;
 
-    public Map<LocalDate, List<Session>> getUserSchedule(User user) {
+    public Map<String, List<Session>> getUserSchedule(User user) {
         List<Participation> participations = participationRepository.findByUserId(user.getId());
         List<Session> sessions = new ArrayList<>();
         for (Participation participation : participations) {
@@ -39,8 +39,10 @@ public class SessionService {
         Collections.sort(sessions);
 
         // Group sessions by date
-        Map<LocalDate, List<Session>> scheduleDays = new HashMap<>();
+        Map<String, List<Session>> scheduleDays = new HashMap<>();
         if (!sessions.isEmpty()) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE-MMM dd");
+
             LocalDateTime prevDateTime = sessions.get(0).getStartDateTime();
 
             List<Session> daySessions = new ArrayList<>();
@@ -48,13 +50,14 @@ public class SessionService {
                 if (prevDateTime.toLocalDate().equals(session.getStartDateTime().toLocalDate())) {
                     daySessions.add(session);
                 } else {
-                    scheduleDays.put(prevDateTime.toLocalDate(), daySessions);
+
+                    scheduleDays.put(prevDateTime.format(formatter), daySessions);
                     prevDateTime = session.getStartDateTime();
                     daySessions = new ArrayList<>();
                     daySessions.add(session);
                 }
             }
-            scheduleDays.put(prevDateTime.toLocalDate(), daySessions); // Add last day
+            scheduleDays.put(prevDateTime.format(formatter), daySessions); // Add last day
         }
 
         return scheduleDays;

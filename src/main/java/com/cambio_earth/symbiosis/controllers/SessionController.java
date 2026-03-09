@@ -1,6 +1,5 @@
 package com.cambio_earth.symbiosis.controllers;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +21,7 @@ public class SessionController {
 
     @GetMapping("/schedule")
     public String getSchedulePage(@AuthenticationPrincipal User user, Model model) {
-        Map<LocalDate, List<Session>> schedule = sessionService.getUserSchedule(user);
+        Map<String, List<Session>> schedule = sessionService.getUserSchedule(user);
         model.addAttribute("schedule", schedule);
 
         return "sessions/eventSchedule";
