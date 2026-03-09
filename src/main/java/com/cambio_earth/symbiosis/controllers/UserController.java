@@ -38,7 +38,7 @@ public class UserController {
     // breakout page
     @GetMapping("/breakout")
     public String getBreakoutPreferencesPage() {
-        return "breakoutRoomPreferences";
+        return "sessions/breakoutRoomPreferences";
     }
 
     @GetMapping("/")

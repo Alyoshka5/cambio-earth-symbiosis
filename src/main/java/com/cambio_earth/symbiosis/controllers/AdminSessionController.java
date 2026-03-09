@@ -1,18 +1,22 @@
 package com.cambio_earth.symbiosis.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.cambio_earth.symbiosis.models.Session;
 import com.cambio_earth.symbiosis.models.SessionRepository;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.LocalDateTime;
 
 @Controller
 public class AdminSessionController {
@@ -20,13 +24,13 @@ public class AdminSessionController {
     @Autowired
     SessionRepository sessionRepository;
 
-    // AdminSessionForm.html 
+    // adminSessionForm.html 
 
     // Show blank form (create new)
     @GetMapping("/admin/sessions/new")
     public String getNewSessionForm(Model model) {
         model.addAttribute("session", new Session());
-        return "AdminSessionForm";
+        return "sessions/adminSessionForm";
     }
 
     // Show pre-filled form (edit existing)
@@ -34,7 +38,7 @@ public class AdminSessionController {
     public String getEditSessionForm(@PathVariable Long id, Model model) {
         Session session = sessionRepository.findById(id).orElseThrow();
         model.addAttribute("session", session);
-        return "AdminSessionForm";
+        return "sessions/adminSessionForm";
     }
 
     // Handle form submission (create or update)
@@ -68,7 +72,7 @@ public class AdminSessionController {
     public String getSessionDetails(@PathVariable Long id, Model model) {
         Session session = sessionRepository.findById(id).orElseThrow();
         model.addAttribute("session", session);
-        return "addDetails";
+        return "sessions/addDetails";
     }
 
     // Delete (admin only)
