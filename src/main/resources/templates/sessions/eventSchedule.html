@@ -40,7 +40,7 @@
                                 <img src="/images/location-icon.svg" alt="Location icon" class="icon">
                                 <p th:text="${eventSession.getLocation()}"></p>
                             </div>
-                            <div class="info-container">
+                            <div th:if="${eventSession.getSpeakersString().length() > 0}" class="info-container">
                                 <img src="/images/person-icon.svg" alt="Person icon" class="icon">
                                 <div>
                                     <p th:text="${eventSession.getSpeakersString()}"></p>

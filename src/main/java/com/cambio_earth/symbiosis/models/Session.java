@@ -166,6 +166,9 @@ public class Session implements Comparable<Session> {
     }
 
     public String getSpeakersString() {
+        if (speakers == null || speakers.isEmpty()) {
+            return "";
+        }
         return String.join(", ", speakers);
     }
 
