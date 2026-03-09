@@ -1,0 +1,102 @@
+body {
+    background-color: #2b3930;
+    color: #FFFFFF;
+}
+
+main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 40px 24px 120px 24px;
+}
+
+.overview-container {
+    color: #FFFFFF;
+}
+
+.back-button {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    left: calc(50% - 28px/2 - 155.5px);
+    top: 45px;
+    color: #FFFFFF;
+    transform: matrix(-1, 0, 0, 1, 0, 0);
+}
+
+/* calendar-blank-outline */
+.date-icon {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    left: 21px;
+    top: 183px;
+}
+
+/* clock-time-eight-outline */
+.time-icon {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    left: 21px;
+    top: 210px;
+}
+
+/* map-marker-outline */
+.location-icon {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    left: 21px;
+    top: 237px;
+}
+
+.tab-button {
+    cursor: pointer;
+    
+}
+
+.home-tab {
+    width: 24px;
+    height: 24px;
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+}
+
+.rank-tab {
+    width: 24px;
+    height: 24px;
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+}
+
+.schedule-tab {
+    width: 24px;
+    height: 24px;
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+}
+
+.map-tab {
+    width: 26px;
+    height: 26px;
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+}
+
+.profile-tab {
+    width: 24px;
+    height: 24px;
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+    background: #FFFFFF;
+}
+
+.tab-bar {
+    display: flex;
+    justify-content: space-evenly;
+}

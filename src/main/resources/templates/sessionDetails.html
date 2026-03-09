@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="/css/sessionDetails.css" rel="stylesheet">
+    <script src="/js/sessionDetails.js" defer></script>
+
+</head>
+<body>
+    <main>
+        <a href="/sessions" class="back-button"></a>
+        <h1 class="session-title" th:text="${session?.title}">[Session title]</h1>
+
+        <div class="session-metadata">
+            <div class="date-icon">
+                <a href="/images/calander-icon.png"></a>
+            </div>
+            <p class="date" th:text="${#temporals.format(session.startDateTime, 'MMM d, yyyy')}">Jan 1, 2026</p>
+
+            <div class="time-icon">
+                <a href="/images/clock-icon.png"></a>
+            </div>
+            <p class="time" th:text="${#temporals.format(session.startDateTime, 'h:mm a') + ' - ' + #temporals.format(session.endDateTime, 'h:mm a')}">12:00pm - 1:00pm</p>
+
+            <div class="location-icon">
+                <a href="/images/map-icon.png"></a>
+            </div>
+            <p class="location" th:text="${session?.location}">[Location]</p>
+        </div>
+
+        <div class="overview-container">
+            <h2>Overview</h2>
+            <p class="desc" th:text="${session?.description}">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        </div>
+
+        <div class="tab-bar">
+            <h2 class="tab-button" id="speakers-heading">Speakers</h2>
+            <h2 class="tab-button" id="participants-heading">Participants</h2>
+        </div>
+
+        <div class="speakers-container">
+            <ul>
+                <li th:each="${speaker : ${session.speakers}}" th:text="${speaker}">
+                    [Speaker Name]
+                </li>
+            </ul>
+        </div>
+
+        <div class="participants-container" style="display:none">
+            <ul>
+                <li th:each="participant : ${session.participations}">
+                    <p th:text="${participant.user.firstName + ' ' + participant.user.lastName}"></p>
+                
+                    <form th:if="${isAdmin}"
+                            th:action="@{/remove/{uid}/fromSession/{sid}(uid=${participant.user.id}), (sid=${session.id})}"
+                            method="post">
+
+                        <button type="button" id="remove-user-btn" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            Remove from session
+                        </button>
+                    </form>
+                    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title" id="deleteModalLabel">Confirm Remove</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p class="mb-0">Are you sure you want to remove </p>
+                                    <span id="unwanted-user"></span>
+                                    <p class="mb-0"> from this session?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn btn-danger" id="confirmDelete">Remove user</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tab-bar">
+            <div class="home-tab"></div>
+            <div class="rank-tab"></div>
+            <div class="schedule-tab"></div>
+            <div class="map-tab"></div>
+            <div class="profile-tab"></div>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
