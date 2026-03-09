@@ -1,7 +1,10 @@
 package com.cambio_earth.symbiosis.models;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -148,6 +151,26 @@ public class Session implements Comparable<Session> {
 
     public void setSessionRankings(List<BreakoutBlockRanking> sessionRankings) {
         this.sessionRankings = sessionRankings;
+    }
+
+    // Helper methods
+    public String getTimeRange() {
+        return formatTime(startDateTime) + " - " + formatTime(endDateTime);
+    }
+    
+    private String formatTime(LocalDateTime dateTime) {
+        SimpleDateFormat formatter = new SimpleDateFormat("hh:mma");
+        Date convertedDateTime = Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
+        String formattedDate = formatter.format(convertedDateTime);
+
+        if (formattedDate.charAt(0) == '0') {
+            formattedDate = formattedDate.substring(1);
+        }
+        return formattedDate.replaceAll("[.]", "");
+    }
+
+    public String getSpeakersString() {
+        return String.join(", ", speakers);
     }
 
     // Comparable
