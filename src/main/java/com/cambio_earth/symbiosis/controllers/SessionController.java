@@ -5,17 +5,33 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cambio_earth.symbiosis.models.Session;
+import com.cambio_earth.symbiosis.services.SessionService;
+
 @Controller
 public class SessionController {
 
-    // stores users registered for sessions
+    @Autowired
+    private SessionService sessionService;
+
+    // teammate's current in-memory signup/remove map
     private Map<String, List<String>> sessionRegistrations = new HashMap<>();
 
+    // your part: breakout page should show real breakout sessions
+    @GetMapping("/breakout")
+    public String getBreakoutPreferencesPage(Model model) {
+        List<Session> breakoutSessions = sessionService.getBreakoutSessions();
+        model.addAttribute("sessions", breakoutSessions);
+        return "sessions/breakoutRoomPreferences";
+    }
 
     // register user for sessions
     @PostMapping("/sessions/register")
@@ -24,14 +40,11 @@ public class SessionController {
             @RequestParam(required = false) List<String> sessionName,
             @RequestParam String email
     ) {
-
-        // if nothing selected
         if (sessionName == null || sessionName.isEmpty()) {
             return "No sessions selected.";
         }
 
         for (String name : sessionName) {
-
             sessionRegistrations.putIfAbsent(name, new ArrayList<>());
 
             List<String> users = sessionRegistrations.get(name);
@@ -44,7 +57,6 @@ public class SessionController {
         return "User registered successfully";
     }
 
-
     // unregister user
     @PostMapping("/sessions/unregister")
     @ResponseBody
@@ -52,17 +64,13 @@ public class SessionController {
             @RequestParam(required = false) List<String> sessionName,
             @RequestParam String email
     ) {
-
         if (sessionName == null || sessionName.isEmpty()) {
             return "No sessions selected.";
         }
 
         for (String name : sessionName) {
-
             if (sessionRegistrations.containsKey(name)) {
-
                 List<String> users = sessionRegistrations.get(name);
-
                 users.remove(email);
             }
         }
