@@ -33,14 +33,14 @@
 
             <div class="meta-row">
 
-                <div class="meta-chip" th:if="${session.datetime != null}">
+                <div class="meta-chip" th:if="${session.startDateTime != null}">
                     <span class="chip-icon">🗓</span>
                     <span th:text="${#temporals.format(session.startDateTime, 'MMMM d, yyyy')}"
                           th:if="${session.startDateTime != null}">January 1, 2025</span>
                 </div>
                 <div class="meta-chip" th:if="${session.datetime != null}">
                     <span class="chip-icon"></span>
-                    <span th:text="${#temporals.format(session.startDateTime, 'h:mm a')} + ' - ' + ${#temporals.format(session.endDateTime, 'h:mm a')}">
+                    <span th:text="${#temporals.format(session.startDateTime, 'h:mm a')} + ' – ' + ${#temporals.format(session.endDateTime, 'h:mm a')}"></span>
                 </div>
                 <div class="meta-chip" th:if="${session.datetime == null}">
                     <span class="chip-icon">🗓</span>
@@ -102,7 +102,7 @@
         </div>
 
         <p class="empty-state"
-           th:if="${session.speakers == null or session.speakers.length == 0}">
+           th:if="${session.speakers != null and !session.speakers.isEmpty()}">
             No speakers listed yet.
         </p>
 

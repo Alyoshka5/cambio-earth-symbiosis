@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import com.cambio_earth.symbiosis.models.Session;
 import com.cambio_earth.symbiosis.models.SessionRepository;
@@ -40,13 +42,21 @@ public class AdminSessionController {
     public String saveSession(
             @ModelAttribute Session session,
             @RequestParam String speakersRaw,
-            @RequestParam String sessionDate,
-            @RequestParam String startTime,
-            @RequestParam String endTime) {
+            @RequestParam(required = false) String sessionDate,
+            @RequestParam(required = false) String startTime,
+            @RequestParam(required = false) String endTime) {
 
-        session.setSpeakers(speakersRaw.split(","));
-        session.setStartDateTime(LocalDateTime.of(LocalDate.parse(sessionDate), LocalTime.parse(startTime)));
-        session.setEndDateTime(LocalDateTime.of(LocalDate.parse(sessionDate), LocalTime.parse(endTime)));
+        if (speakersRaw != null && !speakersRaw.isBlank()) {
+            session.setSpeakers(Arrays.asList(speakersRaw.split(",")));
+        } else {
+            session.setSpeakers(new ArrayList<>());
+        }
+        if (sessionDate != null && !sessionDate.isBlank() && startTime != null && !startTime.isBlank()) {
+            session.setStartDateTime(LocalDateTime.of(LocalDate.parse(sessionDate), LocalTime.parse(startTime)));
+        }
+        if (sessionDate != null && !sessionDate.isBlank() && endTime != null && !endTime.isBlank()) {
+            session.setEndDateTime(LocalDateTime.of(LocalDate.parse(sessionDate), LocalTime.parse(endTime)));
+        }
         sessionRepository.save(session);
         return "redirect:/sessions/" + session.getId();
     }
