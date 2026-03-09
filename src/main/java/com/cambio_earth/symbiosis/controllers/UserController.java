@@ -35,11 +35,7 @@ public class UserController {
         this.authenticationService = authenticationService;
     }
 
-    // breakout page
-    @GetMapping("/breakout")
-    public String getBreakoutPreferencesPage() {
-        return "sessions/breakoutRoomPreferences";
-    }
+
 
     @GetMapping("/")
     public String home() {
