@@ -20,11 +20,33 @@ main {
     padding: 0;
 }
 
+.page-header {
+    width: min(800px, 100%);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 h1 {
     font-weight: 200;
     font-size: 2.75rem;
-    width: min(800px, 100%);
     margin: 0;
+}
+
+.add-session-button {
+    color: #243023;
+    background-color: #8ab661;
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+    flex: 1;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: 500;
+}
+.add-session-button:hover {
+    opacity: 0.9;
 }
 
 .day-header {
@@ -81,7 +103,6 @@ h5 {
     justify-content: space-between;
     transition: background-color 0.2s;
 }
-
 .schedule-card:hover {
     background-color: #82b7652a;
     cursor: pointer;

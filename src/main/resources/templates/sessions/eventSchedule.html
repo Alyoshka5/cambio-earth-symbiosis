@@ -9,7 +9,12 @@
 </head>
 <body>
     <main>
-        <h1>Schedule</h1>
+        <header class="page-header">
+            <h1>Schedule</h1>
+            <form th:if="${isAdmin}" action="/admin/sessions/new" method="get">
+                <button type="submit" class="add-session-button">Add Session</button>
+            </form>
+        </header>
         <section th:each="scheduleDay: ${schedule}" class="container">
             <section class="container-fluid">
                 <header class="day-header">
