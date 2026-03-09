@@ -10,10 +10,14 @@ import java.util.List;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
@@ -33,12 +37,14 @@ public class Session implements Comparable<Session> {
     private String location;
 
     private LocalDateTime startDateTime;
-
     private LocalDateTime endDateTime;
 
     private String description;
 
-    private String[] speakers;
+    @ElementCollection
+    @CollectionTable(name = "session_speakers", joinColumns = @JoinColumn(name = "session_id"))
+    @Column(name = "speaker")
+    private List<String> speakers = new ArrayList<>();
 
     @NotBlank(message = "Must specify if the session is a breakout session")
     private boolean isBreakout;
@@ -54,7 +60,7 @@ public class Session implements Comparable<Session> {
 
     public Session(
             @NotBlank(message = "Title is required") @Size(min = 1, max = 150, message = "Title must be between 1 and 150 characters") String title,
-            String location, LocalDateTime startDateTime, LocalDateTime endDateTime, String description, String[] speakers,
+            String location, LocalDateTime startDateTime, LocalDateTime endDateTime, String description, List<String> speakers,
             @NotBlank(message = "Must specify if session is a breakout session") boolean isBreakout) {
         this.title = title;
         this.location = location;
@@ -97,21 +103,11 @@ public class Session implements Comparable<Session> {
         this.location = location;
     }
 
-    public LocalDateTime getStartDateTime() {
-        return startDateTime;
-    }
+   public LocalDateTime getStartDateTime() { return startDateTime; }
+   public void setStartDateTime(LocalDateTime startDateTime) { this.startDateTime = startDateTime; }
 
-    public void setStartDateTime(LocalDateTime startDateTime) {
-        this.startDateTime = startDateTime;
-    }
-
-    public LocalDateTime getEndDateTime() {
-        return endDateTime;
-    }
-
-    public void setEndDateTime(LocalDateTime endDateTime) {
-        this.endDateTime = endDateTime;
-    }
+   public LocalDateTime getEndDateTime() { return endDateTime; }
+   public void setEndDateTime(LocalDateTime endDateTime) { this.endDateTime = endDateTime; }
 
     public String getDescription() {
         return description;
@@ -121,11 +117,11 @@ public class Session implements Comparable<Session> {
         this.description = description;
     }
 
-    public String[] getSpeakers() {
+    public List<String> getSpeakers() {
         return speakers;
     }
 
-    public void setSpeakers(String[] speakers) {
+    public void setSpeakers(List<String> speakers) {
         this.speakers = speakers;
     }
 

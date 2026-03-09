@@ -1,0 +1,398 @@
+:root {
+    --forest:     #2b3930;
+    --forest-mid: #3a4f42;
+    --forest-light: #4d6657;
+    --bark:       #1a2420;
+    --moss:       #6b8f71;
+    --sage:       #a8c5a0;
+    --cream:      #f0ede6;
+    --white:      #ffffff;
+    --accent:     #c8d96e; /* lichen yellow-green */
+    --danger:     #e07070;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    background-color: var(--bark);
+    background-image:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(107,143,113,0.18) 0%, transparent 70%),
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 60px,
+            rgba(255,255,255,0.015) 60px,
+            rgba(255,255,255,0.015) 61px
+        );
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+}
+
+/* ── Top bar ── */
+.admin-topbar {
+    background: rgba(26, 36, 32, 0.95);
+    border-bottom: 1px solid rgba(168,197,160,0.15);
+    padding: 14px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+}
+
+.topbar-brand {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    color: var(--white);
+    letter-spacing: 0.5px;
+    text-decoration: none;
+}
+
+.topbar-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 3px 10px;
+    border-radius: 20px;
+}
+
+/* ── Page wrapper ── */
+.page-wrapper {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+}
+
+/* ── Page header ── */
+.page-header {
+    margin-bottom: 40px;
+}
+
+.page-header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.4rem;
+    color: var(--white);
+    margin: 0 0 6px;
+    line-height: 1.15;
+}
+
+.page-header p {
+    color: var(--sage);
+    font-size: 0.9rem;
+    margin: 0;
+    font-weight: 300;
+}
+
+.header-line {
+    width: 48px;
+    height: 2px;
+    background: var(--accent);
+    margin: 14px 0 16px;
+    border-radius: 2px;
+}
+
+/* ── Card ── */
+.form-card {
+    background: rgba(58, 79, 66, 0.35);
+    border: 1px solid rgba(168,197,160,0.14);
+    border-radius: 16px;
+    padding: 40px;
+    backdrop-filter: blur(6px);
+}
+
+/* ── Section divider ── */
+.section-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(168,197,160,0.1);
+}
+
+.section-label:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+}
+
+/* ── Form controls ── */
+.form-label {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--sage);
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+}
+
+.form-label span.required {
+    color: var(--accent);
+    margin-left: 3px;
+}
+
+.form-control,
+.form-select {
+    background-color: rgba(26, 36, 32, 0.7) !important;
+    border: 1px solid rgba(168,197,160,0.2) !important;
+    color: var(--white) !important;
+    border-radius: 10px !important;
+    padding: 11px 14px !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 0.9rem !important;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px rgba(200,217,110,0.12) !important;
+    outline: none !important;
+    background-color: rgba(26, 36, 32, 0.9) !important;
+}
+
+.form-control::placeholder {
+    color: rgba(168,197,160,0.4) !important;
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 110px;
+}
+
+.form-select option {
+    background-color: var(--forest);
+    color: var(--white);
+}
+
+/* ── Date + Time side by side ── */
+.datetime-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.7) sepia(1) saturate(2) hue-rotate(60deg);
+    cursor: pointer;
+}
+
+/* ── Speakers dynamic list ── */
+.speaker-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.speaker-entry {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: fadeSlideIn 0.2s ease;
+}
+
+@keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.speaker-entry .form-control {
+    flex: 1;
+}
+
+.btn-remove-speaker {
+    background: rgba(224,112,112,0.15);
+    border: 1px solid rgba(224,112,112,0.3);
+    color: var(--danger);
+    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.2s;
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.btn-remove-speaker:hover {
+    background: rgba(224,112,112,0.28);
+}
+
+.btn-add-speaker {
+    background: transparent;
+    border: 1px dashed rgba(200,217,110,0.4);
+    color: var(--accent);
+    border-radius: 10px;
+    padding: 9px 16px;
+    font-size: 0.83rem;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 6px;
+    transition: background 0.2s, border-color 0.2s;
+    letter-spacing: 0.3px;
+}
+
+.btn-add-speaker:hover {
+    background: rgba(200,217,110,0.08);
+    border-color: rgba(200,217,110,0.7);
+}
+
+/* ── Breakout toggle ── */
+.breakout-toggle-wrapper {
+    background: rgba(26, 36, 32, 0.5);
+    border: 1px solid rgba(168,197,160,0.15);
+    border-radius: 12px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.breakout-toggle-wrapper:hover {
+    border-color: rgba(200,217,110,0.35);
+}
+
+.breakout-toggle-wrapper.active {
+    border-color: rgba(200,217,110,0.5);
+    background: rgba(200,217,110,0.06);
+}
+
+.toggle-text h6 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--white);
+    margin: 0 0 3px;
+}
+
+.toggle-text p {
+    font-size: 0.78rem;
+    color: var(--sage);
+    margin: 0;
+    font-weight: 300;
+}
+
+.toggle-switch {
+    position: relative;
+    width: 48px;
+    height: 26px;
+    flex-shrink: 0;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+.toggle-track {
+    position: absolute;
+    inset: 0;
+    background: rgba(168,197,160,0.2);
+    border-radius: 26px;
+    transition: background 0.25s;
+    cursor: pointer;
+}
+
+.toggle-track::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: var(--sage);
+    border-radius: 50%;
+    top: 4px;
+    left: 4px;
+    transition: transform 0.25s, background 0.25s;
+}
+
+.toggle-switch input:checked ~ .toggle-track {
+    background: rgba(200,217,110,0.4);
+}
+
+.toggle-switch input:checked ~ .toggle-track::after {
+    transform: translateX(22px);
+    background: var(--accent);
+}
+
+/* ── Char counter ── */
+.char-counter {
+    font-size: 0.72rem;
+    color: rgba(168,197,160,0.5);
+    text-align: right;
+    margin-top: 4px;
+}
+
+/* ── Action buttons ── */
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 36px;
+    padding-top: 28px;
+    border-top: 1px solid rgba(168,197,160,0.1);
+}
+
+.btn-save {
+    background: var(--accent);
+    color: var(--bark);
+    border: none;
+    border-radius: 10px;
+    padding: 12px 32px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    flex: 1;
+    transition: opacity 0.2s, transform 0.15s;
+}
+
+.btn-save:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+}
+
+.btn-save:active {
+    transform: translateY(0);
+}
+
+.btn-cancel {
+    background: transparent;
+    color: var(--sage);
+    border: 1px solid rgba(168,197,160,0.25);
+    border-radius: 10px;
+    padding: 12px 24px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.btn-cancel:hover {
+    border-color: rgba(168,197,160,0.5);
+    color: var(--white);
+}
+#speakersHidden { display: none; }

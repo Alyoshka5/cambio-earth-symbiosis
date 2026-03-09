@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="/css/AdminSessionForm.css" rel="stylesheet">
+    <title>Admin — Session Details</title>
+</head>
+
+<body>
+
+    <!-- Top bar -->
+    <nav class="admin-topbar">
+        <a href="#" class="topbar-brand">Symbiosis</a>
+        <span class="topbar-badge">Admin Panel</span>
+    </nav>
+
+    <div class="page-wrapper">
+
+        <!-- Header -->
+        <div class="page-header">
+            <h1>Session Details</h1>
+            <div class="header-line"></div>
+            <p>Fill in the information below. Fields marked <span style="color:var(--accent)">✦</span> are required.</p>
+        </div>
+
+        <!-- Form Card -->
+        <div class="form-card">
+            <form th:action="@{/admin/sessions/save}" th:object="${session}" method="post" id="sessionForm">
+
+                <!-- BASIC INFO -->
+                <div class="section-label">Basic Info</div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="title">
+                        Title <span class="required">✦</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        th:field="*{title}"
+                        class="form-control"
+                        placeholder="e.g. Regenerative Agriculture in Practice"
+                        maxlength="150"
+                        required
+                        oninput="updateCounter(this, 'titleCounter', 150)"
+                    >
+                    <div class="char-counter"><span id="titleCounter">0</span> / 150</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="description">Description</label>
+                    <textarea
+                        id="description"
+                        name="description"
+                        th:field="*{description}"
+                        class="form-control"
+                        placeholder="What will attendees learn or experience in this session?"
+                    ></textarea>
+                </div>
+
+                <div class="section-label">Logistics</div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="location">Location</label>
+                    <input
+                        type="text"
+                        id="location"
+                        name="location"
+                        th:field="*{location}"
+                        class="form-control"
+                        placeholder="e.g. Room 4B, Main Stage, Outdoor Pavilion"
+                    >
+                </div>
+
+                <div class="datetime-row mb-3">
+                    <div>
+                        <label class="form-label" for="sessionDate">Date</label>
+                        <input
+                            type="date"
+                            id="sessionDate"
+                            name="sessionDate"
+                            class="form-control"
+                        >
+                    </div>
+                    <div>
+                        <label class="form-label" for="sessionTime">Time</label>
+                        <input
+                            type="time"
+                            id="sessionTime"
+                            name="sessionTime"
+                            class="form-control"
+                        >
+                    </div>
+                </div>
+
+                <div class="section-label">Speakers</div>
+
+                <div class="speaker-list" id="speakerList">
+                    <!-- Speaker entries injected by JS -->
+                </div>
+
+                <button type="button" class="btn-add-speaker" onclick="addSpeaker()">
+                    + Add Speaker
+                </button>
+
+                <!-- Hidden field: comma-separated speaker names sent to controller -->
+                <input type="hidden" name="speakersRaw" id="speakersHidden">
+
+                <div class="section-label">Session Type</div>
+
+                <div
+                    class="breakout-toggle-wrapper"
+                    id="breakoutWrapper"
+                    onclick="toggleBreakout()"
+                >
+                    <div class="toggle-text">
+                        <h6>Breakout Session</h6>
+                        <p>Optional — attendees can choose whether to join this session.</p>
+                    </div>
+                    <label class="toggle-switch" onclick="event.stopPropagation()">
+                        <input
+                            type="checkbox"
+                            id="isBreakout"
+                            name="isBreakout"
+                            th:field="*{breakout}"
+                            onchange="syncBreakoutWrapper()"
+                        >
+                        <span class="toggle-track"></span>
+                    </label>
+                </div>
+
+                <div class="form-actions">
+                    <a href="/admin/sessions" class="btn-cancel">Cancel</a>
+                    <button type="submit" class="btn-save">Save Session</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Speaker dynamic list 
+
+        let speakerCount = 0;
+
+        function addSpeaker(value = '') {
+            speakerCount++;
+            const list = document.getElementById('speakerList');
+            const entry = document.createElement('div');
+            entry.className = 'speaker-entry';
+            entry.id = `speakerEntry${speakerCount}`;
+            entry.innerHTML = `
+                <input
+                    type="text"
+                    class="form-control speaker-input"
+                    placeholder="Speaker name"
+                    value="${escapeHtml(value)}"
+                    oninput="aggregateSpeakers()"
+                >
+                <button type="button" class="btn-remove-speaker" onclick="removeSpeaker(${speakerCount})" title="Remove">
+                    ✕
+                </button>
+            `;
+            list.appendChild(entry);
+            entry.querySelector('input').focus();
+            aggregateSpeakers();
+        }
+
+        function removeSpeaker(id) {
+            const el = document.getElementById(`speakerEntry${id}`);
+            if (el) {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(-4px)';
+                el.style.transition = 'opacity 0.15s, transform 0.15s';
+                setTimeout(() => { el.remove(); aggregateSpeakers(); }, 150);
+            }
+        }
+
+        function aggregateSpeakers() {
+            const inputs = document.querySelectorAll('.speaker-input');
+            const names = Array.from(inputs)
+                .map(i => i.value.trim())
+                .filter(Boolean)
+                .join(',');
+            document.getElementById('speakersHidden').value = names;
+        }
+
+        // Pre-populate speakers if editing an existing session
+        // (Thymeleaf renders this inline from the model)
+        /*[[${session.speakers}]]*/ 
+        (function seedSpeakers() {
+            // Read existing speakers from a data attribute set by Thymeleaf
+            const raw = document.getElementById('sessionForm').dataset.speakers || '';
+            if (raw) raw.split(',').forEach(s => addSpeaker(s.trim()));
+        })();
+
+
+        function updateCounter(input, counterId, max) {
+            document.getElementById(counterId).textContent = input.value.length;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const titleInput = document.getElementById('title');
+            if (titleInput) updateCounter(titleInput, 'titleCounter', 150);
+        });
+
+
+        function toggleBreakout() {
+            const cb = document.getElementById('isBreakout');
+            cb.checked = !cb.checked;
+            syncBreakoutWrapper();
+        }
+
+        function syncBreakoutWrapper() {
+            const cb = document.getElementById('isBreakout');
+            const wrapper = document.getElementById('breakoutWrapper');
+            wrapper.classList.toggle('active', cb.checked);
+        }
+
+        syncBreakoutWrapper();
+
+        document.getElementById('sessionForm').addEventListener('submit', () => {
+            aggregateSpeakers();
+        });
+
+        function escapeHtml(str) {
+            return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+    </script>
+</body>
+</html>
