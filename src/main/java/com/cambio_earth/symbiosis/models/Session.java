@@ -29,7 +29,9 @@ public class Session implements Comparable<Session> {
 
     private String location;
 
-    private LocalDateTime datetime;
+    private LocalDateTime startDateTime;
+
+    private LocalDateTime endDateTime;
 
     private String description;
 
@@ -49,11 +51,12 @@ public class Session implements Comparable<Session> {
 
     public Session(
             @NotBlank(message = "Title is required") @Size(min = 1, max = 150, message = "Title must be between 1 and 150 characters") String title,
-            String location, LocalDateTime datetime, String description, String[] speakers,
+            String location, LocalDateTime startDateTime, LocalDateTime endDateTime, String description, String[] speakers,
             @NotBlank(message = "Must specify if session is a breakout session") boolean isBreakout) {
         this.title = title;
         this.location = location;
-        this.datetime = datetime;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
         this.description = description;
         this.speakers = speakers;
         this.isBreakout = isBreakout;
@@ -91,12 +94,20 @@ public class Session implements Comparable<Session> {
         this.location = location;
     }
 
-    public LocalDateTime getDatetime() {
-        return datetime;
+    public LocalDateTime getStartDatetime() {
+        return startDateTime;
     }
 
-    public void setDatetime(LocalDateTime datetime) {
-        this.datetime = datetime;
+    public void setStartDateTime(LocalDateTime startDateTime) {
+        this.startDateTime = startDateTime;
+    }
+
+    public LocalDateTime getEndDatetime() {
+        return endDateTime;
+    }
+
+    public void setEndDateTime(LocalDateTime endDateTime) {
+        this.endDateTime = endDateTime;
     }
 
     public String getDescription() {
@@ -142,7 +153,7 @@ public class Session implements Comparable<Session> {
     // Comparable
     @Override
     public int compareTo(Session otherSession) {
-        return this.getDatetime().compareTo(otherSession.getDatetime());
+        return this.getStartDatetime().compareTo(otherSession.getStartDatetime());
     }
 }
 
