@@ -41,15 +41,15 @@ public class SessionService {
         // Group sessions by date
         Map<LocalDate, List<Session>> scheduleDays = new HashMap<>();
         if (!sessions.isEmpty()) {
-            LocalDateTime prevDateTime = sessions.get(0).getStartDatetime();
+            LocalDateTime prevDateTime = sessions.get(0).getStartDateTime();
 
             List<Session> daySessions = new ArrayList<>();
             for (Session session: sessions) {
-                if (prevDateTime.toLocalDate().equals(session.getStartDatetime().toLocalDate())) {
+                if (prevDateTime.toLocalDate().equals(session.getStartDateTime().toLocalDate())) {
                     daySessions.add(session);
                 } else {
                     scheduleDays.put(prevDateTime.toLocalDate(), daySessions);
-                    prevDateTime = session.getStartDatetime();
+                    prevDateTime = session.getStartDateTime();
                     daySessions = new ArrayList<>();
                     daySessions.add(session);
                 }

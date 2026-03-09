@@ -94,7 +94,7 @@ public class Session implements Comparable<Session> {
         this.location = location;
     }
 
-    public LocalDateTime getStartDatetime() {
+    public LocalDateTime getStartDateTime() {
         return startDateTime;
     }
 
@@ -102,7 +102,7 @@ public class Session implements Comparable<Session> {
         this.startDateTime = startDateTime;
     }
 
-    public LocalDateTime getEndDatetime() {
+    public LocalDateTime getEndDateTime() {
         return endDateTime;
     }
 
@@ -153,7 +153,7 @@ public class Session implements Comparable<Session> {
     // Comparable
     @Override
     public int compareTo(Session otherSession) {
-        return this.getStartDatetime().compareTo(otherSession.getStartDatetime());
+        return this.getStartDateTime().compareTo(otherSession.getStartDateTime());
     }
 }
 
