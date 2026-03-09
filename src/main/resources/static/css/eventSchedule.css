@@ -18,6 +18,7 @@ main {
 .container {
     margin: 0;
     padding: 0;
+    max-width: 800px;
 }
 
 .page-header {
@@ -28,7 +29,6 @@ main {
 }
 
 h1 {
-    font-weight: 200;
     font-size: 2.75rem;
     margin: 0;
 }
@@ -38,15 +38,19 @@ h1 {
     background-color: #8ab661;
     display: flex;
     gap: 15px;
-    margin-top: 30px;
     flex: 1;
     border: none;
     padding: 12px;
     border-radius: 6px;
     font-weight: 500;
+    transition: opacity 0.2 ease;
 }
 .add-session-button:hover {
     opacity: 0.9;
+}
+
+form {
+    width: fit-content;
 }
 
 .day-header {
@@ -58,13 +62,13 @@ h1 {
 
 h2 {
     font-size: 2.25em;
-    font-weight: 100;
+    font-weight: 200;
     margin-top: 15px;
 }
 
 h3 {
     font-size: 1.25em;
-    font-weight: 100;
+    font-weight: 200;
 }
 
 h4 {
@@ -92,6 +96,10 @@ h5 {
 .session {
     margin-bottom: 15px;
     padding: 0;
+}
+
+.time-range {
+    margin-bottom: 5px;
 }
 
 .schedule-card {

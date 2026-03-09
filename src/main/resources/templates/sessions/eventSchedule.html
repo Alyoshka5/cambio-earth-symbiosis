@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/global.css">
     <link rel="stylesheet" href="/css/eventSchedule.css">
     <title>Event Schedule</title>
 </head>
 <body>
     <main>
         <header class="page-header">
-            <h1>Schedule</h1>
+            <h1 class="title-jura">Schedule</h1>
             <form th:if="${isAdmin}" action="/admin/sessions/new" method="get">
                 <button type="submit" class="add-session-button">Add Session</button>
             </form>
@@ -22,7 +23,7 @@
                     <h3 th:text="${scheduleDay.key.split('-')[1]}"></h3>
                 </header>
                 <article th:each="eventSession: ${scheduleDay.value}" class="session row">
-                    <p th:text="${eventSession.getTimeRange()}" class="col-12 col-lg-3"></p>
+                    <p th:text="${eventSession.getTimeRange()}" class="time-range col-12 col-lg-3"></p>
                     <div class="schedule-card col-12 col-lg-9">
                         <div>
                             <header th:switch="${eventSession.isBreakout()}">
