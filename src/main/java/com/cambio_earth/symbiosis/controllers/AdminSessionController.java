@@ -9,7 +9,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import com.cambio_earth.symbiosis.models.*;
@@ -78,7 +77,7 @@ public class AdminSessionController {
     @GetMapping("/sessions/{id}")
     public String getSessionDetails(@PathVariable Long id, Model model, @AuthenticationPrincipal User currentUser) {
         Session session = sessionRepository.findById(id).orElseThrow();
-        model.addAttribute("session", session);
+        model.addAttribute("eventSession", session);
 
         // Add an attribute for checking if the current logged in user is an admin
         boolean isAdmin = currentUser != null && currentUser.getRole() == Role.ADMIN;

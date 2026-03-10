@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="/css/sessionDetails.css" rel="stylesheet">
     <script src="/js/sessionDetails.js" defer></script>
-    <title th:text="${session.title} + ' — Symbiosis'">Session — Symbiosis</title>
+    <title th:text="${eventSession.title} + ' — Symbiosis'">Session — Symbiosis</title>
 </head>
 
 <body>
@@ -23,15 +23,15 @@
     <div class="hero">
         <div class="hero-inner">
 
-            <div th:if="${session.breakout}" class="session-type-badge breakout">
+            <div th:if="${eventSession.breakout}" class="session-type-badge breakout">
                 <span class="badge-dot"></span> Breakout Session
             </div>
-            <div th:unless="${session.breakout}" class="session-type-badge required">
+            <div th:unless="${eventSession.breakout}" class="session-type-badge required">
                 <span class="badge-dot"></span> Required Session
             </div>
 
-            <h1 class="session-title" th:text="${session.title}">Session Title</h1>
-            <div th:if="${session.title == null}">
+            <h1 class="session-title" th:text="${eventSession.title}">Session Title</h1>
+            <div th:if="${eventSession.title == null}">
                 <h1 class="session-title">[Session Title]</h1>
             </div>
 
@@ -39,26 +39,25 @@
 
                 <div class="meta-chip">
                     <span class="chip-icon">🗓</span>
-                    <span th:if="${session != null and session.startDateTime != null}"
-                    th:text="${#temporals.format(session.startDateTime, 'MMMM d, yyyy')}">
+                    <span th:if="${eventSession != null and eventSession.startDateTime != null}"
+                    th:text="${#temporals.format(eventSession.startDateTime, 'MMMM d, yyyy')}">
                     January 1, 2025
                     </span>
                 </div>
                 <div class="meta-chip">
                     <span class="chip-icon"></span>
-                    <span th:if="${session.datetime != null}">12:00 pm - 1:00 pm</span>
-                    <span th:text="${#temporals.format(session.startDateTime, 'h:mm a')} + ' – ' + ${#temporals.format(session.endDateTime, 'h:mm a')}"></span>
+                    <span th:text="${#temporals.format(eventSession.startDateTime, 'h:mm a')} + ' – ' + ${#temporals.format(eventSession.endDateTime, 'h:mm a')}"></span>
                 </div>
-                <div class="meta-chip" th:if="${session.datetime == null}">
+                <div class="meta-chip" th:if="${eventSession.startDateTime == null}">
                     <span class="chip-icon">🗓</span>
                     <span>Date TBD</span>
                 </div>
 
-                <div class="meta-chip" th:if="${session.location != null and !#strings.isEmpty(session.location)}">
+                <div class="meta-chip" th:if="${eventSession.location != null and !#strings.isEmpty(eventSession.location)}">
                     <span class="chip-icon"></span>
-                    <span th:text="${session.location}">Location</span>
+                    <span th:text="${eventSession.location}">Location</span>
                 </div>
-                <div class="meta-chip" th:if="${session.location == null or #strings.isEmpty(session.location)}">
+                <div class="meta-chip" th:if="${eventSession.location == null or #strings.isEmpty(eventSession.location)}">
                     <span class="chip-icon"></span>
                     <span>Location TBD</span>
                 </div>
@@ -71,10 +70,10 @@
         <div class="admin-actions" th:if="${isAdmin}">
             <p>You are viewing this as an admin.</p>
             <div class="admin-btn-row">
-                <a th:href="@{/admin/sessions/{id}/edit(id=${session.id})}" class="btn-edit">
+                <a th:href="@{/admin/sessions/{id}/edit(id=${eventSession.id})}" class="btn-edit">
                     ✏ Edit Session
                 </a>
-                <form th:action="@{/admin/sessions/{id}/delete(id=${session.id})}" method="post" style="margin:0">
+                <form th:action="@{/admin/sessions/{id}/delete(id=${eventSession.id})}" method="post" style="margin:0">
                     <button type="submit" class="btn-delete"
                         onclick="return confirm('Delete this session? This cannot be undone.')">
                         Delete
@@ -85,12 +84,12 @@
 
         <div class="section-heading">About This Session</div>
         <div class="description-block"
-             th:if="${session.description != null and !#strings.isEmpty(session.description)}"
-             th:text="${session.description}">
+             th:if="${eventSession.description != null and !#strings.isEmpty(eventSession.description)}"
+             th:text="${eventSession.description}">
             Session description goes here.
         </div>
         <p class="empty-state"
-           th:if="${session.description == null or #strings.isEmpty(session.description)}">
+           th:if="${eventSession.description == null or #strings.isEmpty(eventSession.description)}">
             No description provided yet.
         </p>
 
@@ -102,24 +101,24 @@
         </div>
 
         <div id="speakers-container">
-            <div class="speakers-grid" th:if="${session.speakers != null and session.speakers.length > 0}">
-                <div class="speaker-card" th:each="speaker : ${session.speakers}">
+            <div class="speakers-grid" th:if="${eventSession.speakers != null and !eventSession.speakers.isEmpty()}">
+                <div class="speaker-card" th:each="speaker : ${eventSession.speakers}">
                     <div class="speaker-name" th:text="${speaker}">Speaker Name</div>
                 </div>
             </div>
         </div>
 
         <p class="empty-state"
-           th:if="${session.speakers != null and !session.speakers.isEmpty()}">
+           th:if="${eventSession.speakers == null or eventSession.speakers.isEmpty()}">
             No speakers listed yet.
         </p>
 
         <div id="participants-container" style="display:none">
-            <div class="participants-grid" th:if="${session.participations != null and session.participations.length > 0}">
-                <div class="participants-card" th:each="participant : ${session.participations}">
+            <div class="participants-grid" th:if="${eventSession.participations != null and !eventSession.participations.isEmpty()}">
+                <div class="participants-card" th:each="participant : ${eventSession.participations}">
                     <div class="participants-name" th:text="${participant.user.firstName + ' ' + participant.user.lastName}">[Participant Name]</div>
                     <form th:if="${isAdmin}"
-                        th:action="@{/remove/{uid}/fromSession/{sid}(uid=${participant.user.id}), (sid=${session.id})}"
+                        th:action="@{/remove/{uid}/fromSession/{sid}(uid=${participant.user.id}, sid=${eventSession.id})}"
                         method="post">
                         <button type="submit"
                             class="btn btn-sm btn-danger ms-2"
@@ -131,7 +130,7 @@
             </div>
 
             <p class="empty-state"
-            th:if="${session.participations != null and !session.participations.isEmpty()}">
+            th:if="${eventSession.participations == null or eventSession.participations.isEmpty()}">
                 No participants listed yet.
             </p>
         </div>
