@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="/css/sessionDetails.css" rel="stylesheet">
+    <script src="/js/sessionDetails.js" defer></script>
+    <title th:text="${eventSession.title} + ' — Symbiosis'">Session — Symbiosis</title>
+</head>
+
+<body>
+
+    <nav class="topbar">
+        <a href="#" class="topbar-brand">Symbiosis</a>
+        <a href="/schedule" class="topbar-back">
+            <span class="back-arrow">←</span> All Sessions
+        </a>
+    </nav>
+
+    <div class="hero">
+        <div class="hero-inner">
+
+            <div th:if="${eventSession.breakout}" class="session-type-badge breakout">
+                <span class="badge-dot"></span> Breakout Session
+            </div>
+            <div th:unless="${eventSession.breakout}" class="session-type-badge required">
+                <span class="badge-dot"></span> Required Session
+            </div>
+
+            <h1 class="session-title" th:text="${eventSession.title}">Session Title</h1>
+            <div th:if="${eventSession.title == null}">
+                <h1 class="session-title">[Session Title]</h1>
+            </div>
+
+            <div class="meta-row">
+
+                <div class="meta-chip">
+                    <span class="chip-icon">🗓</span>
+                    <span th:if="${eventSession != null and eventSession.startDateTime != null}"
+                    th:text="${#temporals.format(eventSession.startDateTime, 'MMMM d, yyyy')}">
+                    January 1, 2025
+                    </span>
+                </div>
+                <div class="meta-chip">
+                    <span class="chip-icon"></span>
+                    <span th:text="${#temporals.format(eventSession.startDateTime, 'h:mm a')} + ' – ' + ${#temporals.format(eventSession.endDateTime, 'h:mm a')}"></span>
+                </div>
+                <div class="meta-chip" th:if="${eventSession.startDateTime == null}">
+                    <span class="chip-icon">🗓</span>
+                    <span>Date TBD</span>
+                </div>
+
+                <div class="meta-chip" th:if="${eventSession.location != null and !#strings.isEmpty(eventSession.location)}">
+                    <span class="chip-icon"></span>
+                    <span th:text="${eventSession.location}">Location</span>
+                </div>
+                <div class="meta-chip" th:if="${eventSession.location == null or #strings.isEmpty(eventSession.location)}">
+                    <span class="chip-icon"></span>
+                    <span>Location TBD</span>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="body-wrapper">
+        <div class="admin-actions" th:if="${isAdmin}">
+            <p>You are viewing this as an admin.</p>
+            <div class="admin-btn-row">
+                <a th:href="@{/admin/sessions/{id}/edit(id=${eventSession.id})}" class="btn-edit">
+                    ✏ Edit Session
+                </a>
+                <form th:action="@{/admin/sessions/{id}/delete(id=${eventSession.id})}" method="post" style="margin:0">
+                    <button type="submit" class="btn-delete"
+                        onclick="return confirm('Delete this session? This cannot be undone.')">
+                        Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="section-heading">About This Session</div>
+        <div class="description-block"
+             th:if="${eventSession.description != null and !#strings.isEmpty(eventSession.description)}"
+             th:text="${eventSession.description}">
+            Session description goes here.
+        </div>
+        <p class="empty-state"
+           th:if="${eventSession.description == null or #strings.isEmpty(eventSession.description)}">
+            No description provided yet.
+        </p>
+
+        <hr class="section-divider">
+
+        <div class="tab-container">
+            <div id="speakers-heading">Speakers</div>
+            <div id="participants-heading">Participants</div>
+        </div>
+
+        <div id="speakers-container">
+            <div class="speakers-grid" th:if="${eventSession.speakers != null and !eventSession.speakers.isEmpty()}">
+                <div class="speaker-card" th:each="speaker : ${eventSession.speakers}">
+                    <div class="speaker-name" th:text="${speaker}">Speaker Name</div>
+                </div>
+            </div>
+        </div>
+
+        <p class="empty-state"
+           th:if="${eventSession.speakers == null or eventSession.speakers.isEmpty()}">
+            No speakers listed yet.
+        </p>
+
+        <div id="participants-container" style="display:none">
+            <div class="participants-grid" th:if="${eventSession.participations != null and !eventSession.participations.isEmpty()}">
+                <div class="participants-card" th:each="participant : ${eventSession.participations}">
+                    <div class="participants-name" th:text="${participant.user.firstName + ' ' + participant.user.lastName}">[Participant Name]</div>
+                    <form th:if="${isAdmin}"
+                        th:action="@{/remove/{uid}/fromSession/{sid}(uid=${participant.user.id}, sid=${eventSession.id})}"
+                        method="post">
+                        <button type="submit"
+                            class="btn btn-sm btn-danger ms-2"
+                            onclick="return confirm('Remove this participant from the session?')">
+                            Remove
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <p class="empty-state"
+            th:if="${eventSession.participations == null or eventSession.participations.isEmpty()}">
+                No participants listed yet.
+            </p>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
