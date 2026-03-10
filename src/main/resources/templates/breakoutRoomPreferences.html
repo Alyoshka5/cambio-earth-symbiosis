@@ -94,9 +94,11 @@
                 </button>
             </form>
 
-            <button onclick="window.location.href='/submit'" class="btn btn-primary">
-                Submit
-            </button>
+            <form id="registerForm" th:action="@{/sessions/register}" method="post">
+                <input type="hidden" name="email" th:value="${#request.userPrincipal.name}">
+                <div id="sessionInputs"></div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
         </div>
     </div>
 </body>

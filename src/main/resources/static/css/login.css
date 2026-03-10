@@ -11,16 +11,18 @@ body {
     ),
     url('https://media.istockphoto.com/id/1351811592/nl/vector/green-forest-pine-trees-silhouette-landscape.jpg?s=170667a&w=0&k=20&c=m1OI9tqQ4jRuveGFR548nG6NvZsONvAd5hDX--PvN4A=');
 
-    background-size: cover;
-    background-position: center bottom;
+    background-size: 100% auto;
+    background-position: bottom center;
+    background-repeat: no-repeat;
+    overflow: hidden; 
+
 
     color: #ffffff;
 
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
-
+    align-items: center;
     min-height: 100vh;
     margin: 0;
 }
