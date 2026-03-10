@@ -1,98 +1,143 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Session details</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="/css/sessionDetails.css" rel="stylesheet">
     <script src="/js/sessionDetails.js" defer></script>
-
+    <title th:text="${session.title} + ' — Symbiosis'">Session — Symbiosis</title>
 </head>
+
 <body>
-    <main>
-        <a href="/sessions" class="back-button"></a>
-        <h1 class="session-title" th:text="${session?.title}">[Session title]</h1>
 
-        <div class="session-metadata">
-            <div class="date-icon">
-                <a href="/images/calander-icon.png"></a>
+    <nav class="topbar">
+        <a href="#" class="topbar-brand">Symbiosis</a>
+        <a href="/schedule" class="topbar-back">
+            <span class="back-arrow">←</span> All Sessions
+        </a>
+    </nav>
+
+    <div class="hero">
+        <div class="hero-inner">
+
+            <div th:if="${session.breakout}" class="session-type-badge breakout">
+                <span class="badge-dot"></span> Breakout Session
             </div>
-            <p class="date" th:text="${#temporals.format(session.startDateTime, 'MMM d, yyyy')}">Jan 1, 2026</p>
-
-            <div class="time-icon">
-                <a href="/images/clock-icon.png"></a>
+            <div th:unless="${session.breakout}" class="session-type-badge required">
+                <span class="badge-dot"></span> Required Session
             </div>
-            <p class="time" th:text="${#temporals.format(session.startDateTime, 'h:mm a') + ' - ' + #temporals.format(session.endDateTime, 'h:mm a')}">12:00pm - 1:00pm</p>
 
-            <div class="location-icon">
-                <a href="/images/map-icon.png"></a>
+            <h1 class="session-title" th:text="${session.title}">Session Title</h1>
+            <div th:if="${session.title == null}">
+                <h1 class="session-title">[Session Title]</h1>
             </div>
-            <p class="location" th:text="${session?.location}">[Location]</p>
+
+            <div class="meta-row">
+
+                <div class="meta-chip">
+                    <span class="chip-icon">🗓</span>
+                    <span th:if="${session != null and session.startDateTime != null}"
+                    th:text="${#temporals.format(session.startDateTime, 'MMMM d, yyyy')}">
+                    January 1, 2025
+                    </span>
+                </div>
+                <div class="meta-chip">
+                    <span class="chip-icon"></span>
+                    <span th:if="${session.datetime != null}">12:00 pm - 1:00 pm</span>
+                    <span th:text="${#temporals.format(session.startDateTime, 'h:mm a')} + ' – ' + ${#temporals.format(session.endDateTime, 'h:mm a')}"></span>
+                </div>
+                <div class="meta-chip" th:if="${session.datetime == null}">
+                    <span class="chip-icon">🗓</span>
+                    <span>Date TBD</span>
+                </div>
+
+                <div class="meta-chip" th:if="${session.location != null and !#strings.isEmpty(session.location)}">
+                    <span class="chip-icon"></span>
+                    <span th:text="${session.location}">Location</span>
+                </div>
+                <div class="meta-chip" th:if="${session.location == null or #strings.isEmpty(session.location)}">
+                    <span class="chip-icon"></span>
+                    <span>Location TBD</span>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="body-wrapper">
+        <div class="admin-actions" th:if="${isAdmin}">
+            <p>You are viewing this as an admin.</p>
+            <div class="admin-btn-row">
+                <a th:href="@{/admin/sessions/{id}/edit(id=${session.id})}" class="btn-edit">
+                    ✏ Edit Session
+                </a>
+                <form th:action="@{/admin/sessions/{id}/delete(id=${session.id})}" method="post" style="margin:0">
+                    <button type="submit" class="btn-delete"
+                        onclick="return confirm('Delete this session? This cannot be undone.')">
+                        Delete
+                    </button>
+                </form>
+            </div>
         </div>
 
-        <div class="overview-container">
-            <h2>Overview</h2>
-            <p class="desc" th:text="${session?.description}">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        <div class="section-heading">About This Session</div>
+        <div class="description-block"
+             th:if="${session.description != null and !#strings.isEmpty(session.description)}"
+             th:text="${session.description}">
+            Session description goes here.
+        </div>
+        <p class="empty-state"
+           th:if="${session.description == null or #strings.isEmpty(session.description)}">
+            No description provided yet.
+        </p>
+
+        <hr class="section-divider">
+
+        <div class="tab-container">
+            <div id="speakers-heading">Speakers</div>
+            <div id="participants-heading">Participants</div>
         </div>
 
-        <div class="tab-bar">
-            <h2 class="tab-button" id="speakers-heading">Speakers</h2>
-            <h2 class="tab-button" id="participants-heading">Participants</h2>
+        <div id="speakers-container">
+            <div class="speakers-grid" th:if="${session.speakers != null and session.speakers.length > 0}">
+                <div class="speaker-card" th:each="speaker : ${session.speakers}">
+                    <div class="speaker-name" th:text="${speaker}">Speaker Name</div>
+                </div>
+            </div>
         </div>
 
-        <div class="speakers-container">
-            <ul>
-                <li th:each="${speaker : ${session.speakers}}" th:text="${speaker}">
-                    [Speaker Name]
-                </li>
-            </ul>
-        </div>
+        <p class="empty-state"
+           th:if="${session.speakers != null and !session.speakers.isEmpty()}">
+            No speakers listed yet.
+        </p>
 
-        <div class="participants-container" style="display:none">
-            <ul>
-                <li th:each="participant : ${session.participations}">
-                    <p th:text="${participant.user.firstName + ' ' + participant.user.lastName}"></p>
-                
+        <div id="participants-container" style="display:none">
+            <div class="participants-grid" th:if="${session.participations != null and session.participations.length > 0}">
+                <div class="participants-card" th:each="participant : ${session.participations}">
+                    <div class="participants-name" th:text="${participant.user.firstName + ' ' + participant.user.lastName}">[Participant Name]</div>
                     <form th:if="${isAdmin}"
-                            th:action="@{/remove/{uid}/fromSession/{sid}(uid=${participant.user.id}), (sid=${session.id})}"
-                            method="post">
-
-                        <button type="button" id="remove-user-btn" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                            Remove from session
+                        th:action="@{/remove/{uid}/fromSession/{sid}(uid=${participant.user.id}), (sid=${session.id})}"
+                        method="post">
+                        <button type="submit"
+                            class="btn btn-sm btn-danger ms-2"
+                            onclick="return confirm('Remove this participant from the session?')">
+                            Remove
                         </button>
                     </form>
-                    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header bg-danger text-white">
-                                    <h5 class="modal-title" id="deleteModalLabel">Confirm Remove</h5>
-                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <p class="mb-0">Are you sure you want to remove </p>
-                                    <span id="unwanted-user"></span>
-                                    <p class="mb-0"> from this session?</p>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="button" class="btn btn-danger" id="confirmDelete">Remove user</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-            </ul>
+                </div>
+            </div>
+
+            <p class="empty-state"
+            th:if="${session.participations != null and !session.participations.isEmpty()}">
+                No participants listed yet.
+            </p>
         </div>
 
-        <div class="tab-bar">
-            <div class="home-tab"></div>
-            <div class="rank-tab"></div>
-            <div class="schedule-tab"></div>
-            <div class="map-tab"></div>
-            <div class="profile-tab"></div>
-        </div>
-    </main>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

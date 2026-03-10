@@ -5,8 +5,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import com.cambio_earth.symbiosis.models.*;
@@ -83,23 +86,28 @@ public class AdminSessionController {
         System.out.println(">>> currentUser is: " + currentUser);
         System.out.println(">>> session title is: " + session.getTitle());
 
-        return "addDetails";
+        return "sessionDetails";
     }
 
     // Remove a user from a session
     @PostMapping("/remove/{uid}/fromSession/{sid}")
-    public String removeUserFromSession(@PathVariable Long uid, @PathVariable Long sid) {
+    public String removeUserFromSession(@PathVariable Long uid, @PathVariable Long sid, RedirectAttributes redirectAttributes) {
         
-        // Get the session and user object
-        Session session = sessionRepository.findById(sid).orElseThrow();
-        User user = userRepository.findById(uid).orElseThrow();
-        
-        // Find the session the desired user is in within the participation table
-        Optional<Participation> participation = participationRepository.findFirstBySessionAndUser(session, user);
+        try {
+            // Get the session and user object
+            Session session = sessionRepository.findById(sid).orElseThrow();
+            User user = userRepository.findById(uid).orElseThrow();
+            
+            // Find the session the desired user is in within the participation table
+            Optional<Participation> participation = participationRepository.findFirstBySessionAndUser(session, user);
 
-        // Delete the session the user is in if found in the participations table
-        if (participation.isPresent()) {
-            participationRepository.delete(participation.get());
+            // Delete the session the user is in if found in the participations table
+            if (participation.isPresent()) {
+                participationRepository.delete(participation.get());
+            }
+        } catch (Exception err) {
+            redirectAttributes.addFlashAttribute("err", "Could not remove user from the session: " + err.getMessage());
+            System.out.println(">>> Could not remove user from the session" + err.getMessage());
         }
         
         return "redirect:/sessions/" + sid;
