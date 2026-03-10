@@ -11,7 +11,6 @@ body {
     background-size: cover;
     background-position: center bottom;
 
-    font-family: "Inter", sans-serif;
     color: white;
 
     display: flex;
@@ -27,20 +26,18 @@ body {
 /* Title */
 h1 {
     display: block;
-
     font-size: 4rem;
     font-weight: 500;
-
     margin-bottom: 20px;
 }
 
-/* image */
+/* Logo Image */
 img {
     width: 400px;
     margin-bottom: 50px;
 }
 
-/* Form Container*/
+/* Form Container */
 
 form {
     width: 100%;
@@ -64,50 +61,10 @@ legend + p {
 }
 
 
-/* Input Fields */
+/* Hide labels */
 
 .mb-3 label {
     display: none;
-}
-
-input[type="input-text"],
-input[type="email"],
-input[type="password"] {
-
-    background: rgba(255,255,255,0.25);
-    border: 1px solid rgba(255,255,255,0.2);
-
-    border-radius: 8px;
-
-    padding: 12px 15px;
-    width: 100%;
-
-    color: white;
-}
-
-input::placeholder {
-    color: #dddddd;
-}
-
-
-/* Button */
-
-.btn-primary {
-    background-color: black !important;
-    border: none !important;
-
-    border-radius: 8px;
-
-    padding: 10px;
-
-    font-weight: 600;
-
-    width: 100%;
-    margin-top: 10px;
-}
-
-.btn-primary:hover {
-    background-color: #1a1a1a !important;
 }
 
 

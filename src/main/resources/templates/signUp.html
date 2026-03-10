@@ -1,27 +1,42 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="/css/signup.css">
+
     <title>Sign up</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
+    <!-- Global styles -->
+
+    <link rel="stylesheet" href="/css/global.css">
+
+    <!-- Page specific styles -->
+
+    <link rel="stylesheet" href="/css/signup.css">
+
 </head>
+
 <body>
     <img src="/images/CambioEarth_Primary.png" alt="Cambio Earth logo">
+
     <h1>Symbiosis</h1>
     <h2>Sign up</h2>
 
     <form th:action="@{/auth/signup}" method="post">
         <div class="mb-3">
             <label for="input-name">Enter your first name:</label>
-            <input type="input-text" class="first-name" name="firstName" placeholder="First name">
+            <input type="text" class="first-name" name="firstName" placeholder="First name">
             <p class="first-name-error" style="display: none;">Must enter a first name</p>
         </div>
 
         <div class="mb-3">
             <label for="input-name">Enter your last name:</label>
-            <input type="input-text" class="last-name" name="lastName" placeholder="Last name">
+            <input type="text" class="last-name" name="lastName" placeholder="Last name">
             <p class="last-name-error" style="display: none;">Must enter a last name</p>
         </div>
 
@@ -37,9 +52,7 @@
             <input type="password" class="input-pass" name="password" placeholder="Password">
             <p class="password-error" style="display: none;">Must enter a password</p>
         </div>
-
         <button type="submit" class="btn btn-primary">Continue</button>
-
     </form>
 </body>
 </html>

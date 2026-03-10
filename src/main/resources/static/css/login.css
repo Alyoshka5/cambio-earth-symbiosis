@@ -1,31 +1,45 @@
 /*Used ai to help with background imagie*/
 /* 1. Global Layout & Background */
+
 body {
-    background-color: #2b3930; /* Dark forest green */
-    background-image: linear-gradient(to bottom, rgba(43, 57, 48, 0.8), rgba(43, 57, 48, 0.8)), 
-                      url('https://media.istockphoto.com/id/1351811592/nl/vector/green-forest-pine-trees-silhouette-landscape.jpg?s=170667a&w=0&k=20&c=m1OI9tqQ4jRuveGFR548nG6NvZsONvAd5hDX--PvN4A=');
-    background-size: cover;
-    background-position: center bottom;
+    background-color: #2b3930;
+
+    background-image: linear-gradient(
+        to bottom,
+        rgba(43, 57, 48, 0.8),
+        rgba(43, 57, 48, 0.8)
+    ),
+    url('https://media.istockphoto.com/id/1351811592/nl/vector/green-forest-pine-trees-silhouette-landscape.jpg?s=170667a&w=0&k=20&c=m1OI9tqQ4jRuveGFR548nG6NvZsONvAd5hDX--PvN4A=');
+
+    background-size: 100% auto;
+    background-position: bottom center;
+    background-repeat: no-repeat;
+    overflow: hidden; 
+
+
     color: #ffffff;
-    font-family: 'Inter', -apple-system, sans-serif;
+
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
-    height: 100vh;
+    align-items: center;
+    min-height: 100vh;
     margin: 0;
 }
 
-/* 2. Adding the "Symbiosis" Title via Pseudo-element */
+/* 2. "Symbiosis" Title */
+
 body::before {
     content: "Symbiosis";
     display: block;
+    font-family: "Jura", sans-serif;
     font-size: 4.5rem;
     font-weight: 500;
     color: #ffffff;
     margin-bottom: 20px;
     letter-spacing: 1px;
 }
+
 
 /* 3. Form Container Styling */
 form {
@@ -36,15 +50,10 @@ form {
 
 /* Hide the default H1 and Legend to match the UI flow */
 legend {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-}
-
-legend {
     font-size: 0.9rem;
     font-weight: normal;
     color: #cccccc;
+
     margin-bottom: 2rem;
     border: none;
 }
@@ -53,34 +62,3 @@ legend {
 .mb-3 label {
     display: none; /* Hiding labels to match the minimalist placeholder style */
 }
-
-input[type="text"], 
-input[type="password"] {
-    background-color: rgba(255, 255, 255, 0.25) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    color: #ffffff !important;
-    border-radius: 8px !important;
-    padding: 12px 15px !important;
-    width: 100%;
-}
-
-input::placeholder {
-    color: #dddddd;
-}
-
-/* 5. Button Styling */
-.btn-primary {
-    background-color: #000000 !important;
-    border: none !important;
-    border-radius: 8px !important;
-    padding: 10px 0 !important;
-    font-weight: 600 !important;
-    width: 100%;
-    margin-top: 10px;
-    transition: background 0.2s ease;
-}
-
-.btn-primary:hover {
-    background-color: #1a1a1a !important;
-}
-

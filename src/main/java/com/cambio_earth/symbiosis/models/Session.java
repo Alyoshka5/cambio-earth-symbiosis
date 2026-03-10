@@ -1,7 +1,10 @@
 package com.cambio_earth.symbiosis.models;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -22,7 +25,7 @@ import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name="sessions")
-public class Session {
+public class Session implements Comparable<Session> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,7 +37,6 @@ public class Session {
     private String location;
 
     private LocalDateTime startDateTime;
-    
     private LocalDateTime endDateTime;
 
     private String description;
@@ -145,6 +147,35 @@ public class Session {
 
     public void setSessionRankings(List<BreakoutBlockRanking> sessionRankings) {
         this.sessionRankings = sessionRankings;
+    }
+
+    // Helper methods
+    public String getTimeRange() {
+        return formatTime(startDateTime) + " - " + formatTime(endDateTime);
+    }
+    
+    private String formatTime(LocalDateTime dateTime) {
+        SimpleDateFormat formatter = new SimpleDateFormat("hh:mma");
+        Date convertedDateTime = Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
+        String formattedDate = formatter.format(convertedDateTime);
+
+        if (formattedDate.charAt(0) == '0') {
+            formattedDate = formattedDate.substring(1);
+        }
+        return formattedDate.replaceAll("[.]", "");
+    }
+
+    public String getSpeakersString() {
+        if (speakers == null || speakers.isEmpty()) {
+            return "";
+        }
+        return String.join(", ", speakers);
+    }
+
+    // Comparable
+    @Override
+    public int compareTo(Session otherSession) {
+        return this.getStartDateTime().compareTo(otherSession.getStartDateTime());
     }
 }
 
