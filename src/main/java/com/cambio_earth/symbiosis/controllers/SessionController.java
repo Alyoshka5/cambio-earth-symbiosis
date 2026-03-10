@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.cambio_earth.symbiosis.models.Session;
 import com.cambio_earth.symbiosis.services.SessionService;
@@ -21,17 +22,15 @@ public class SessionController {
 
     @Autowired
     private SessionService sessionService;
+    
+    @Autowired
+    private com.cambio_earth.symbiosis.models.UserRepository userRepository;
+
+    @Autowired
+    private com.cambio_earth.symbiosis.services.JwtService jwtService;
 
     // teammate's current in-memory signup/remove map
     private Map<String, List<String>> sessionRegistrations = new HashMap<>();
-
-    // your part: breakout page should show real breakout sessions
-    @GetMapping("/breakout")
-    public String getBreakoutPreferencesPage(Model model) {
-        List<Session> breakoutSessions = sessionService.getBreakoutSessions();
-        model.addAttribute("sessions", breakoutSessions);
-        return "sessions/breakoutRoomPreferences";
-    }
 
     // register user for sessions
     @PostMapping("/sessions/register")
@@ -46,7 +45,7 @@ public class SessionController {
         for (String name : sessionName) {
             sessionRegistrations.putIfAbsent(name, new ArrayList<>());
 
-            List<String> users = sessionRegistrations.get(name);
+            List<String> users = sessionRegistrations.get(name); 
 
             if (!users.contains(email)) {
                 users.add(email);
@@ -81,4 +80,28 @@ public class SessionController {
 
         return "User removed from selected sessions";
     }
+
+    @GetMapping("/breakout")
+public String getBreakoutPreferencesPage(Model model, HttpServletRequest request) {
+    List<Session> breakoutSessions = sessionService.getBreakoutSessions();
+    model.addAttribute("sessions", breakoutSessions);
+
+    boolean isAdmin = false;
+    jakarta.servlet.http.Cookie[] cookies = request.getCookies();
+    if (cookies != null) {
+        for (jakarta.servlet.http.Cookie cookie : cookies) {
+            if (cookie.getName().equals("jwt-token")) {
+                String email = jwtService.extractUsername(cookie.getValue());
+                com.cambio_earth.symbiosis.models.User user = userRepository.findByEmail(email).orElse(null);
+                if (user != null && user.getRole() == com.cambio_earth.symbiosis.models.Role.ADMIN) {
+                    isAdmin = true;
+                }
+                break;
+            }
+        }
+    }
+    model.addAttribute("isAdmin", isAdmin);
+    return "sessions/breakoutRoomPreferences";
+}
+
 }

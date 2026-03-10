@@ -39,6 +39,11 @@
         <button type="submit" class="btn btn-secondary">Log Out</button>
     </form>
 
+    <!-- Admin only — add new session -->
+    <a th:if="${isAdmin}" href="/admin/sessions/new" class="btn btn-secondary">
+        + Add Session
+    </a>
+
     <form id="registerForm" th:action="@{/sessions/register}" method="post">
         <input type="hidden" name="email" id="emailInput">
         <div id="sessionInputs"></div>
