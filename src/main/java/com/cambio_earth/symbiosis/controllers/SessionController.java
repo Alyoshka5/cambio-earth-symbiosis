@@ -27,10 +27,12 @@ public class SessionController {
 
     private Map<String, List<String>> sessionRegistrations = new HashMap<>();
 
-    @GetMapping("/breakout")
-    public String getBreakoutPreferencesPage(Model model) {
+   @GetMapping("/breakout")
+    public String getBreakoutPreferencesPage(@AuthenticationPrincipal User user, Model model) {
         List<Session> breakoutSessions = sessionService.getBreakoutSessions();
         model.addAttribute("sessions", breakoutSessions);
+        model.addAttribute("isAdmin", user.getRole().equals(Role.ADMIN));
+        model.addAttribute("isAdmin", user != null && user.getRole().equals(Role.ADMIN));
         return "sessions/breakoutRoomPreferences";
     }
 
