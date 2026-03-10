@@ -75,3 +75,32 @@ function fixRanking() {
         }
     });
 }
+
+// AFTER
+const registerForm = document.getElementById("registerForm");
+if (registerForm) {
+    registerForm.addEventListener("submit", function(e) {
+        // populate email
+        const email = document.body.dataset.email;
+        document.getElementById("emailInput").value = email;
+
+        const container = document.getElementById("sessionInputs");
+        container.innerHTML = "";
+
+        if (selected.length === 0) {
+            e.preventDefault();
+            alert("Please select at least one session before submitting.");
+            return;
+        }
+
+        selected.forEach(circle => {
+            const sessionDiv = circle.closest(".session");
+            const title = sessionDiv.querySelector("summary").textContent.trim();
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "sessionName";
+            input.value = title;
+            container.appendChild(input);
+        });
+    });
+}

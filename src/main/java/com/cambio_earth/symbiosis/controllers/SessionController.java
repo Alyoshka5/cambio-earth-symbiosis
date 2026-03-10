@@ -35,7 +35,6 @@ public class SessionController {
 
     // register user for sessions
     @PostMapping("/sessions/register")
-    @ResponseBody
     public String registerUser(
             @RequestParam(required = false) List<String> sessionName,
             @RequestParam String email
@@ -54,7 +53,12 @@ public class SessionController {
             }
         }
 
-        return "User registered successfully";
+        return "redirect:/sessions/thankYou";
+    }
+
+    @GetMapping("/sessions/thankYou")
+    public String getThankYouPage() {
+        return "sessions/thankYou";
     }
 
     // unregister user
