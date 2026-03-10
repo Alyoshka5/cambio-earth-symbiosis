@@ -38,6 +38,10 @@
     <form id="logoutForm" th:action="@{/auth/logout}" method="post">
         <button type="submit" class="btn btn-secondary">Log Out</button>
     </form>
+    
+    <a th:if="${isAdmin}" href="/sessions/schedule" class="btn btn-secondary">
+        Manage Sessions
+    </a>
 
     <form id="registerForm" th:action="@{/sessions/register}" method="post">
         <input type="hidden" name="email" id="emailInput">
