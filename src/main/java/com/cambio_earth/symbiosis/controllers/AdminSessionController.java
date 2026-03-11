@@ -5,21 +5,25 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.Optional;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.cambio_earth.symbiosis.models.*;
+import com.cambio_earth.symbiosis.models.Participation;
+import com.cambio_earth.symbiosis.models.ParticipationRepository;
+import com.cambio_earth.symbiosis.models.Role;
+import com.cambio_earth.symbiosis.models.Session;
+import com.cambio_earth.symbiosis.models.SessionRepository;
+import com.cambio_earth.symbiosis.models.User;
+import com.cambio_earth.symbiosis.models.UserRepository;
 
 
 @Controller
@@ -54,23 +58,48 @@ public class AdminSessionController {
     // Handle form submission (create or update)
     @PostMapping("/admin/sessions/save")
     public String saveSession(
-            @ModelAttribute Session session,
-            @RequestParam String speakersRaw,
-            @RequestParam(required = false) String sessionDate,
+            @RequestParam String title,
+            @RequestParam(required = false) String description,
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) String date,
             @RequestParam(required = false) String startTime,
-            @RequestParam(required = false) String endTime) {
+            @RequestParam(required = false) String endTime,
+            @RequestParam(required = false) String speakersRaw,
+            @RequestParam(required = false) boolean breakout 
+        ) {
+        Session session = new Session();
 
+        if (title != null && !title.equals("")) {
+            session.setTitle(title);
+        } else {
+            session.setTitle("Session");
+        }
+        if (description != null && !description.equals("")) {
+            session.setDescription(description);
+        } else {
+            session.setDescription("");
+        }
+        if (location != null && !location.equals("")) {
+            session.setLocation(location);
+        } else {
+            session.setLocation("");
+        }
         if (speakersRaw != null && !speakersRaw.isBlank()) {
             session.setSpeakers(Arrays.asList(speakersRaw.split(",")));
         } else {
             session.setSpeakers(new ArrayList<>());
         }
-        if (sessionDate != null && !sessionDate.isBlank() && startTime != null && !startTime.isBlank()) {
-            session.setStartDateTime(LocalDateTime.of(LocalDate.parse(sessionDate), LocalTime.parse(startTime)));
+        if (date != null && !date.isBlank() && startTime != null && !startTime.isBlank()) {
+            session.setStartDateTime(LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(startTime)));
+        } else {
+            session.setStartDateTime(LocalDateTime.now());
         }
-        if (sessionDate != null && !sessionDate.isBlank() && endTime != null && !endTime.isBlank()) {
-            session.setEndDateTime(LocalDateTime.of(LocalDate.parse(sessionDate), LocalTime.parse(endTime)));
+        if (date != null && !date.isBlank() && endTime != null && !endTime.isBlank()) {
+            session.setEndDateTime(LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(endTime)));
+        } else {
+            session.setEndDateTime(LocalDateTime.now());
         }
+
         sessionRepository.save(session);
         return "redirect:/sessions/" + session.getId();
     }

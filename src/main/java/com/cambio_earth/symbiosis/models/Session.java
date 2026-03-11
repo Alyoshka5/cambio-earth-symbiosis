@@ -46,7 +46,6 @@ public class Session implements Comparable<Session> {
     @Column(name = "speaker")
     private List<String> speakers = new ArrayList<>();
 
-    @NotBlank(message = "Must specify if the session is a breakout session")
     private boolean isBreakout;
 
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
