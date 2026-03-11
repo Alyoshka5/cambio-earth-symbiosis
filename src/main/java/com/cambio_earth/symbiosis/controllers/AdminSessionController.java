@@ -89,7 +89,7 @@ public class AdminSessionController {
         System.out.println(">>> currentUser is: " + currentUser);
         System.out.println(">>> session title is: " + session.getTitle());
 
-        return "sessionDetails";
+        return "sessions/sessionDetails";
     }
 
     // Remove a user from a session
