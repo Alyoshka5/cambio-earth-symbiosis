@@ -48,9 +48,21 @@ public class UserController {
     }
 
     @PostMapping("/auth/signup")
-    public String register(@ModelAttribute RegisterUserDto registerUserDto) {
-        authenticationService.signup(registerUserDto);
-        return "redirect:/auth/verify?email=" + registerUserDto.getEmail();
+    public String register(@ModelAttribute RegisterUserDto registerUserDto, Model model) {
+        String email = registerUserDto.getEmail();
+
+        if (email == null || !email.matches("^[A-Za-z0-9._%+-]+@cambioearth\\.com$")) {
+            model.addAttribute("error", "Not Valid Information.");
+            return "signup";
+        }
+
+        try {
+            authenticationService.signup(registerUserDto);
+            return "redirect:/auth/verify?email=" + registerUserDto.getEmail();
+        } catch (RuntimeException e) {
+            model.addAttribute("error", "Unable to create account.");
+            return "signup";
+        }
     }
 
     @GetMapping("/auth/login")

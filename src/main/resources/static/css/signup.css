@@ -183,6 +183,13 @@ a:hover {
 
 
 /* Error Messages */
+.error-message {
+    color: #ff6b6b;
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
 
 .first-name-error,
 .last-name-error,
