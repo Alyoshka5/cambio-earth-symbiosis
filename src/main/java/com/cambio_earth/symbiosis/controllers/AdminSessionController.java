@@ -162,6 +162,6 @@ public class AdminSessionController {
     @PostMapping("/admin/sessions/{id}/delete")
     public String deleteSession(@PathVariable Long id) {
         sessionRepository.deleteById(id);
-        return "redirect:/sessions";
+        return "redirect:/sessions/schedule";
     }
 }
