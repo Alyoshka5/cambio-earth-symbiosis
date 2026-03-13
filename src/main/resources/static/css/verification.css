@@ -1,134 +1,225 @@
+:root {
+    --forest:       #2b3930;
+    --forest-mid:   #3a4f42;
+    --forest-light: #4d6657;
+    --bark:         #1a2420;
+    --moss:         #6b8f71;
+    --sage:         #a8c5a0;
+    --cream:        #f0ede6;
+    --white:        #ffffff;
+    --accent:       #c8d96e; /* lichen yellow-green */
+    --danger:       #e07070;
+}
+
+* { box-sizing: border-box; }
+
 body {
-    background-color: #2b3930; 
-    /* Changed background-size to 100% auto to remove side padding */
-    background-image: linear-gradient(to bottom, rgba(43, 57, 48, 0.7), rgba(43, 57, 48, 0.7)), 
-                      url('https://media.istockphoto.com/id/1351811592/nl/vector/green-forest-pine-trees-silhouette-landscape.jpg?s=170667a&w=0&k=20&c=m1OI9tqQ4jRuveGFR548nG6NvZsONvAd5hDX--PvN4A='); 
-    background-size: 100% auto; 
-    background-position: bottom center;
-    background-repeat: no-repeat;
-    color: white;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    height: 100vh;
+    background-color: var(--bark);
+    background-image:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(107,143,113,0.18) 0%, transparent 70%),
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 60px,
+            rgba(255,255,255,0.015) 60px,
+            rgba(255,255,255,0.015) 61px
+        );
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
     margin: 0;
-    overflow: hidden; /* Prevents scrollbars from background image scaling */
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.verification-block {
-    text-align: center;
-    width: 100%;
-    max-width: 500px;
-    padding-bottom: 50px; 
-    z-index: 2;
-}
-
-/* Header & Logo */
+/* ── Top bar (simple-header) ── */
 .simple-header {
-    position: absolute;
-    top: 40px;
-    left: 40px;
-    right: 40px;
+    background: rgba(26, 36, 32, 0.95);
+    border-bottom: 1px solid rgba(168,197,160,0.15);
+    padding: 14px 40px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    backdrop-filter: blur(8px);
 }
 
 .cambio-logo {
-    height: 70px;
+    height: 36px;
     width: auto;
 }
 
-/* Updated Symbiosis: Heavier weight and White color */
 .app-name {
-    font-size: 3.8rem;
-    font-weight: 500; /* Made heavier as requested */
-    color: #ffffff;   /* Solid white */
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--white);
+    letter-spacing: 0.5px;
     margin: 0;
-    letter-spacing: 1px;
 }
 
-/* Icons and Text */
-img[alt="Lock icon"] {
-    width: 90px;
-    margin-bottom: 25px;
-    filter: brightness(0);
+/* ── Page wrapper ── */
+.verification-block {
+    width: 100%;
+    max-width: 480px;
+    padding: 0 24px 80px;
+    text-align: center;
+    margin-top: 80px; /* offset for fixed header */
 }
 
-/* Updated Heading: Light Green color */
-h2 {
-    font-weight: bold;
-    font-size: 1.9rem;
-    margin-bottom: 5px;
-    color: #bfdca7; /* Very light green to contrast with Symbiosis white */
+/* ── Lock icon ── */
+.verification-block > img[alt="Lock icon"] {
+    display: block;
+    width: 56px;
+    height: auto;
+    margin: 0 auto 28px;
+    filter: invert(1) brightness(0.6) sepia(1) saturate(3) hue-rotate(40deg);
+    opacity: 0.85;
 }
 
-h2, .verification-block h2 {
-    color: #bfdca7;
+/* ── Heading ── */
+.verification-block h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    font-weight: 400;
+    color: var(--white);
+    margin: 0 0 6px;
+    line-height: 1.2;
 }
 
-p {
-    font-size: 0.9rem;
-    color: #cccccc;
+/* ── Sub-text ── */
+.verification-block > p {
+    color: var(--sage);
+    font-size: 0.88rem;
+    font-weight: 300;
+    margin: 0 0 32px;
 }
 
-/* Verification Code Inputs */
+/* ── Accent line (mirrors .header-line) ── */
+.verification-block h2::after {
+    content: '';
+    display: block;
+    width: 48px;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 2px;
+    margin: 14px auto 16px;
+}
+
+/* ── Card ── */
 .code-inputs {
-    margin: 30px 0;
+    background: rgba(58, 79, 66, 0.35);
+    border: 1px solid rgba(168,197,160,0.14);
+    border-radius: 16px;
+    padding: 36px 40px;
+    backdrop-filter: blur(6px);
+    margin-bottom: 20px;
+}
+
+/* ── OTP digit inputs ── */
+.code-inputs form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
 }
 
 .code-inputs input[type="text"] {
-    width: 50px;
-    height: 60px;
-    background: rgba(255, 255, 255, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 8px;
-    margin: 0 5px;
+    flex-shrink: 0;
+    width: 48px;
+    height: 58px;
+    background: rgba(26, 36, 32, 0.7);
+    border: 1px solid rgba(168,197,160,0.2);
+    border-radius: 10px;
     text-align: center;
-    font-size: 1.5rem;
-    color: white;
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem;
+    color: var(--white);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
 }
 
 .code-inputs input[type="text"]:focus {
-    outline: none;
-    background: rgba(255, 255, 255, 0.4);
-    border-color: #ffffff;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(200,217,110,0.12);
+    background: rgba(26, 36, 32, 0.9);
 }
 
-/* Buttons */
-.btn-primary {
-    background-color: #000000 !important;
+/* ── Submit button ── */
+.code-inputs .btn-primary {
+    background: var(--accent) !important;
+    color: var(--bark) !important;
     border: none !important;
+    border-radius: 10px !important;
+    padding: 12px 32px !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 0.9rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.3px;
+    cursor: pointer;
     width: 100%;
-    max-width: 350px;
-    padding: 12px;
-    margin-top: 25px;
-    border-radius: 8px !important;
-    font-weight: bold;
+    flex-basis: 100%;
+    margin-top: 24px;
+    transition: opacity 0.2s, transform 0.15s;
 }
 
+.code-inputs .btn-primary:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+}
+
+.code-inputs .btn-primary:active {
+    transform: translateY(0);
+}
+
+/* ── Resend block ── */
 .resend-block {
-    margin-top: 20px;
     display: flex;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
+    margin-top: 16px;
+    width: 100%;
+}
+
+.resend-block form {
+    display: contents;
 }
 
 .resend-block p {
+    font-size: 0.82rem;
+    color: var(--sage);
+    font-weight: 300;
     margin: 0;
 }
 
 .btn-secondary {
     background: none !important;
     border: none !important;
-    color: #a3d977 !important; /* Muted lime green */
     padding: 0 !important;
-    font-weight: bold;
+    color: var(--accent) !important;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
     text-decoration: none;
+    transition: opacity 0.2s;
 }
 
 .btn-secondary:hover {
+    opacity: 0.75;
     text-decoration: underline;
+}
+
+.error-message {
+    color: #ff6b6b;
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+    text-align: center;
 }
