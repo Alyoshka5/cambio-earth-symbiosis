@@ -65,9 +65,21 @@ public class AdminSessionController {
             @RequestParam(required = false) String startTime,
             @RequestParam(required = false) String endTime,
             @RequestParam(required = false) String speakersRaw,
-            @RequestParam(required = false) boolean breakout 
+            @RequestParam(required = false) boolean breakout,
+            @RequestParam(required = false) Long id
         ) {
-        Session session = new Session();
+
+        Session session;
+        if (id == null) { // Creating new session
+            session = new Session();
+        } else { // Updating existing session
+            Optional<Session> optionalSession = sessionRepository.findById(id);
+            if (optionalSession.isPresent()) {
+                session = optionalSession.get();
+            } else {
+                session = new Session();
+            }
+        }
 
         if (title != null && !title.equals("")) {
             session.setTitle(title);
