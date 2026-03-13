@@ -24,35 +24,37 @@
 <body>
     <img src="/images/CambioEarth_Primary.png" alt="Cambio Earth logo">
 
-    <h1>Symbiosis</h1>
-    <h2>Sign up</h2>
+    <h1 class="session-title">Symbiosis</h1>
+    <div class="form-card">
+        <h2 class="section-heading">Sign up</h2>
 
-    <form th:action="@{/auth/signup}" method="post">
-        <div class="mb-3">
-            <label for="input-name">Enter your first name:</label>
-            <input type="text" class="first-name" name="firstName" placeholder="First name">
-            <p class="first-name-error" style="display: none;">Must enter a first name</p>
-        </div>
+        <form th:action="@{/auth/signup}" method="post">
+            <div class="mb-3">
+                <label class="form-label" for="input-name">Enter your first name:</label>
+                <input type="text" class="first-name form-control" name="firstName" placeholder="First name">
+                <p class="first-name-error" style="display: none;">Must enter a first name</p>
+            </div>
 
-        <div class="mb-3">
-            <label for="input-name">Enter your last name:</label>
-            <input type="text" class="last-name" name="lastName" placeholder="Last name">
-            <p class="last-name-error" style="display: none;">Must enter a last name</p>
-        </div>
+            <div class="mb-3">
+                <label class="form-label" for="input-name">Enter your last name:</label>
+                <input type="text" class="last-name form-control" name="lastName" placeholder="Last name">
+                <p class="last-name-error" style="display: none;">Must enter a last name</p>
+            </div>
 
-        <div class="mb-3">
-            <label for="input-email">Enter an email:</label>
-            <input type="email" class="input-email" name="email" placeholder="email@domain.com">
-            <p class="email-blank-error" style="display: none;">Must enter an email</p>
-            <p class="email-invalid-error" style="display: none;">Email entered is invalid</p>
-        </div>
+            <div class="mb-3">
+                <label class="form-label" for="input-email">Enter an email:</label>
+                <input type="email" class="input-email form-control" name="email" placeholder="email@domain.com">
+                <p class="email-blank-error" style="display: none;">Must enter an email</p>
+                <p class="email-invalid-error" style="display: none;">Email entered is invalid</p>
+            </div>
 
-        <div class="mb-3">
-            <label for="input-pass">Enter a password:</label>
-            <input type="password" class="input-pass" name="password" placeholder="Password">
-            <p class="password-error" style="display: none;">Must enter a password</p>
-        </div>
-        <button type="submit" class="btn btn-primary">Continue</button>
-    </form>
+            <div class="mb-3">
+                <label class="form-label" for="input-pass">Enter a password:</label>
+                <input type="password" class="input-pass form-control" name="password" placeholder="Password">
+                <p class="password-error" style="display: none;">Must enter a password</p>
+            </div>
+            <button type="submit" class="btn btn-primary btn-cont">Continue</button>
+        </form>
+    </div>
 </body>
 </html>

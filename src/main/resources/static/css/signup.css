@@ -1,13 +1,28 @@
-/* Background Layout */
+:root {
+    --forest:      #2b3930;
+    --forest-mid:  #3a4f42;
+    --forest-light:#4d6657;
+    --bark:        #1a2420;
+    --moss:        #6b8f71;
+    --sage:        #a8c5a0;
+    --cream:       #f0ede6;
+    --white:       #ffffff;
+    --accent:      #c8d96e;
+    --accent-dim:  rgba(200,217,110,0.15);
+    --danger:      #e07070;
+}
 
 body {
-    background-color: #2b3930;
-    background-image: linear-gradient(
-        rgba(43,57,48,0.8),
-        rgba(43,57,48,0.8)
-    ),
-    url("https://media.istockphoto.com/id/1315811592/vector/green-forest-pine-trees-silhouette-landscape.jpg");
-
+    background-color: var(--bark);
+    background-image:
+        radial-gradient(ellipse 100% 70% at 50% 5%, rgba(107,143,113,0.18) 0%, transparent 70%),
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 60px,
+            rgba(255,255,255,0.015) 60px,
+            rgba(255,255,255,0.015) 61px
+        );
     background-size: cover;
     background-position: center bottom;
 
@@ -26,14 +41,52 @@ body {
 /* Title */
 h1 {
     display: block;
-    font-size: 4rem;
+    font-size: clamp(2rem, 5vw, 3rem);
     font-weight: 500;
-    margin-bottom: 20px;
+    font-family: 'DM Serif Display', serif;
+    color: var(--white);
+    line-height: 1.15;
+    margin: 0 0 40px;
+}
+
+.form-card {
+    background: rgba(58, 79, 66, 0.35);
+    border: 1px solid rgba(168,197,160,0.14);
+    border-radius: 16px;
+    padding: 40px;
+    backdrop-filter: blur(6px);
+    width: 500px;
+    max-width: 500px;
+}
+
+/* Sign-up subheader */
+.section-heading {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+    text-align: center;
+}
+
+/* Form labels */
+.form-label {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--sage);
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+}
+
+.form-label span.required {
+    color: var(--accent);
+    margin-left: 3px;
 }
 
 /* Logo Image */
 img {
-    width: 400px;
+    width: 300px;
     margin-bottom: 50px;
 }
 
@@ -42,7 +95,7 @@ img {
 form {
     width: 100%;
     max-width: 420px;
-    text-align: center;
+    text-align: left;
 }
 
 
@@ -60,16 +113,65 @@ legend + p {
     margin-bottom: 25px;
 }
 
+.form-label span.required {
+    color: var(--accent);
+    margin-left: 3px;
+}
 
-/* Hide labels */
 
-.mb-3 label {
-    display: none;
+/* Input fields */
+.form-control,
+.form-select {
+    background-color: rgba(26, 36, 32, 0.7) !important;
+    border: 1px solid rgba(168,197,160,0.2) !important;
+    color: var(--white) !important;
+    border-radius: 10px !important;
+    padding: 11px 14px !important;
+    font-family: 'DM Sans', sans-serif !important;
+
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px rgba(200,217,110,0.12) !important;
+    outline: none !important;
+    background-color: rgba(26, 36, 32, 0.9) !important;
+}
+
+.form-control::placeholder {
+    color: rgba(168,197,160,0.4) !important;
+}
+
+/* Continue button */
+.btn-cont {
+    background: var(--accent);
+    color: var(--bark);
+    border: none;
+    border-radius: 10px;
+    padding: 12px 32px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+    display: block;
+    margin: 0 auto;
+}
+
+.btn-cont:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+}
+
+.btn-cont:active {
+    transform: translateY(0);
 }
 
 
 /*  Link to login */
-
 a {
     color: #8be28b;
     text-decoration: none;
