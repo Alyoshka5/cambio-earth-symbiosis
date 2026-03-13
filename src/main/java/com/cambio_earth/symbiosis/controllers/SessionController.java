@@ -1,72 +1,81 @@
 package com.cambio_earth.symbiosis.controllers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cambio_earth.symbiosis.models.Participation;
+import com.cambio_earth.symbiosis.models.ParticipationRepository;
+import com.cambio_earth.symbiosis.models.Session;
+import com.cambio_earth.symbiosis.models.SessionRepository;
+import com.cambio_earth.symbiosis.models.User;
+import com.cambio_earth.symbiosis.models.UserRepository;
+
 @Controller
 public class SessionController {
 
-    // stores users registered for sessions
-    private Map<String, List<String>> sessionRegistrations = new HashMap<>();
+    @Autowired
+    private ParticipationRepository participationRepository;
 
+    @Autowired
+    private UserRepository userRepository;
 
-    // register user for sessions
+    @Autowired
+    private SessionRepository sessionRepository;
+
     @PostMapping("/sessions/register")
     @ResponseBody
     public String registerUser(
-            @RequestParam(required = false) List<String> sessionName,
-            @RequestParam String email
+            @RequestParam(value = "sessionId", required = false) List<Long> sessionIds,
+            @AuthenticationPrincipal User currentUser
     ) {
 
-        // if nothing selected
-        if (sessionName == null || sessionName.isEmpty()) {
-            return "No sessions selected.";
+        System.out.println("Received session registration request");
+        System.out.println("Session IDs: " + sessionIds);
+        System.out.println("Current user: " + currentUser);
+
+        if (sessionIds == null || sessionIds.isEmpty()) {
+            return "No sessions selected";
         }
 
-        for (String name : sessionName) {
+        User user = userRepository.findById(currentUser.getId()).orElse(null);
 
-            sessionRegistrations.putIfAbsent(name, new ArrayList<>());
+        if (user == null) {
+            return "User not found";
+        }
 
-            List<String> users = sessionRegistrations.get(name);
+        try {
+            // First, clear all existing registrations for this user
+            List<Participation> existingParticipations = participationRepository.findByUser_Id(user.getId());
+            System.out.println("Deleting " + existingParticipations.size() + " existing registrations");
+            participationRepository.deleteAll(existingParticipations);
 
-            if (!users.contains(email)) {
-                users.add(email);
+            // Then save the new selections
+            int savedCount = 0;
+            for (Long id : sessionIds) {
+                Session session = sessionRepository.findById(id).orElse(null);
+                
+                if (session == null) {
+                    System.out.println("Session not found with ID: " + id);
+                    continue;
+                }
+                
+                // Save the new participation
+                Participation participation = new Participation(user, session);
+                participationRepository.save(participation);
+                savedCount++;
+                System.out.println("Saved participation for session: " + id);
             }
+
+            return "Successfully registered for " + savedCount + " sessions";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error saving registrations: " + e.getMessage();
         }
-
-        return "User registered successfully";
-    }
-
-
-    // unregister user
-    @PostMapping("/sessions/unregister")
-    @ResponseBody
-    public String unregisterUser(
-            @RequestParam(required = false) List<String> sessionName,
-            @RequestParam String email
-    ) {
-
-        if (sessionName == null || sessionName.isEmpty()) {
-            return "No sessions selected.";
-        }
-
-        for (String name : sessionName) {
-
-            if (sessionRegistrations.containsKey(name)) {
-
-                List<String> users = sessionRegistrations.get(name);
-
-                users.remove(email);
-            }
-        }
-
-        return "User removed from selected sessions";
     }
 }
