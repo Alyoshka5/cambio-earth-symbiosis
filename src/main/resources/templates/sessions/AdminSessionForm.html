@@ -84,6 +84,7 @@
                             type="date"
                             id="sessionDate"
                             name="date"
+                            th:value="${eventSession.startDateTime != null ? #temporals.format(eventSession.startDateTime, 'yyyy-MM-dd') : ''}"
                             class="form-control"
                         >
                     </div>
@@ -93,6 +94,7 @@
                             type="time"
                             id="sessionStartTime"
                             name="startTime"
+                            th:value="${eventSession.startDateTime != null ? #temporals.format(eventSession.startDateTime, 'HH:mm') : ''}"
                             class="form-control"
                         >
                     </div>
@@ -102,6 +104,7 @@
                             type="time"
                             id="sessionEndTime"
                             name="endTime"
+                            th:value="${eventSession.endDateTime != null ? #temporals.format(eventSession.endDateTime, 'HH:mm') : ''}"
                             class="form-control"
                         >
                     </div>
