@@ -9,9 +9,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "participates_in")
+@Table(name="participates_in")
 public class Participation {
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -57,3 +56,4 @@ public class Participation {
         this.session = session;
     }
 }
+

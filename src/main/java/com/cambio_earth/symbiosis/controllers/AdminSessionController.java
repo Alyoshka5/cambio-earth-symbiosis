@@ -5,26 +5,21 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Optional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.cambio_earth.symbiosis.models.Participation;
-import com.cambio_earth.symbiosis.models.ParticipationRepository;
-import com.cambio_earth.symbiosis.models.Role;
-import com.cambio_earth.symbiosis.models.Session;
-import com.cambio_earth.symbiosis.models.SessionRepository;
-import com.cambio_earth.symbiosis.models.User;
-import com.cambio_earth.symbiosis.models.UserRepository;
+import com.cambio_earth.symbiosis.models.*;
 
 
 @Controller
@@ -39,7 +34,7 @@ public class AdminSessionController {
     @Autowired
     ParticipationRepository participationRepository;
 
-    // AdminSessionForm.html
+    // AdminSessionForm.html 
 
     // Show blank form (create new)
     @GetMapping("/admin/sessions/new")

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="/css/addDetails.css" rel="stylesheet">
+    <title th:text="${session.title} + ' — Symbiosis'">Session — Symbiosis</title>
+</head>
+
+<body>
+
+    <nav class="topbar">
+        <a href="#" class="topbar-brand">Symbiosis</a>
+        <a href="/sessions" class="topbar-back">
+            <span class="back-arrow">←</span> All Sessions
+        </a>
+    </nav>
+
+    <div class="hero">
+        <div class="hero-inner">
+
+            <div th:if="${session.breakout}" class="session-type-badge breakout">
+                <span class="badge-dot"></span> Breakout Session
+            </div>
+            <div th:unless="${session.breakout}" class="session-type-badge required">
+                <span class="badge-dot"></span> Required Session
+            </div>
+
+            <h1 class="session-title" th:text="${session.title}">Session Title</h1>
+
+            <div class="meta-row">
+
+                <div class="meta-chip" th:if="${session.startDateTime != null}">
+                    <span class="chip-icon">🗓</span>
+                    <span th:text="${#temporals.format(session.startDateTime, 'MMMM d, yyyy')}"
+                          th:if="${session.startDateTime != null}">January 1, 2025</span>
+                </div>
+                <div class="meta-chip" th:if="${session.datetime != null}">
+                    <span class="chip-icon"></span>
+                    <span th:text="${#temporals.format(session.startDateTime, 'h:mm a')} + ' – ' + ${#temporals.format(session.endDateTime, 'h:mm a')}"></span>
+                </div>
+                <div class="meta-chip" th:if="${session.datetime == null}">
+                    <span class="chip-icon">🗓</span>
+                    <span>Date TBD</span>
+                </div>
+
+                <div class="meta-chip" th:if="${session.location != null and !#strings.isEmpty(session.location)}">
+                    <span class="chip-icon"></span>
+                    <span th:text="${session.location}">Location</span>
+                </div>
+                <div class="meta-chip" th:if="${session.location == null or #strings.isEmpty(session.location)}">
+                    <span class="chip-icon"></span>
+                    <span>Location TBD</span>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="body-wrapper">
+        <div class="admin-actions" th:if="${isAdmin}">
+            <p>You are viewing this as an admin.</p>
+            <div class="admin-btn-row">
+                <a th:href="@{/admin/sessions/{id}/edit(id=${session.id})}" class="btn-edit">
+                    ✏ Edit Session
+                </a>
+                <form th:action="@{/admin/sessions/{id}/delete(id=${session.id})}" method="post" style="margin:0">
+                    <button type="submit" class="btn-delete"
+                        onclick="return confirm('Delete this session? This cannot be undone.')">
+                        Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="section-heading">About This Session</div>
+        <div class="description-block"
+             th:if="${session.description != null and !#strings.isEmpty(session.description)}"
+             th:text="${session.description}">
+            Session description goes here.
+        </div>
+        <p class="empty-state"
+           th:if="${session.description == null or #strings.isEmpty(session.description)}">
+            No description provided yet.
+        </p>
+
+        <hr class="section-divider">
+
+        <div class="section-heading">Speakers</div>
+
+        <div class="speakers-grid" th:if="${session.speakers != null and session.speakers.length > 0}">
+            <div class="speaker-card" th:each="speaker : ${session.speakers}">
+                <div class="speaker-avatar"
+                     th:text="${#strings.toUpperCase(#strings.substring(speaker, 0, 1))}">
+                    A
+                </div>
+                <div class="speaker-name" th:text="${speaker}">Speaker Name</div>
+            </div>
+        </div>
+
+        <p class="empty-state"
+           th:if="${session.speakers != null and !session.speakers.isEmpty()}">
+            No speakers listed yet.
+        </p>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
