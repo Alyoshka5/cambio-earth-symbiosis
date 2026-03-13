@@ -29,7 +29,7 @@
 
         <!-- Form Card -->
         <div class="form-card">
-            <form th:action="@{/admin/sessions/save}" th:object="${session}" method="post" id="sessionForm">
+            <form th:action="@{/admin/sessions/save}" th:object="${eventSession}" method="post" id="sessionForm">
 
                 <!-- BASIC INFO -->
                 <div class="section-label">Basic Info</div>
@@ -146,7 +146,8 @@
                 <input type="hidden" th:field="*{id}">
 
                 <div class="form-actions">
-                    <a href="/sessions/schedule" class="btn-cancel">Cancel</a>
+                    <a th:if="*{id == null}" href="/sessions/schedule" class="btn-cancel">Cancel</a>
+                    <a th:if="*{id != null}" th:href="*{'/sessions/' + id}" class="btn-cancel">Cancel</a>
                     <button type="submit" class="btn-save">Save Session</button>
                 </div>
 

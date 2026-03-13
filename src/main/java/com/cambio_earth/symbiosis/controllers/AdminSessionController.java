@@ -43,7 +43,7 @@ public class AdminSessionController {
     // Show blank form (create new)
     @GetMapping("/admin/sessions/new")
     public String getNewSessionForm(Model model) {
-        model.addAttribute("session", new Session());
+        model.addAttribute("eventSession", new Session());
         return "sessions/adminSessionForm";
     }
 
@@ -51,7 +51,7 @@ public class AdminSessionController {
     @GetMapping("/admin/sessions/{id}/edit")
     public String getEditSessionForm(@PathVariable Long id, Model model) {
         Session session = sessionRepository.findById(id).orElseThrow();
-        model.addAttribute("session", session);
+        model.addAttribute("eventSession", session);
         return "sessions/adminSessionForm";
     }
 
