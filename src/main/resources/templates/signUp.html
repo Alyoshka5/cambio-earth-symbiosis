@@ -28,6 +28,9 @@
     <h2>Sign up</h2>
 
     <form th:action="@{/auth/signup}" method="post">
+
+        <p th:if="${error}" th:text="${error}" class="error-message"></p>
+        
         <div class="mb-3">
             <label for="input-name">Enter your first name:</label>
             <input type="text" class="first-name" name="firstName" placeholder="First name">
