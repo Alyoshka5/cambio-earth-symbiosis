@@ -99,6 +99,7 @@ public class AdminSessionController {
         } else {
             session.setEndDateTime(LocalDateTime.now());
         }
+        session.setBreakout(breakout);
 
         sessionRepository.save(session);
         return "redirect:/sessions/" + session.getId();
