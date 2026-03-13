@@ -5,15 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Breakout Preferences</title>
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Global styles -->
     <link rel="stylesheet" href="/css/global.css">
-
-    <!-- Page specific styles -->
     <link rel="stylesheet" href="/css/breakoutRoom.css">
-
     <script src="/js/breakout-room-preferences.js" defer></script>
 </head>
 
@@ -24,88 +18,82 @@
             <p>Rank the breakout sessions you're most excited for!</p>
         </header>
 
-        <!-- Breakout Session 1 -->
-        <div class="session" data-session-id="1">
+        <!-- Dynamic sessions from database -->
+        <div th:each="session : ${sessions}" class="session" th:attr="data-session-id=${session.id}">
             <div class="rank"><span></span></div>
             <div class="session-content">
                 <details>
-                    <summary>Breakout 1 – [Put title here]</summary>
-                    <p>[Add description here]</p>
+                    <summary th:text="'Breakout ' + ${session.id} + ' – ' + ${session.title}">Breakout Title</summary>
+                    <p th:text="${session.description}">Session description</p>
                 </details>
             </div>
         </div>
 
-        <!-- Breakout Session 2 -->
-        <div class="session" data-session-id="2">
-            <div class="rank"><span></span></div>
-            <div class="session-content">
-                <details>
-                    <summary>Breakout 2 – [Put title here]</summary>
-                    <p>[Add description here]</p>
-                </details>
+        <!-- Fallback static sessions if no data from backend -->
+        <div th:if="${sessions == null or sessions.isEmpty()}">
+            <div class="session" data-session-id="1">
+                <div class="rank"><span></span></div>
+                <div class="session-content">
+                    <details>
+                        <summary>Breakout 1 – [Put title here]</summary>
+                        <p>[Add description here]</p>
+                    </details>
+                </div>
             </div>
-        </div>
-
-        <!-- Breakout Session 3 -->
-        <div class="session" data-session-id="3">
-            <div class="rank"><span></span></div>
-            <div class="session-content">
-                <details>
-                    <summary>Breakout 3 – [Put title here]</summary>
-                    <p>[Add description here]</p>
-                </details>
+            <div class="session" data-session-id="2">
+                <div class="rank"><span></span></div>
+                <div class="session-content">
+                    <details>
+                        <summary>Breakout 2 – [Put title here]</summary>
+                        <p>[Add description here]</p>
+                    </details>
+                </div>
             </div>
-        </div>
-
-        <!-- Breakout Session 4 -->
-        <div class="session" data-session-id="4">
-            <div class="rank"><span></span></div>
-            <div class="session-content">
-                <details>
-                    <summary>Breakout 4 – [Put title here]</summary>
-                    <p>[Add description here]</p>
-                </details>
+            <div class="session" data-session-id="3">
+                <div class="rank"><span></span></div>
+                <div class="session-content">
+                    <details>
+                        <summary>Breakout 3 – [Put title here]</summary>
+                        <p>[Add description here]</p>
+                    </details>
+                </div>
             </div>
-        </div>
-
-        <!-- Breakout Session 5 -->
-        <div class="session" data-session-id="5">
-            <div class="rank"><span></span></div>
-            <div class="session-content">
-                <details>
-                    <summary>Breakout 5 – [Put title here]</summary>
-                    <p>[Add description here]</p>
-                </details>
+            <div class="session" data-session-id="4">
+                <div class="rank"><span></span></div>
+                <div class="session-content">
+                    <details>
+                        <summary>Breakout 4 – [Put title here]</summary>
+                        <p>[Add description here]</p>
+                    </details>
+                </div>
             </div>
-        </div>
-
-        <!-- Breakout Session 6 -->
-        <div class="session" data-session-id="6">
-            <div class="rank"><span></span></div>
-            <div class="session-content">
-                <details>
-                    <summary>Breakout 6 – [Put title here]</summary>
-                    <p>[Add description here]</p>
-                </details>
+            <div class="session" data-session-id="5">
+                <div class="rank"><span></span></div>
+                <div class="session-content">
+                    <details>
+                        <summary>Breakout 5 – [Put title here]</summary>
+                        <p>[Add description here]</p>
+                    </details>
+                </div>
+            </div>
+            <div class="session" data-session-id="6">
+                <div class="rank"><span></span></div>
+                <div class="session-content">
+                    <details>
+                        <summary>Breakout 6 – [Put title here]</summary>
+                        <p>[Add description here]</p>
+                    </details>
+                </div>
             </div>
         </div>
 
         <div class="buttons">
-            <!-- Logout Form - Add an ID to distinguish it -->
             <form th:action="@{/auth/logout}" method="post" id="logoutForm">
-                <button type="submit" class="btn btn-secondary" id="logoutButton">
-                    Log Out
-                </button>
+                <button type="submit" class="btn btn-secondary">Log Out</button>
             </form>
-
-            <!-- Submit Button -->
-            <button type="button" id="submitPreferences" class="btn btn-primary">
-                Submit
-            </button>
+            <button type="button" id="submitPreferences" class="btn btn-primary">Submit</button>
         </div>
     </div>
-
-    <!-- CSRF Token -->
     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 </body>
 </html>

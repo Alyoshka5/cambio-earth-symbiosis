@@ -47,6 +47,7 @@
                                     <p th:text="${eventSession.getSpeakersString()}"></p>
                                 </div>
                             </div>
+                            <a th:href="${'/sessions/' + eventSession.getId()}" class="card-link"><span class="card-link-span"></span></a>
                         </div>
                         <img src="/images/arrow-icon.svg" alt="Right arrow icon" class="icon arrow-icon">
                     </div>

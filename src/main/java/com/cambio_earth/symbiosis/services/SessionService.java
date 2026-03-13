@@ -22,6 +22,11 @@ public class SessionService {
     @Autowired
     private SessionRepository sessionRepository;
 
+    // Get all breakout sessions
+    public List<Session> getBreakoutSessions() {
+        return sessionRepository.findByIsBreakoutTrue();
+    }
+
     /* Register a user for multiple sessions */
     @Transactional
     public void registerUserForSessions(User user, List<Long> sessionIds) {

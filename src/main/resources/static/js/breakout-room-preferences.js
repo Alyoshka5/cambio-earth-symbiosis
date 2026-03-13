@@ -7,14 +7,12 @@ document.addEventListener('DOMContentLoaded', function() {
     let circles = document.querySelectorAll('.rank');
     console.log('Found circles:', circles.length);
     
-    // Get the submit button (NOT the logout button)
+    // Get the submit button
     let submitButton = document.getElementById('submitPreferences');
     if (submitButton) {
         submitButton.addEventListener('click', submitPreferences);
         console.log('Submit button found');
     }
-    
-    // The logout form should work normally - we don't attach any event to it
     
     // Loop through all circles to add a click event to each
     for (let i = 0; i < circles.length; i++) {
@@ -28,9 +26,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Main function to handle selecting and ranking selections
 function selectCircle(event) {
-    event.stopPropagation(); // Prevent event bubbling
+    event.stopPropagation();
     
-    // Go through all selected circles to see if its being deselected
     let clickedCircle = event.currentTarget;
     console.log('Circle clicked:', clickedCircle);
     
@@ -65,20 +62,17 @@ function selectCircle(event) {
     console.log('Selected count:', selected.length);
 }
 
-// Function to deselect the unwanted session in selections
+// Function to deselect the unwanted session
 function deselectCircle(unwanted) {
     console.log('Deselecting circle');
 
-    // Remove the unwanted selection from the selected array
     let unwantedIndex = selected.findIndex(function(item) {return item === unwanted;});
 
-    // Error handle unwanted circle not found in selected array
     if (unwantedIndex == -1) {
         return;
     }
     selected.splice(unwantedIndex, 1);
 
-    // Reset the circle's appearance back to unselected
     unwanted.style.backgroundColor = '#243023';
     unwanted.style.borderColor = '#000000';
     unwanted.classList.remove('filled');
@@ -93,7 +87,7 @@ function deselectCircle(unwanted) {
     console.log('Selected count after deselect:', selected.length);
 }
 
-// Function to reorder all the selections with the correct rank
+// Function to reorder all the selections
 function fixRanking() {
     for (let i = 0; i < selected.length; i++) {
         let span = selected[i].querySelector('span');
@@ -103,23 +97,20 @@ function fixRanking() {
     }
 }
 
-// Function to submit preferences to the server
+// Function to submit preferences
 function submitPreferences(event) {
     event.preventDefault();
     
     console.log('Submit clicked, selected sessions:', selected.length);
     
-    // Check if any sessions are selected
     if (selected.length === 0) {
         alert('Please select at least one session by clicking on the circles');
         return;
     }
     
-    // Extract session IDs from the selected circles
     let sessionIds = [];
     
     for (let i = 0; i < selected.length; i++) {
-        // Find the session div that contains this circle
         let sessionDiv = selected[i].closest('.session');
         
         if (sessionDiv) {
@@ -127,40 +118,31 @@ function submitPreferences(event) {
             if (sessionId) {
                 sessionIds.push(sessionId);
                 console.log('Found session ID:', sessionId);
-            } else {
-                console.warn('Session div has no data-session-id attribute');
             }
-        } else {
-            console.warn('Could not find parent session div for circle');
         }
     }
     
     console.log('Session IDs to submit:', sessionIds);
     
-    // Confirm submission
     if (!confirm(`Submit your preferences for ${sessionIds.length} sessions?`)) {
         return;
     }
     
-    // Disable submit button to prevent double submission
     let submitBtn = event.target;
     let originalText = submitBtn.textContent;
     submitBtn.disabled = true;
     submitBtn.textContent = 'Submitting...';
     
-    // Create form data
     let formData = new URLSearchParams();
     sessionIds.forEach(id => {
         formData.append('sessionId', id);
     });
     
-    // Get CSRF token if it exists
     let csrfToken = document.querySelector('input[name="_csrf"]');
     if (csrfToken) {
         formData.append(csrfToken.name, csrfToken.value);
     }
     
-    // Send to server
     fetch('/sessions/register', {
         method: 'POST',
         headers: {
@@ -175,31 +157,15 @@ function submitPreferences(event) {
         return response.text();
     })
     .then(data => {
-        alert(data); // Show success message
+        alert(data);
         console.log('Success:', data);
-        
-        // Optionally, clear selections after successful submission
-        // clearAllSelections();
-        
-        // Re-enable submit button
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
     })
     .catch((error) => {
         console.error('Error:', error);
         alert('Error registering for sessions. Please try again. ' + error.message);
-        
-        // Re-enable submit button
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
-    });
-}
-
-// Optional: Function to clear all selections
-function clearAllSelections() {
-    // Make a copy of the array since we're modifying it
-    let selectionsToClear = [...selected];
-    selectionsToClear.forEach(circle => {
-        deselectCircle(circle);
     });
 }

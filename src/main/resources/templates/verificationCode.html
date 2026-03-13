@@ -33,6 +33,10 @@
 
         <div class="code-inputs">
             <form th:action="@{/auth/verify}" method="post">
+
+                <p th:if="${error}" th:text="${error}" class="error-message"></p>
+         
+
                 <input type="email" name="email" th:value="${email}" hidden>
 
                 <input type="text" maxlength="1" name="first" id="first" data-next="second" data-idx="0"

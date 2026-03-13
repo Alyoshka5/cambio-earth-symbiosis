@@ -28,6 +28,9 @@
     <h2>Sign up</h2>
 
     <form th:action="@{/auth/signup}" method="post">
+
+        <p th:if="${error}" th:text="${error}" class="error-message"></p>
+        
         <div class="mb-3">
             <label for="input-name">Enter your first name:</label>
             <input type="text" class="first-name" name="firstName" placeholder="First name">
@@ -54,5 +57,65 @@
         </div>
         <button type="submit" class="btn btn-primary">Continue</button>
     </form>
+
+    <script>
+        const form = document.querySelector("form");
+
+        const firstNameInput = document.querySelector(".first-name");
+        const lastNameInput = document.querySelector(".last-name");
+        const emailInput = document.querySelector(".input-email");
+        const passwordInput = document.querySelector(".input-pass");
+
+        const firstNameError = document.querySelector(".first-name-error");
+        const lastNameError = document.querySelector(".last-name-error");
+        const emailBlankError = document.querySelector(".email-blank-error");
+        const emailInvalidError = document.querySelector(".email-invalid-error");
+        const passwordError = document.querySelector(".password-error");
+
+        function showError(element) {
+            element.style.display = "block";
+        }
+
+        function hideError(element) {
+            element.style.display = "none";
+        }
+
+        form.addEventListener("submit", function (event) {
+            let hasError = false;
+
+            hideError(firstNameError);
+            hideError(lastNameError);
+            hideError(emailBlankError);
+            hideError(emailInvalidError);
+            hideError(passwordError);
+
+            if (firstNameInput.value.trim() === "") {
+                showError(firstNameError);
+                hasError = true;
+            }
+
+            if (lastNameInput.value.trim() === "") {
+                showError(lastNameError);
+                hasError = true;
+            }
+
+            if (emailInput.value.trim() === "") {
+                showError(emailBlankError);
+                hasError = true;
+            } else if (!/^[A-Za-z0-9._%+-]+@cambioearth\.com$/.test(emailInput.value.trim())) {
+                showError(emailInvalidError);
+                hasError = true;
+            }
+
+            if (passwordInput.value.trim() === "") {
+                showError(passwordError);
+                hasError = true;
+            }
+
+            if (hasError) {
+                event.preventDefault();
+            }
+        });
+    </script>
 </body>
 </html>
