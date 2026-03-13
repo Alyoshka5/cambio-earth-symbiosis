@@ -55,5 +55,34 @@ public class Participation {
     public void setSession(Session session) {
         this.session = session;
     }
+    
+    // Helper methods
+    @Override
+    public String toString() {
+        return "Participation{" +
+                "id=" + id +
+                ", userId=" + (user != null ? user.getId() : null) +
+                ", sessionId=" + (session != null ? session.getId() : null) +
+                '}';
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        
+        Participation that = (Participation) o;
+        
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (user != null ? !user.equals(that.user) : that.user != null) return false;
+        return session != null ? session.equals(that.session) : that.session == null;
+    }
+    
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (user != null ? user.hashCode() : 0);
+        result = 31 * result + (session != null ? session.hashCode() : 0);
+        return result;
+    }
 }
-
