@@ -46,7 +46,6 @@ public class Session implements Comparable<Session> {
     @Column(name = "speaker")
     private List<String> speakers = new ArrayList<>();
 
-    @NotBlank(message = "Must specify if the session is a breakout session")
     private boolean isBreakout;
 
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -60,8 +59,7 @@ public class Session implements Comparable<Session> {
 
     public Session(
             @NotBlank(message = "Title is required") @Size(min = 1, max = 150, message = "Title must be between 1 and 150 characters") String title,
-            String location, LocalDateTime startDateTime, LocalDateTime endDateTime, String description, List<String> speakers,
-            @NotBlank(message = "Must specify if session is a breakout session") boolean isBreakout) {
+            String location, LocalDateTime startDateTime, LocalDateTime endDateTime, String description, List<String> speakers, boolean isBreakout) {
         this.title = title;
         this.location = location;
         this.startDateTime = startDateTime;
@@ -71,9 +69,7 @@ public class Session implements Comparable<Session> {
         this.isBreakout = isBreakout;
     }
 
-    public Session(
-            @NotBlank(message = "Title is required") @Size(min = 1, max = 150, message = "Title must be between 1 and 150 characters") String title,
-            @NotBlank(message = "Must specify if session is a breakout session") boolean isBreakout) {
+    public Session(@NotBlank(message = "Title is required") @Size(min = 1, max = 150, message = "Title must be between 1 and 150 characters") String title, boolean isBreakout) {
         this.title = title;
         this.isBreakout = isBreakout;
     }
