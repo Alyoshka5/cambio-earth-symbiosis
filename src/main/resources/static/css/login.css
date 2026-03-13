@@ -1,64 +1,150 @@
-/*Used ai to help with background imagie*/
 /* 1. Global Layout & Background */
+:root {
+    --forest:      #2b3930;
+    --forest-mid:  #3a4f42;
+    --forest-light:#4d6657;
+    --bark:        #1a2420;
+    --moss:        #6b8f71;
+    --sage:        #a8c5a0;
+    --cream:       #f0ede6;
+    --white:       #ffffff;
+    --accent:      #c8d96e;
+    --accent-dim:  rgba(200,217,110,0.15);
+    --danger:      #e07070;
+}
 
 body {
-    background-color: #2b3930;
+    background-color: var(--bark);
+    background-image:
+        radial-gradient(ellipse 100% 70% at 50% 5%, rgba(107,143,113,0.18) 0%, transparent 70%),
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 60px,
+            rgba(255,255,255,0.015) 60px,
+            rgba(255,255,255,0.015) 61px
+        );
+    background-size: cover;
+    background-position: center bottom;
 
-    background-image: linear-gradient(
-        to bottom,
-        rgba(43, 57, 48, 0.8),
-        rgba(43, 57, 48, 0.8)
-    ),
-    url('https://media.istockphoto.com/id/1351811592/nl/vector/green-forest-pine-trees-silhouette-landscape.jpg?s=170667a&w=0&k=20&c=m1OI9tqQ4jRuveGFR548nG6NvZsONvAd5hDX--PvN4A=');
-
-    background-size: 100% auto;
-    background-position: bottom center;
-    background-repeat: no-repeat;
-    overflow: hidden; 
-
-
-    color: #ffffff;
+    color: white;
 
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    justify-content: center;
+
+    height: 100vh;
     margin: 0;
 }
 
-/* 2. "Symbiosis" Title */
-
-body::before {
-    content: "Symbiosis";
-    display: block;
-    font-family: "Jura", sans-serif;
-    font-size: 4.5rem;
-    font-weight: 500;
-    color: #ffffff;
-    margin-bottom: 20px;
-    letter-spacing: 1px;
+/* Cambio logo */
+.cambio-logo {
+    width: 300px;
+    margin-bottom: 50px;
 }
 
+/* "Symbiosis" Title */
+h1 {
+    display: block;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 500;
+    font-family: 'DM Serif Display', serif;
+    color: var(--white);
+    line-height: 1.15;
+    margin: 0 0 40px;
+}
 
-/* 3. Form Container Styling */
+/* Form Container Styling */
 form {
     width: 100%;
     max-width: 400px;
+    text-align: left;
+}
+
+.form-card {
+    background: rgba(58, 79, 66, 0.35);
+    border: 1px solid rgba(168,197,160,0.14);
+    border-radius: 16px;
+    padding: 40px;
+    backdrop-filter: blur(6px);
+    width: 500px;
+    max-width: 500px;
+}
+
+/* Login subheader */
+.section-heading {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
     text-align: center;
 }
 
-/* Hide the default H1 and Legend to match the UI flow */
-legend {
-    font-size: 0.9rem;
-    font-weight: normal;
-    color: #cccccc;
-
-    margin-bottom: 2rem;
-    border: none;
+/* Form labels */
+.form-label {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--sage);
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+    margin-left: 5px;
 }
 
-/* 4. Input Field Styling */
-.mb-3 label {
-    display: none; /* Hiding labels to match the minimalist placeholder style */
+.form-label span.required {
+    color: var(--accent);
+    margin-left: 3px;
+}
+
+/* Input fields */
+.form-control,
+.form-select {
+    background-color: rgba(26, 36, 32, 0.7) !important;
+    border: 1px solid rgba(168,197,160,0.2) !important;
+    color: var(--white) !important;
+    border-radius: 10px !important;
+    padding: 11px 14px !important;
+    font-family: 'DM Sans', sans-serif !important;
+
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px rgba(200,217,110,0.12) !important;
+    outline: none !important;
+    background-color: rgba(26, 36, 32, 0.9) !important;
+}
+
+.form-control::placeholder {
+    color: rgba(168,197,160,0.4) !important;
+}
+
+/* Continue button */
+.btn-cont {
+    background: var(--accent);
+    color: var(--bark);
+    border: none;
+    border-radius: 10px;
+    padding: 12px 32px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+    display: block;
+    margin: 0 auto;
+}
+
+.btn-cont:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+}
+
+.btn-cont:active {
+    transform: translateY(0);
 }
