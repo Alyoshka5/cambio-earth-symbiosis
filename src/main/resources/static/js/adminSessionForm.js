@@ -2,7 +2,7 @@
 
 let speakerCount = 0;
 
-function addSpeaker(value = '') {
+function addSpeaker(focusInput, value = '') {
     speakerCount++;
     const list = document.getElementById('speakerList');
     const entry = document.createElement('div');
@@ -21,7 +21,7 @@ function addSpeaker(value = '') {
         </button>
     `;
     list.appendChild(entry);
-    entry.querySelector('input').focus();
+    if (focusInput) entry.querySelector('input').focus();
     aggregateSpeakers();
 }
 
@@ -45,12 +45,10 @@ function aggregateSpeakers() {
 }
 
 // Pre-populate speakers if editing an existing session
-// (Thymeleaf renders this inline from the model)
-/*[[${session.speakers}]]*/ 
 (function seedSpeakers() {
-    // Read existing speakers from a data attribute set by Thymeleaf
-    const raw = document.getElementById('sessionForm').dataset.speakers || '';
-    if (raw) raw.split(',').forEach(s => addSpeaker(s.trim()));
+    // Read existing speakers from a data attribute
+    const raw = document.getElementById('speakerList').dataset.existingSpeakers;
+    if (raw) raw.split(',').forEach(s => addSpeaker(false, s.trim()));
 })();
 
 

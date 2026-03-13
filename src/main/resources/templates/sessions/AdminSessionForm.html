@@ -113,11 +113,11 @@
 
                 <div class="section-label">Speakers</div>
 
-                <div class="speaker-list" id="speakerList">
+                <div class="speaker-list" id="speakerList" th:data-existing-speakers="*{#strings.listJoin(speakers, ',')}">
                     <!-- Speaker entries injected by JS -->
                 </div>
 
-                <button type="button" class="btn-add-speaker" onclick="addSpeaker()">
+                <button type="button" class="btn-add-speaker" onclick="addSpeaker(true)">
                     + Add Speaker
                 </button>
 
