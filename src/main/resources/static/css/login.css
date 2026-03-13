@@ -145,6 +145,16 @@ form {
     transform: translateY(-1px);
 }
 
+/* 4. Input Field Styling */
+.mb-3 label {
+    display: none; /* Hiding labels to match the minimalist placeholder style */
+}
+
+.error-message {
+    color: #ff6b6b;
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+    text-align: center;
 .btn-cont:active {
     transform: translateY(0);
 }
