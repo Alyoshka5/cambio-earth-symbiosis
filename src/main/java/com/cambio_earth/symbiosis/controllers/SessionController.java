@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -93,4 +94,15 @@ public class SessionController {
 
         return "sessions/eventSchedule";
     }
+
+    
+    // @GetMapping("/sessions/{id}")
+    // public String getSessionDetail(@PathVariable Long id, 
+    //                                 @AuthenticationPrincipal User user, 
+    //                                 Model model) {
+    //     Session session = sessionService.getSessionById(id);
+    //     model.addAttribute("session", session);
+    //     model.addAttribute("isAdmin", user.getRole().equals(Role.ADMIN));
+    //     return "sessions/sessionDetail"; // your detail template
+    // }
 }

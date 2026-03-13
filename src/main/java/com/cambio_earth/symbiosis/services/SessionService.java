@@ -90,4 +90,8 @@ public class SessionService {
     public List<Session> getBreakoutSessions() {
         return sessionRepository.findByIsBreakoutTrue();
     }
+
+//     public Session getSessionById(Long id) {
+//     return sessionRepository.findById(id).orElseThrow();
+// }
 }

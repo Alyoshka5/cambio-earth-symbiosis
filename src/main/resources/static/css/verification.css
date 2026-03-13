@@ -121,6 +121,21 @@ body {
     margin-bottom: 20px;
 }
 
+/* ── Error message ── */
+.error-message {
+    flex-basis: 100%;
+    width: 100%;
+    text-align: center;
+    font-size: 0.82rem;
+    color: var(--danger);
+    background: rgba(224,112,112,0.1);
+    border: 1px solid rgba(224,112,112,0.25);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin: 0 0 12px;
+    font-weight: 400;
+}
+
 /* ── OTP digit inputs ── */
 .code-inputs form {
     display: flex;
@@ -215,11 +230,4 @@ body {
 .btn-secondary:hover {
     opacity: 0.75;
     text-decoration: underline;
-}
-
-.error-message {
-    color: #ff6b6b;
-    font-size: 0.9rem;
-    margin-bottom: 12px;
-    text-align: center;
 }
