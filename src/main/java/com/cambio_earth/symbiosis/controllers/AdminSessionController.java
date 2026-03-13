@@ -89,7 +89,7 @@ public class AdminSessionController {
         session.setLocation(formSessionData.getLocation());
 
         if (speakersRaw != null && !speakersRaw.isBlank()) {
-            session.setSpeakers(Arrays.asList(speakersRaw.split(",")));
+            session.setSpeakers(new ArrayList<>(Arrays.asList(speakersRaw.split(","))));
         } else {
             session.setSpeakers(new ArrayList<>());
         }
