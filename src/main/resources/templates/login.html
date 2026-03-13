@@ -19,26 +19,27 @@
 </head>
 
 <body>
-    <form th:action="@{/auth/login}" method="post">
+    <img class="cambio-logo" src="/images/CambioEarth_Primary.png">
+    <h1>Symbiosis</h1>
+    <div class="form-card">
+        <form th:action="@{/auth/login}" method="post">
+            <legend class="section-heading">Login</legend>
 
-        <p th:if="${error}" th:text="${error}" class="error-message"></p>
-        
-        <legend>Login to your account</legend>
+            <div class="mb-3">
+                <label class="form-label">Enter your email:</label>
+                <input class="form-control" type="text" name="email" placeholder="email@domain.com">
+            </div>
 
-        <div class="mb-3">
-            <label>Enter your email:</label>
-            <input type="text" name="email" placeholder="email@domain.com">
-        </div>
+            <div class="mb-3">
+                <label class="form-label">Enter your password:</label>
+                <input class="form-control" type="password" name="password" placeholder="Password">
+            </div>
 
-        <div class="mb-3">
-            <label>Enter your password:</label>
-            <input type="password" name="password" placeholder="Password">
-        </div>
-
-        <button type="submit" class="btn btn-primary">Continue</button>
-        <p style="margin-top: 16px; text-align: center; color: #cccccc; font-size: 0.9rem;">
-            Don't have an account? <a href="/auth/signup">Sign up</a>
-        </p>
-    </form>
+            <button type="submit" class="btn btn-primary btn-cont">Continue</button>
+            <p style="margin-top: 16px; text-align: center; color: #cccccc; font-size: 0.9rem;">
+                Don't have an account? <a href="/auth/signup">Sign up</a>
+            </p>
+        </form>
+    </div>
 </body>
 </html>
