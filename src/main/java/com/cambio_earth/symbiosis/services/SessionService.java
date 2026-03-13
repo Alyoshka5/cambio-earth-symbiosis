@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.cambio_earth.symbiosis.models.Participation;
 import com.cambio_earth.symbiosis.models.ParticipationRepository;
+import com.cambio_earth.symbiosis.models.Role;
 import com.cambio_earth.symbiosis.models.Session;
 import com.cambio_earth.symbiosis.models.SessionRepository;
 import com.cambio_earth.symbiosis.models.User;
@@ -33,11 +34,16 @@ public class SessionService {
     // retrieve schedule of sessions grouped by day
     public Map<String, List<Session>> getUserSchedule(User user) {
         List<Participation> participations = participationRepository.findByUserId(user.getId());
-        List<Session> sessions = new ArrayList<>();
-        for (Participation participation : participations) {
-            Optional<Session> optionalSession = sessionRepository.findById(participation.getSession().getId());
-            if (optionalSession.isPresent()) {
-                sessions.add(optionalSession.get());
+        List<Session> sessions;
+        if (user.getRole().equals(Role.ADMIN)) {
+            sessions = sessionRepository.findAll();
+        } else {
+            sessions = new ArrayList<>();
+            for (Participation participation : participations) {
+                Optional<Session> optionalSession = sessionRepository.findById(participation.getSession().getId());
+                if (optionalSession.isPresent()) {
+                    sessions.add(optionalSession.get());
+                }
             }
         }
 
