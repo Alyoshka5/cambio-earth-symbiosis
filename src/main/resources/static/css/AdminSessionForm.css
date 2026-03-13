@@ -178,7 +178,7 @@ textarea.form-control {
 /* ── Date + Time side by side ── */
 .datetime-row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 16px;
 }
 

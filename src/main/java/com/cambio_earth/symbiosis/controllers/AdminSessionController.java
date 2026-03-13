@@ -5,21 +5,26 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.Optional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.cambio_earth.symbiosis.models.*;
+import com.cambio_earth.symbiosis.models.Participation;
+import com.cambio_earth.symbiosis.models.ParticipationRepository;
+import com.cambio_earth.symbiosis.models.Role;
+import com.cambio_earth.symbiosis.models.Session;
+import com.cambio_earth.symbiosis.models.SessionRepository;
+import com.cambio_earth.symbiosis.models.User;
+import com.cambio_earth.symbiosis.models.UserRepository;
 
 
 @Controller
@@ -39,7 +44,7 @@ public class AdminSessionController {
     // Show blank form (create new)
     @GetMapping("/admin/sessions/new")
     public String getNewSessionForm(Model model) {
-        model.addAttribute("session", new Session());
+        model.addAttribute("eventSession", new Session());
         return "sessions/adminSessionForm";
     }
 
@@ -47,30 +52,62 @@ public class AdminSessionController {
     @GetMapping("/admin/sessions/{id}/edit")
     public String getEditSessionForm(@PathVariable Long id, Model model) {
         Session session = sessionRepository.findById(id).orElseThrow();
-        model.addAttribute("session", session);
+        model.addAttribute("eventSession", session);
         return "sessions/adminSessionForm";
     }
 
     // Handle form submission (create or update)
     @PostMapping("/admin/sessions/save")
     public String saveSession(
-            @ModelAttribute Session session,
-            @RequestParam String speakersRaw,
-            @RequestParam(required = false) String sessionDate,
+            @ModelAttribute Session formSessionData,
+            @RequestParam(required = false) String date,
             @RequestParam(required = false) String startTime,
-            @RequestParam(required = false) String endTime) {
+            @RequestParam(required = false) String endTime,
+            @RequestParam(required = false) String speakersRaw
+        ) {
+        Session session;
+        if (formSessionData.getId() == null) { // Creating new session
+            session = new Session();
+        } else { // Updating existing session
+            Optional<Session> optionalSession = sessionRepository.findById(formSessionData.getId());
+            if (optionalSession.isPresent()) {
+                session = optionalSession.get();
+            } else {
+                session = new Session();
+            }
+        }
+
+        // Validate data
+        if (!formSessionData.getTitle().equals("")) {
+            session.setTitle(formSessionData.getTitle());
+        } else {
+            session.setTitle("Default Title");
+        }
+
+        session.setDescription(formSessionData.getDescription());
+
+        session.setLocation(formSessionData.getLocation());
 
         if (speakersRaw != null && !speakersRaw.isBlank()) {
-            session.setSpeakers(Arrays.asList(speakersRaw.split(",")));
+            session.setSpeakers(new ArrayList<>(Arrays.asList(speakersRaw.split(","))));
         } else {
             session.setSpeakers(new ArrayList<>());
         }
-        if (sessionDate != null && !sessionDate.isBlank() && startTime != null && !startTime.isBlank()) {
-            session.setStartDateTime(LocalDateTime.of(LocalDate.parse(sessionDate), LocalTime.parse(startTime)));
+
+        if (date != null && !date.isBlank() && startTime != null && !startTime.isBlank()) {
+            session.setStartDateTime(LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(startTime)));
+        } else {
+            session.setStartDateTime(LocalDateTime.now());
         }
-        if (sessionDate != null && !sessionDate.isBlank() && endTime != null && !endTime.isBlank()) {
-            session.setEndDateTime(LocalDateTime.of(LocalDate.parse(sessionDate), LocalTime.parse(endTime)));
+
+        if (date != null && !date.isBlank() && endTime != null && !endTime.isBlank()) {
+            session.setEndDateTime(LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(endTime)));
+        } else {
+            session.setEndDateTime(LocalDateTime.now());
         }
+
+        session.setBreakout(formSessionData.isBreakout());
+
         sessionRepository.save(session);
         return "redirect:/sessions/" + session.getId();
     }
@@ -89,7 +126,7 @@ public class AdminSessionController {
         System.out.println(">>> currentUser is: " + currentUser);
         System.out.println(">>> session title is: " + session.getTitle());
 
-        return "sessionDetails";
+        return "sessions/sessionDetails";
     }
 
     // Remove a user from a session
@@ -120,6 +157,6 @@ public class AdminSessionController {
     @PostMapping("/admin/sessions/{id}/delete")
     public String deleteSession(@PathVariable Long id) {
         sessionRepository.deleteById(id);
-        return "redirect:/sessions";
+        return "redirect:/sessions/schedule";
     }
 }
