@@ -20,6 +20,9 @@
 
 <body>
     <form th:action="@{/auth/login}" method="post">
+
+        <p th:if="${error}" th:text="${error}" class="error-message"></p>
+        
         <legend>Login to your account</legend>
 
         <div class="mb-3">

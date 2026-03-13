@@ -62,3 +62,10 @@ legend {
 .mb-3 label {
     display: none; /* Hiding labels to match the minimalist placeholder style */
 }
+
+.error-message {
+    color: #ff6b6b;
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+    text-align: center;
+}

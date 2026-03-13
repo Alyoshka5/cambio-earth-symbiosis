@@ -71,7 +71,9 @@ public class UserController {
     }
 
     @PostMapping("/auth/login")
-    public String authenticate(@ModelAttribute LoginUserDto loginUserDto, HttpServletResponse response) {
+    public String authenticate(@ModelAttribute LoginUserDto loginUserDto,
+                            HttpServletResponse response,
+                            Model model) {
         try {
             User authenticatedUser = authenticationService.authenticate(loginUserDto);
             String jwtToken = jwtService.generateToken(authenticatedUser);
@@ -84,6 +86,8 @@ public class UserController {
 
             return "redirect:/breakout";
         } catch (RuntimeException e) {
+            model.addAttribute("error", "Invalid email or password.");
+            model.addAttribute("email", loginUserDto.getEmail());
             return "login";
         }
     }
@@ -95,7 +99,9 @@ public class UserController {
     }
 
     @PostMapping("/auth/verify")
-    public String verifyCode(Model model, @ModelAttribute VerifyUserDto verifyUserDto, HttpServletResponse response) {
+    public String verifyCode(Model model,
+                            @ModelAttribute VerifyUserDto verifyUserDto,
+                            HttpServletResponse response) {
         try {
             authenticationService.verifyUser(verifyUserDto);
 
@@ -113,9 +119,9 @@ public class UserController {
             }
 
             return "redirect:/auth/login";
-
         } catch (RuntimeException e) {
             model.addAttribute("email", verifyUserDto.getEmail());
+            model.addAttribute("error", "Invalid verification code.");
             return "verificationCode";
         }
     }
