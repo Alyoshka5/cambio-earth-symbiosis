@@ -12,6 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -58,22 +59,17 @@ public class AdminSessionController {
     // Handle form submission (create or update)
     @PostMapping("/admin/sessions/save")
     public String saveSession(
-            @RequestParam String title,
-            @RequestParam(required = false) String description,
-            @RequestParam(required = false) String location,
+            @ModelAttribute Session formSessionData,
             @RequestParam(required = false) String date,
             @RequestParam(required = false) String startTime,
             @RequestParam(required = false) String endTime,
-            @RequestParam(required = false) String speakersRaw,
-            @RequestParam(required = false) boolean breakout,
-            @RequestParam(required = false) Long id
+            @RequestParam(required = false) String speakersRaw
         ) {
-
         Session session;
-        if (id == null) { // Creating new session
+        if (formSessionData.getId() == null) { // Creating new session
             session = new Session();
         } else { // Updating existing session
-            Optional<Session> optionalSession = sessionRepository.findById(id);
+            Optional<Session> optionalSession = sessionRepository.findById(formSessionData.getId());
             if (optionalSession.isPresent()) {
                 session = optionalSession.get();
             } else {
@@ -81,37 +77,36 @@ public class AdminSessionController {
             }
         }
 
-        if (title != null && !title.equals("")) {
-            session.setTitle(title);
+        // Validate data
+        if (!formSessionData.getTitle().equals("")) {
+            session.setTitle(formSessionData.getTitle());
         } else {
-            session.setTitle("Session");
+            session.setTitle("Default Title");
         }
-        if (description != null && !description.equals("")) {
-            session.setDescription(description);
-        } else {
-            session.setDescription("");
-        }
-        if (location != null && !location.equals("")) {
-            session.setLocation(location);
-        } else {
-            session.setLocation("");
-        }
+
+        session.setDescription(formSessionData.getDescription());
+
+        session.setLocation(formSessionData.getLocation());
+
         if (speakersRaw != null && !speakersRaw.isBlank()) {
             session.setSpeakers(Arrays.asList(speakersRaw.split(",")));
         } else {
             session.setSpeakers(new ArrayList<>());
         }
+
         if (date != null && !date.isBlank() && startTime != null && !startTime.isBlank()) {
             session.setStartDateTime(LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(startTime)));
         } else {
             session.setStartDateTime(LocalDateTime.now());
         }
+
         if (date != null && !date.isBlank() && endTime != null && !endTime.isBlank()) {
             session.setEndDateTime(LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(endTime)));
         } else {
             session.setEndDateTime(LocalDateTime.now());
         }
-        session.setBreakout(breakout);
+
+        session.setBreakout(formSessionData.isBreakout());
 
         sessionRepository.save(session);
         return "redirect:/sessions/" + session.getId();
