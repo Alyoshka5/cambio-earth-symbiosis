@@ -24,98 +24,99 @@
 <body>
     <img src="/images/CambioEarth_Primary.png" alt="Cambio Earth logo">
 
-    <h1>Symbiosis</h1>
-    <h2>Sign up</h2>
+    <h1 class="session-title">Symbiosis</h1>
+    <div class="form-card">
+        <h2 class="section-heading">Sign up</h2>
 
-    <form th:action="@{/auth/signup}" method="post">
+        <form th:action="@{/auth/signup}" method="post">
+          
+            <p th:if="${error}" th:text="${error}" class="error-message"></p>
+          
+            <div class="mb-3">
+                <label class="form-label" for="input-name">Enter your first name:</label>
+                <input type="text" class="first-name form-control" name="firstName" placeholder="First name">
+                <p class="first-name-error" style="display: none;">Must enter a first name</p>
+            </div>
 
-        <p th:if="${error}" th:text="${error}" class="error-message"></p>
-        
-        <div class="mb-3">
-            <label for="input-name">Enter your first name:</label>
-            <input type="text" class="first-name" name="firstName" placeholder="First name">
-            <p class="first-name-error" style="display: none;">Must enter a first name</p>
-        </div>
+            <div class="mb-3">
+                <label class="form-label" for="input-name">Enter your last name:</label>
+                <input type="text" class="last-name form-control" name="lastName" placeholder="Last name">
+                <p class="last-name-error" style="display: none;">Must enter a last name</p>
+            </div>
 
-        <div class="mb-3">
-            <label for="input-name">Enter your last name:</label>
-            <input type="text" class="last-name" name="lastName" placeholder="Last name">
-            <p class="last-name-error" style="display: none;">Must enter a last name</p>
-        </div>
+            <div class="mb-3">
+                <label class="form-label" for="input-email">Enter an email:</label>
+                <input type="text" class="input-email form-control" name="email" placeholder="email@domain.com">
+                <p class="email-blank-error" style="display: none;">Must enter an email</p>
+                <p class="email-invalid-error" style="display: none;">Email entered is invalid</p>
+            </div>
 
-        <div class="mb-3">
-        <label for="input-email">Enter an email:</label>
-        <input id="input-email" type="text" class="input-email" name="email" placeholder="email@domain.com">
-        <p class="email-blank-error" style="display: none;">Must enter an email</p>
-        <p class="email-invalid-error" style="display: none;">Email entered is invalid</p>
-        </div>
+            <div class="mb-3">
+                <label class="form-label" for="input-pass">Enter a password:</label>
+                <input type="password" class="input-pass form-control" name="password" placeholder="Password">
+                <p class="password-error" style="display: none;">Must enter a password</p>
+            </div>
+            <button type="submit" class="btn btn-primary btn-cont">Continue</button>
+        </form>
 
-        <div class="mb-3">
-            <label for="input-pass">Enter a password:</label>
-            <input type="password" class="input-pass" name="password" placeholder="Password">
-            <p class="password-error" style="display: none;">Must enter a password</p>
-        </div>
-        <button type="submit" class="btn btn-primary">Continue</button>
-    </form>
+        <script>
+            const form = document.querySelector("form");
 
-    <script>
-        const form = document.querySelector("form");
+            const firstNameInput = document.querySelector(".first-name");
+            const lastNameInput = document.querySelector(".last-name");
+            const emailInput = document.querySelector(".input-email");
+            const passwordInput = document.querySelector(".input-pass");
 
-        const firstNameInput = document.querySelector(".first-name");
-        const lastNameInput = document.querySelector(".last-name");
-        const emailInput = document.querySelector(".input-email");
-        const passwordInput = document.querySelector(".input-pass");
+            const firstNameError = document.querySelector(".first-name-error");
+            const lastNameError = document.querySelector(".last-name-error");
+            const emailBlankError = document.querySelector(".email-blank-error");
+            const emailInvalidError = document.querySelector(".email-invalid-error");
+            const passwordError = document.querySelector(".password-error");
 
-        const firstNameError = document.querySelector(".first-name-error");
-        const lastNameError = document.querySelector(".last-name-error");
-        const emailBlankError = document.querySelector(".email-blank-error");
-        const emailInvalidError = document.querySelector(".email-invalid-error");
-        const passwordError = document.querySelector(".password-error");
-
-        function showError(element) {
-            element.style.display = "block";
-        }
-
-        function hideError(element) {
-            element.style.display = "none";
-        }
-
-        form.addEventListener("submit", function (event) {
-            let hasError = false;
-
-            hideError(firstNameError);
-            hideError(lastNameError);
-            hideError(emailBlankError);
-            hideError(emailInvalidError);
-            hideError(passwordError);
-
-            if (firstNameInput.value.trim() === "") {
-                showError(firstNameError);
-                hasError = true;
+            function showError(element) {
+                element.style.display = "block";
             }
 
-            if (lastNameInput.value.trim() === "") {
-                showError(lastNameError);
-                hasError = true;
+            function hideError(element) {
+                element.style.display = "none";
             }
 
-            if (emailInput.value.trim() === "") {
-                showError(emailBlankError);
-                hasError = true;
-            } else if (!/^[A-Za-z0-9._%+-]+@cambioearth\.com$/.test(emailInput.value.trim())) {
-                showError(emailInvalidError);
-                hasError = true;
-            }
+            form.addEventListener("submit", function (event) {
+                let hasError = false;
 
-            if (passwordInput.value.trim() === "") {
-                showError(passwordError);
-                hasError = true;
-            }
+                hideError(firstNameError);
+                hideError(lastNameError);
+                hideError(emailBlankError);
+                hideError(emailInvalidError);
+                            hideError(passwordError);
 
-            if (hasError) {
-                event.preventDefault();
-            }
-        });
+                if (firstNameInput.value.trim() === "") {
+                    showError(firstNameError);
+                    hasError = true;
+                }
+
+                if (lastNameInput.value.trim() === "") {
+                    showError(lastNameError);
+                    hasError = true;
+                }
+
+                if (emailInput.value.trim() === "") {
+                    showError(emailBlankError);
+                    hasError = true;
+                } else if (!/^[A-Za-z0-9._%+-]+@cambioearth\.com$/.test(emailInput.value.trim())) {
+                    showError(emailInvalidError);
+                    hasError = true;
+                }
+
+                if (passwordInput.value.trim() === "") {
+                    showError(passwordError);
+                    hasError = true;
+                }
+
+                if (hasError) {
+                    event.preventDefault();
+                }
+            });
     </script>
 </body>
 </html>
