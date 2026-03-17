@@ -4,28 +4,38 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cambio_earth.symbiosis.models.BreakoutBlockRanking;
+import com.cambio_earth.symbiosis.models.BreakoutBlockRankingRepository;
 import com.cambio_earth.symbiosis.models.Participation;
 import com.cambio_earth.symbiosis.models.ParticipationRepository;
+import com.cambio_earth.symbiosis.models.Role;
 import com.cambio_earth.symbiosis.models.Session;
 import com.cambio_earth.symbiosis.models.SessionRepository;
 import com.cambio_earth.symbiosis.models.User;
+import com.cambio_earth.symbiosis.models.UserRepository;
 
 @Service
 public class SessionService {
-    private Map<String, Set<User>> sessionRegistrations = new HashMap<>();
 
     @Autowired
     ParticipationRepository participationRepository;
+
+    @Autowired
+    UserRepository userRepository;
+    
+    @Autowired
+    BreakoutBlockRankingRepository rankingRepository;
+        
 
     @Autowired
     private SessionRepository sessionRepository;
@@ -33,11 +43,16 @@ public class SessionService {
     // retrieve schedule of sessions grouped by day
     public Map<String, List<Session>> getUserSchedule(User user) {
         List<Participation> participations = participationRepository.findByUserId(user.getId());
-        List<Session> sessions = new ArrayList<>();
-        for (Participation participation : participations) {
-            Optional<Session> optionalSession = sessionRepository.findById(participation.getSession().getId());
-            if (optionalSession.isPresent()) {
-                sessions.add(optionalSession.get());
+        List<Session> sessions;
+        if (user.getRole().equals(Role.ADMIN)) {
+            sessions = sessionRepository.findAll();
+        } else {
+            sessions = new ArrayList<>();
+            for (Participation participation : participations) {
+                Optional<Session> optionalSession = sessionRepository.findById(participation.getSession().getId());
+                if (optionalSession.isPresent()) {
+                    sessions.add(optionalSession.get());
+                }
             }
         }
 
@@ -68,30 +83,83 @@ public class SessionService {
         return scheduleDays;
     }
 
-    // Register a user for a session
-    public void registerUser(String sessionName, User user) {
-        sessionRegistrations.putIfAbsent(sessionName, new HashSet<>());
-        sessionRegistrations.get(sessionName).add(user);
-    }
-
-    // Remove a user from a session
-    public void unregisterUser(String sessionName, User user) {
-        if (sessionRegistrations.containsKey(sessionName)) {
-            sessionRegistrations.get(sessionName).remove(user);
-        }
-    }
-
-    // Get all users registered in a session
-    public Set<User> getUsersInSession(String sessionName) {
-        return sessionRegistrations.getOrDefault(sessionName, new HashSet<>());
-    }
-
-    // your part: fetch real breakout sessions from DB
     public List<Session> getBreakoutSessions() {
         return sessionRepository.findByIsBreakoutTrue();
     }
 
-//     public Session getSessionById(Long id) {
-//     return sessionRepository.findById(id).orElseThrow();
-// }
+    public void registerUsersForMandatorySessions() {
+        List<Session> mandatorySessions = sessionRepository.findByIsBreakoutFalse();
+        Iterable<User> users = userRepository.findAll();
+        for (User user : users) {
+            for (Session session : mandatorySessions) {
+                Participation participation = new Participation(user, session);
+                participationRepository.save(participation);
+            }
+        }
+    }
+
+    public void registerUsersForBreakoutSessions() {
+        List<User> users = userRepository.findAll();
+
+        List<Participation> participations = participationRepository.findAll();
+
+        List<BreakoutBlockRanking> rankings = rankingRepository.findAll();
+        rankings.sort(Comparator.comparing(BreakoutBlockRanking::getRank)); // Sort rankings so higher ranks are found first
+        
+        // Group sessions by the dateStartTime property
+        List<Session> breakoutSessions = getBreakoutSessions();
+        List<List<Session>> groupedBreakoutSessions = breakoutSessions.stream()
+            .collect(Collectors.groupingBy(Session::getStartDateTime))
+            .values()
+            .stream()
+            .collect(Collectors.toList());
+
+        // Calculate how many users are already registered for each sessions (should be 0 but could have been manually added)
+        Map<Session, Integer> sessionParticipationCounts = new HashMap<>();
+        for (Session breakoutSession : breakoutSessions) {
+            Integer sessionParticipationCount = participations.stream().filter(participation -> participation.getSession().getId().equals(breakoutSession.getId())).toList().size();
+            sessionParticipationCounts.put(breakoutSession, sessionParticipationCount);
+        }
+
+        for (List<Session> currentBreakoutSessions : groupedBreakoutSessions) {
+            Collections.shuffle(users); // Shuffle users to distribute priority fairly
+            for (User user : users) {
+                // Find the user's rankings
+                List<BreakoutBlockRanking> userRankings = rankings.stream().filter(ranking -> ranking.getUser().getId().equals(user.getId()) && currentBreakoutSessions.contains(ranking.getSession())).toList();
+                boolean userRegistered = false;
+
+                // Register user based on ranking
+                for (BreakoutBlockRanking ranking : userRankings) {
+                    Integer sessionParticipationCount = sessionParticipationCounts.get(ranking.getSession());
+                    if (sessionParticipationCount < ranking.getSession().getCapacity()) {
+                        Participation participation = new Participation(user, ranking.getSession());
+                        participationRepository.save(participation);
+                        sessionParticipationCounts.put(ranking.getSession(), sessionParticipationCount + 1);
+                        userRegistered = true;
+                        break;
+                    }
+                }
+
+                // Register user to least participated-in breakout session
+                if (!userRegistered) {
+                    Session leastParticipatedSession = currentBreakoutSessions.get(0);
+                    double minParticipationRatio = (double) sessionParticipationCounts.get(leastParticipatedSession) / leastParticipatedSession.getCapacity();
+                    for (Session session: currentBreakoutSessions) {
+                        double sessionParticipationRatio = (double) sessionParticipationCounts.get(session) / session.getCapacity();
+                        if (sessionParticipationRatio < minParticipationRatio) {
+                            leastParticipatedSession = session;
+                            minParticipationRatio = sessionParticipationRatio;
+                        }
+                    }
+                    if (sessionParticipationCounts.get(leastParticipatedSession) < leastParticipatedSession.getCapacity()) { // If false, then all sessions are at full capacity
+                        Participation participation = new Participation(user, leastParticipatedSession);
+                        participationRepository.save(participation);
+                        sessionParticipationCounts.put(leastParticipatedSession, sessionParticipationCounts.get(leastParticipatedSession) + 1);
+                    } else {
+                        break; // Go to next group of breakout sessions since all current sessions are at full capacity
+                    }
+                }
+            }
+        }
+    }
 }

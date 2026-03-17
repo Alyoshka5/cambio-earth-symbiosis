@@ -3,15 +3,32 @@ let selected = [];
 // get all rank circles
 const circles = document.querySelectorAll(".rank");
 
-// clear any numbers that came from the server/html on first load
-circles.forEach(circle => {
-    const span = circle.querySelector("span");
-    if (span) {
-        span.textContent = "";
-    }
-    circle.classList.remove("filled");
-    circle.style.backgroundColor = "";
-    circle.style.borderColor = "";
+// Initialize selected array with any pre-selected sessions from the server
+document.addEventListener('DOMContentLoaded', function() {
+    circles.forEach(circle => {
+        const span = circle.querySelector("span");
+        if (span && span.textContent.trim() !== "") {
+            // This circle was pre-selected (has a rank number)
+            selected.push(circle);
+            circle.classList.add("filled");
+            circle.style.backgroundColor = "#c3f775";
+            circle.style.borderColor = "#c3f775";
+        } else {
+            // Clear any default styling
+            circle.classList.remove("filled");
+            circle.style.backgroundColor = "";
+            circle.style.borderColor = "";
+            if (span) {
+                span.textContent = "";
+            }
+        }
+    });
+    
+    // Fix ranking numbers to ensure they're in order
+    fixRanking();
+    
+    // Add debug logging
+    console.log("Initialized with selected sessions:", selected.length);
 });
 
 // add click event to each circle
@@ -38,6 +55,8 @@ function selectCircle(event) {
 
     // update ranking numbers
     fixRanking();
+    
+    console.log("Selected session. Total selected:", selected.length);
 }
 
 function deselectCircle(circle) {
@@ -56,6 +75,8 @@ function deselectCircle(circle) {
     }
 
     fixRanking();
+    
+    console.log("Deselected session. Total selected:", selected.length);
 }
 
 function fixRanking() {
@@ -76,14 +97,11 @@ function fixRanking() {
     });
 }
 
-// AFTER
+// Handle form submission
 const registerForm = document.getElementById("registerForm");
-if (registerForm) {
-    registerForm.addEventListener("submit", function(e) {
-        // populate email
-        const email = document.body.dataset.email;
-        document.getElementById("emailInput").value = email;
 
+if (registerForm) {
+    registerForm.addEventListener("submit", function (e) {
         const container = document.getElementById("sessionInputs");
         container.innerHTML = "";
 
@@ -93,14 +111,27 @@ if (registerForm) {
             return;
         }
 
-        selected.forEach(circle => {
+        selected.forEach((circle, index) => {
             const sessionDiv = circle.closest(".session");
-            const title = sessionDiv.querySelector("summary").textContent.trim();
-            const input = document.createElement("input");
-            input.type = "hidden";
-            input.name = "sessionName";
-            input.value = title;
-            container.appendChild(input);
+            const sessionId = sessionDiv.dataset.sessionId;
+            const rank = index + 1;
+
+            if (sessionId) {
+                const sessionInput = document.createElement("input");
+                sessionInput.type = "hidden";
+                sessionInput.name = "sessionIds";
+                sessionInput.value = sessionId;
+                container.appendChild(sessionInput);
+
+                const rankInput = document.createElement("input");
+                rankInput.type = "hidden";
+                rankInput.name = "rankings";
+                rankInput.value = rank;
+                container.appendChild(rankInput);
+            }
         });
     });
 }
+
+// Add debug info to see what's being submitted
+console.log("Breakout preferences JS loaded");

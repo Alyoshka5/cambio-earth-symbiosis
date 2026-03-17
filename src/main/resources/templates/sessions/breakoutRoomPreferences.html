@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/css/breakoutRoom.css">
     <script src="/js/breakout-room-preferences.js" defer></script>
 </head>
-<body data-email="[[${#request.userPrincipal.name}]]">
+<body>
     <header>
         <h1>Breakout Preferences</h1>
         <p>Rank the breakout sessions you're most excited for!</p>
@@ -19,36 +19,38 @@
         <p>No breakout sessions available yet.</p>
     </div>
 
-    <div th:each="s, stat : ${sessions}" class="session">
-        <div class="rank">
-            <span th:text="${stat.count}"></span>
-        </div>
-        <div class="session-content">
-            <details>
-                <summary th:text="'Breakout ' + ${stat.count} + ' – ' + ${s.title}"></summary>
-                <p th:text="${s.description}"></p>
-                <p><strong>Location:</strong> <span th:text="${s.location}"></span></p>
-                <p><strong>Time:</strong> <span th:text="${s.timeRange}"></span></p>
-                <p><strong>Speakers:</strong> <span th:text="${s.speakersString}"></span></p>
-            </details>
-        </div>
-    </div>
-
-    <div class="buttons">
-    <form id="logoutForm" th:action="@{/auth/logout}" method="post">
-        <button type="submit" class="btn btn-secondary">Log Out</button>
-    </form>
-    
-    <a th:if="${isAdmin}" href="/sessions/schedule" class="btn btn-secondary">
-        Manage Sessions
-    </a>
+    <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
 
     <form id="registerForm" th:action="@{/sessions/register}" method="post">
-        <input type="hidden" name="email" id="emailInput">
+        <div th:each="s, stat : ${sessions}" class="session" th:attr="data-session-id=${s.id}">
+            <div class="rank" th:classappend="${selectedSessionIds.contains(s.id)} ? 'filled' : ''">
+                <span th:if="${selectedSessionIds.contains(s.id)}" th:text="${selectedSessionIds.indexOf(s.id) + 1}"></span>
+                <span th:unless="${selectedSessionIds.contains(s.id)}"></span>
+            </div>
+            <div class="session-content">
+                <details>
+                    <summary th:text="'Breakout ' + ${stat.count} + ' – ' + ${s.title}"></summary>
+                    <p th:text="${s.description}"></p>
+                    <p><strong>Location:</strong> <span th:text="${s.location}"></span></p>
+                    <p><strong>Time:</strong> <span th:text="${s.timeRange}"></span></p>
+                    <p><strong>Speakers:</strong> <span th:text="${s.speakersString}"></span></p>
+                </details>
+            </div>
+        </div>
+
         <div id="sessionInputs"></div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        
+        <div class="buttons">
+            <form id="logoutForm" th:action="@{/auth/logout}" method="post" style="display: inline;">
+                <button type="submit" class="btn btn-secondary">Log Out</button>
+            </form>
+            
+            <a th:if="${isAdmin}" href="/sessions/schedule" class="btn btn-secondary">
+                Manage Sessions
+            </a>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
     </form>
-</div>
-</div>
 </body>
 </html>
