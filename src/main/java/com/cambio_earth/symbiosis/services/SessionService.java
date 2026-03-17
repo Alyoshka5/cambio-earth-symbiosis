@@ -18,12 +18,16 @@ import com.cambio_earth.symbiosis.models.Role;
 import com.cambio_earth.symbiosis.models.Session;
 import com.cambio_earth.symbiosis.models.SessionRepository;
 import com.cambio_earth.symbiosis.models.User;
+import com.cambio_earth.symbiosis.models.UserRepository;
 
 @Service
 public class SessionService {
 
     @Autowired
     ParticipationRepository participationRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @Autowired
     private SessionRepository sessionRepository;
@@ -73,5 +77,16 @@ public class SessionService {
 
     public List<Session> getBreakoutSessions() {
         return sessionRepository.findByIsBreakoutTrue();
+    }
+
+    public void registerUsersForMandatorySessions() {
+        List<Session> mandatorySessions = sessionRepository.findByIsBreakoutFalse();
+        Iterable<User> users = userRepository.findAll();
+        for (User user : users) {
+            for (Session session : mandatorySessions) {
+                Participation participation = new Participation(user, session);
+                participationRepository.save(participation);
+            }
+        }
     }
 }

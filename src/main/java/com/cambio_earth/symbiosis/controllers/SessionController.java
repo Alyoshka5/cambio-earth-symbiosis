@@ -184,4 +184,11 @@ public class SessionController {
         }
         return null;
     }
+
+    @PostMapping("/launch")
+    public String launchEvent() {
+        sessionService.registerUsersForMandatorySessions();
+
+        return "redirect:/sessions/schedule";
+    }
 }
