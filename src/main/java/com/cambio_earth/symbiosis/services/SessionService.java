@@ -4,14 +4,18 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cambio_earth.symbiosis.models.BreakoutBlockRanking;
+import com.cambio_earth.symbiosis.models.BreakoutBlockRankingRepository;
 import com.cambio_earth.symbiosis.models.Participation;
 import com.cambio_earth.symbiosis.models.ParticipationRepository;
 import com.cambio_earth.symbiosis.models.Role;
@@ -28,6 +32,10 @@ public class SessionService {
 
     @Autowired
     UserRepository userRepository;
+    
+    @Autowired
+    BreakoutBlockRankingRepository rankingRepository;
+        
 
     @Autowired
     private SessionRepository sessionRepository;
@@ -86,6 +94,71 @@ public class SessionService {
             for (Session session : mandatorySessions) {
                 Participation participation = new Participation(user, session);
                 participationRepository.save(participation);
+            }
+        }
+    }
+
+    public void registerUsersForBreakoutSessions() {
+        List<User> users = userRepository.findAll();
+
+        List<Participation> participations = participationRepository.findAll();
+
+        List<BreakoutBlockRanking> rankings = rankingRepository.findAll();
+        rankings.sort(Comparator.comparing(BreakoutBlockRanking::getRank)); // Sort rankings so higher ranks are found first
+        
+        // Group sessions by the dateStartTime property
+        List<Session> breakoutSessions = getBreakoutSessions();
+        List<List<Session>> groupedBreakoutSessions = breakoutSessions.stream()
+            .collect(Collectors.groupingBy(Session::getStartDateTime))
+            .values()
+            .stream()
+            .collect(Collectors.toList());
+
+        // Calculate how many users are already registered for each sessions (should be 0 but could have been manually added)
+        Map<Session, Integer> sessionParticipationCounts = new HashMap<>();
+        for (Session breakoutSession : breakoutSessions) {
+            Integer sessionParticipationCount = participations.stream().filter(participation -> participation.getSession().getId().equals(breakoutSession.getId())).toList().size();
+            sessionParticipationCounts.put(breakoutSession, sessionParticipationCount);
+        }
+
+        for (List<Session> currentBreakoutSessions : groupedBreakoutSessions) {
+            Collections.shuffle(users); // Shuffle users to distribute priority fairly
+            for (User user : users) {
+                // Find the user's rankings
+                List<BreakoutBlockRanking> userRankings = rankings.stream().filter(ranking -> ranking.getUser().getId().equals(user.getId()) && currentBreakoutSessions.contains(ranking.getSession())).toList();
+                boolean userRegistered = false;
+
+                // Register user based on ranking
+                for (BreakoutBlockRanking ranking : userRankings) {
+                    Integer sessionParticipationCount = sessionParticipationCounts.get(ranking.getSession());
+                    if (sessionParticipationCount < ranking.getSession().getCapacity()) {
+                        Participation participation = new Participation(user, ranking.getSession());
+                        participationRepository.save(participation);
+                        sessionParticipationCounts.put(ranking.getSession(), sessionParticipationCount + 1);
+                        userRegistered = true;
+                        break;
+                    }
+                }
+
+                // Register user to least participated-in breakout session
+                if (!userRegistered) {
+                    Session leastParticipatedSession = currentBreakoutSessions.get(0);
+                    double minParticipationRatio = (double) sessionParticipationCounts.get(leastParticipatedSession) / leastParticipatedSession.getCapacity();
+                    for (Session session: currentBreakoutSessions) {
+                        double sessionParticipationRatio = (double) sessionParticipationCounts.get(session) / session.getCapacity();
+                        if (sessionParticipationRatio < minParticipationRatio) {
+                            leastParticipatedSession = session;
+                            minParticipationRatio = sessionParticipationRatio;
+                        }
+                    }
+                    if (sessionParticipationCounts.get(leastParticipatedSession) < leastParticipatedSession.getCapacity()) { // If false, then all sessions are at full capacity
+                        Participation participation = new Participation(user, leastParticipatedSession);
+                        participationRepository.save(participation);
+                        sessionParticipationCounts.put(leastParticipatedSession, sessionParticipationCounts.get(leastParticipatedSession) + 1);
+                    } else {
+                        break; // Go to next group of breakout sessions since all current sessions are at full capacity
+                    }
+                }
             }
         }
     }

@@ -200,6 +200,7 @@ public class SessionController {
     @PostMapping("/launch")
     public String launchEvent() {
         sessionService.registerUsersForMandatorySessions();
+        sessionService.registerUsersForBreakoutSessions();
 
         return "redirect:/sessions/schedule";
     }
