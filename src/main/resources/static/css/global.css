@@ -261,6 +261,10 @@ input:focus {
     padding-top: 0;
 }
 
+#modal form {
+    width: fit-content;
+}
+
 #modal .btn-primary {
     background: var(--accent);
     color: var(--bark);
