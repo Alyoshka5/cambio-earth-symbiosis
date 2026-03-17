@@ -99,8 +99,9 @@ function fixRanking() {
 
 // Handle form submission
 const registerForm = document.getElementById("registerForm");
+
 if (registerForm) {
-    registerForm.addEventListener("submit", function(e) {
+    registerForm.addEventListener("submit", function (e) {
         const container = document.getElementById("sessionInputs");
         container.innerHTML = "";
 
@@ -110,31 +111,25 @@ if (registerForm) {
             return;
         }
 
-        // Sort selected circles by their rank number
-        const sortedSelected = [...selected].sort((a, b) => {
-            const aSpan = a.querySelector("span");
-            const bSpan = b.querySelector("span");
-            return parseInt(aSpan.textContent) - parseInt(bSpan.textContent);
-        });
-
-        sortedSelected.forEach(circle => {
+        selected.forEach((circle, index) => {
             const sessionDiv = circle.closest(".session");
             const sessionId = sessionDiv.dataset.sessionId;
-            
+            const rank = index + 1;
+
             if (sessionId) {
-                // Create hidden input for session ID
-                const input = document.createElement("input");
-                input.type = "hidden";
-                input.name = "sessionIds";
-                input.value = sessionId;
-                container.appendChild(input);
-                console.log("Adding session ID to form:", sessionId);
-            } else {
-                console.error("No session ID found for circle:", circle);
+                const sessionInput = document.createElement("input");
+                sessionInput.type = "hidden";
+                sessionInput.name = "sessionIds";
+                sessionInput.value = sessionId;
+                container.appendChild(sessionInput);
+
+                const rankInput = document.createElement("input");
+                rankInput.type = "hidden";
+                rankInput.name = "rankings";
+                rankInput.value = rank;
+                container.appendChild(rankInput);
             }
         });
-        
-        console.log("Submitting form with", selected.length, "sessions");
     });
 }
 

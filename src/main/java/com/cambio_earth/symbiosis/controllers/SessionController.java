@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.cambio_earth.symbiosis.models.BreakoutBlockRanking;
+import com.cambio_earth.symbiosis.models.BreakoutBlockRankingRepository;
 import com.cambio_earth.symbiosis.models.Participation;
 import com.cambio_earth.symbiosis.models.ParticipationRepository;
 import com.cambio_earth.symbiosis.models.Role;
@@ -35,6 +37,9 @@ public class SessionController {
     
     @Autowired
     private SessionRepository sessionRepository;
+
+    @Autowired
+    private BreakoutBlockRankingRepository breakoutBlockRankingRepository;
     
     @Autowired
     private ParticipationRepository participationRepository;
@@ -56,10 +61,10 @@ public class SessionController {
         List<Session> breakoutSessions = sessionService.getBreakoutSessions();
         
         // Get user's existing participations to pre-select their ranked sessions
-        List<Participation> userParticipations = participationRepository.findByUserId(user.getId());
+        List<BreakoutBlockRanking> userRankings = breakoutBlockRankingRepository.findByUser(user);
         List<Long> selectedSessionIds = new ArrayList<>();
-        for (Participation participation : userParticipations) {
-            selectedSessionIds.add(participation.getSession().getId());
+        for (BreakoutBlockRanking ranking : userRankings) {
+            selectedSessionIds.add(ranking.getSession().getId());
         }
         
         model.addAttribute("sessions", breakoutSessions);
@@ -73,9 +78,9 @@ public class SessionController {
     @PostMapping("/sessions/register")
     public String registerUser(
             @RequestParam(required = false) List<Long> sessionIds,
+            @RequestParam(required = false) List<Integer> rankings,
             HttpServletRequest request,
-            RedirectAttributes redirectAttributes
-    ) {
+            RedirectAttributes redirectAttributes) {
         // Get user from JWT token in cookie
         User user = getUserFromRequest(request);
         if (user == null) {
@@ -87,18 +92,25 @@ public class SessionController {
             return "redirect:/breakout";
         }
 
+        if (rankings == null || rankings.isEmpty() || rankings.size() != sessionIds.size()) {
+            redirectAttributes.addFlashAttribute("error", "Invalid breakout rankings submitted.");
+            return "redirect:/breakout";
+        }
+
         try {
             // First, remove any existing participations for this user
-            List<Participation> existingParticipations = participationRepository.findByUserId(user.getId());
-            participationRepository.deleteAll(existingParticipations);
-            
-            // Add new participations for selected sessions
-            for (Long sessionId : sessionIds) {
+            List<BreakoutBlockRanking> existingRankings = breakoutBlockRankingRepository.findByUser(user);
+            breakoutBlockRankingRepository.deleteAll(existingRankings);
+
+            for (int i = 0; i < sessionIds.size(); i++) {
+                Long sessionId = sessionIds.get(i);
+                Integer rank = rankings.get(i);
+
                 Optional<Session> sessionOpt = sessionRepository.findById(sessionId);
                 if (sessionOpt.isPresent()) {
                     Session session = sessionOpt.get();
-                    Participation participation = new Participation(user, session);
-                    participationRepository.save(participation);
+                    BreakoutBlockRanking breakoutRanking = new BreakoutBlockRanking(user, session, rank);
+                    breakoutBlockRankingRepository.save(breakoutRanking);
                 }
             }
             
