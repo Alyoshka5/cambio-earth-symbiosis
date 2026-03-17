@@ -48,6 +48,8 @@ public class Session implements Comparable<Session> {
 
     private boolean isBreakout;
 
+    private Integer capacity;
+
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Participation> participations = new HashSet<>();
 
@@ -59,7 +61,8 @@ public class Session implements Comparable<Session> {
 
     public Session(
             @NotBlank(message = "Title is required") @Size(min = 1, max = 150, message = "Title must be between 1 and 150 characters") String title,
-            String location, LocalDateTime startDateTime, LocalDateTime endDateTime, String description, List<String> speakers, boolean isBreakout) {
+            String location, LocalDateTime startDateTime, LocalDateTime endDateTime, String description, List<String> speakers, boolean isBreakout, Integer capacity
+        ) {
         this.title = title;
         this.location = location;
         this.startDateTime = startDateTime;
@@ -67,6 +70,7 @@ public class Session implements Comparable<Session> {
         this.description = description;
         this.speakers = speakers;
         this.isBreakout = isBreakout;
+        this.capacity = capacity;
     }
 
     public Session(@NotBlank(message = "Title is required") @Size(min = 1, max = 150, message = "Title must be between 1 and 150 characters") String title, boolean isBreakout) {
@@ -127,6 +131,14 @@ public class Session implements Comparable<Session> {
 
     public void setBreakout(boolean isBreakout) {
         this.isBreakout = isBreakout;
+    }
+
+    public Integer getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(Integer capacity) {
+        this.capacity = capacity;
     }
 
     public Set<Participation> getParticipations() {
