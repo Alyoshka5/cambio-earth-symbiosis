@@ -26,7 +26,6 @@ import com.cambio_earth.symbiosis.models.SessionRepository;
 import com.cambio_earth.symbiosis.models.User;
 import com.cambio_earth.symbiosis.models.UserRepository;
 
-
 @Controller
 public class AdminSessionController {
 
@@ -39,12 +38,15 @@ public class AdminSessionController {
     @Autowired
     ParticipationRepository participationRepository;
 
-    // AdminSessionForm.html 
-
     // Show blank form (create new)
     @GetMapping("/admin/sessions/new")
     public String getNewSessionForm(Model model) {
         model.addAttribute("eventSession", new Session());
+
+        // Navigation bar control 
+        model.addAttribute("showSidebar", true);
+        model.addAttribute("currentPage", "schedule");
+
         return "sessions/adminSessionForm";
     }
 
@@ -53,6 +55,10 @@ public class AdminSessionController {
     public String getEditSessionForm(@PathVariable Long id, Model model) {
         Session session = sessionRepository.findById(id).orElseThrow();
         model.addAttribute("eventSession", session);
+
+        model.addAttribute("showSidebar", true);
+        model.addAttribute("currentPage", "schedule");
+
         return "sessions/adminSessionForm";
     }
 
@@ -65,10 +71,12 @@ public class AdminSessionController {
             @RequestParam(required = false) String endTime,
             @RequestParam(required = false) String speakersRaw
         ) {
+
         Session session;
-        if (formSessionData.getId() == null) { // Creating new session
+
+        if (formSessionData.getId() == null) {
             session = new Session();
-        } else { // Updating existing session
+        } else {
             Optional<Session> optionalSession = sessionRepository.findById(formSessionData.getId());
             if (optionalSession.isPresent()) {
                 session = optionalSession.get();
@@ -85,7 +93,6 @@ public class AdminSessionController {
         }
 
         session.setDescription(formSessionData.getDescription());
-
         session.setLocation(formSessionData.getLocation());
 
         if (speakersRaw != null && !speakersRaw.isBlank()) {
@@ -112,19 +119,22 @@ public class AdminSessionController {
         return "redirect:/sessions/" + session.getId();
     }
 
-    // AddDetails.html
-
     // Show session detail page
     @GetMapping("/sessions/{id}")
     public String getSessionDetails(@PathVariable Long id, Model model, @AuthenticationPrincipal User currentUser) {
         Session session = sessionRepository.findById(id).orElseThrow();
         model.addAttribute("eventSession", session);
 
-        // Add an attribute for checking if the current logged in user is an admin
         boolean isAdmin = currentUser != null && currentUser.getRole() == Role.ADMIN;
         model.addAttribute("isAdmin", isAdmin);
-        System.out.println(">>> currentUser is: " + currentUser);
-        System.out.println(">>> session title is: " + session.getTitle());
+
+        // Navigation bar control (only show for admin)
+        if (isAdmin) {
+            model.addAttribute("showSidebar", true);
+            model.addAttribute("currentPage", "schedule");
+        } else {
+            model.addAttribute("showSidebar", false);
+        }
 
         return "sessions/sessionDetails";
     }
@@ -134,20 +144,17 @@ public class AdminSessionController {
     public String removeUserFromSession(@PathVariable Long uid, @PathVariable Long sid, RedirectAttributes redirectAttributes) {
         
         try {
-            // Get the session and user object
             Session session = sessionRepository.findById(sid).orElseThrow();
             User user = userRepository.findById(uid).orElseThrow();
             
-            // Find the session the desired user is in within the participation table
             Optional<Participation> participation = participationRepository.findFirstBySessionAndUser(session, user);
 
-            // Delete the session the user is in if found in the participations table
             if (participation.isPresent()) {
                 participationRepository.delete(participation.get());
             }
+
         } catch (Exception err) {
             redirectAttributes.addFlashAttribute("err", "Could not remove user from the session: " + err.getMessage());
-            System.out.println(">>> Could not remove user from the session" + err.getMessage());
         }
         
         return "redirect:/sessions/" + sid;
@@ -155,7 +162,7 @@ public class AdminSessionController {
 
     // Delete (admin only)
     @PostMapping("/admin/sessions/{id}/delete")
-    public String deleteSession(@PathVariable Long id) {
+    public String deleteSession(@PathVariable("id") Long id) {
         sessionRepository.deleteById(id);
         return "redirect:/sessions/schedule";
     }
