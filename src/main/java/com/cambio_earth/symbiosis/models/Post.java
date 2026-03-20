@@ -29,6 +29,15 @@ public class Post {
         img = imgInput;
         title = titleInput;
         caption = captionInput;
+        createdAt = LocalDateTime.now();
+    }
+
+    public Post(User userInput, String imgInput, String titleInput, String captionInput) {
+        user = userInput;
+        img = imgInput;
+        title = titleInput;
+        caption = captionInput;
+        createdAt = LocalDateTime.now();
     }
 
     // Getters
