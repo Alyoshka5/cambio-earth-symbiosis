@@ -71,7 +71,9 @@ function toggleBreakout() {
 function syncBreakoutWrapper() {
     const cb = document.getElementById('isBreakout');
     const wrapper = document.getElementById('breakoutWrapper');
+    const capacityField = document.getElementById('capacityField');
     wrapper.classList.toggle('active', cb.checked);
+    capacityField.style.display = cb.checked ? 'block' : 'none';
 }
 
 syncBreakoutWrapper();

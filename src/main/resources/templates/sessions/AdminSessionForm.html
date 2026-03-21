@@ -111,6 +111,19 @@
                     </div>
                 </div>
 
+                <div class="mb-3" id="capacityField" style="display:none">
+                    <label class="form-label" for="capacity">Capacity</label>
+                    <input
+                        type="number"
+                        id="capacity"
+                        name="capacity"
+                        th:field="*{capacity}"
+                        class="form-control"
+                        placeholder="e.g. 30"
+                        min="1"
+                    >
+                </div>
+
                 <div class="section-label">Speakers</div>
 
                 <div class="speaker-list" id="speakerList" th:data-existing-speakers="*{#strings.listJoin(speakers, ',')}">
