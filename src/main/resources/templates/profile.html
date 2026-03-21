@@ -18,12 +18,22 @@
     </nav>
 
     <main>
+        <!-- User info and logout -->
         <section>
             <h1 th:text="${user.firstName} + ' ' + ${user.lastName}">profile</h1>
             <h2 th:text="${user.email}"></h2>
             <form action="/auth/logout" method="post">
                 <button class="btn-secondary logout">Log Out</button>
             </form>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- Posts -->
+        <section class="container-fluid">
+            <div class="row">
+                <img th:each="post: ${posts}" th:src="${post.img}" alt="User post" class="post col-4">
+            </div>
         </section>
     </main>
 

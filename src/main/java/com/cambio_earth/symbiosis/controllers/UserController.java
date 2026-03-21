@@ -159,6 +159,7 @@ public class UserController {
         }
 
         model.addAttribute("user", user);
+        model.addAttribute("posts", user.getPosts());
 
         return "profile";
     }

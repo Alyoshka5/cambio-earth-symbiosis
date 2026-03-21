@@ -114,6 +114,10 @@ public class User implements UserDetails {
     public List<BreakoutBlockRanking> getSessionRankings() { return sessionRankings; }
     public void setSessionRankings(List<BreakoutBlockRanking> sessionRankings) { this.sessionRankings = sessionRankings; }
 
+    public List<Post> getPosts() { return posts; }
+    public void setPosts(List<Post> posts) { this.posts = posts; }
+
+
     // Authentication
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
