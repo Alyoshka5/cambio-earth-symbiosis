@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,6 +13,9 @@
 <body>
     <nav class="topbar">
         <a href="#" class="topbar-brand">Symbiosis</a>
+        <a th:if="${isAdmin}" href="/admin/event" class="topbar-link">
+            Event Settings
+        </a>
         <a th:if="${isAdmin}" href="#" class="topbar-link" data-bs-toggle="modal" data-bs-target="#modal">
             Launch Event
         </a>
@@ -77,7 +80,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <form action="/launch" method="post">
+                        <form action="/admin/event/launch" method="post">
                             <button type="submit" class="btn btn-primary">Launch</button>
                         </form>
                     </div>
