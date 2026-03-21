@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <title>Edit Map</title>
+    <!-- same <style> block as addMap.html -->
+    <style>
+        :root {
+            --forest-mid:   #3a4f42;
+            --bark:         #1a2420;
+            --sage:         #a8c5a0;
+            --cream:        #f0ede6;
+            --white:        #ffffff;
+            --accent:       #c8d96e;
+            --danger:       #e07070;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background-color: var(--bark);
+            background-image:
+                radial-gradient(ellipse 80% 60% at 50% 0%, rgba(107,143,113,0.18) 0%, transparent 70%),
+                repeating-linear-gradient(
+                    0deg, transparent, transparent 60px,
+                    rgba(255,255,255,0.015) 60px, rgba(255,255,255,0.015) 61px
+                );
+            color: var(--cream);
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            margin: 0; padding: 0;
+        }
+
+        main { max-width: 560px; margin: 0 auto; padding: 48px 24px 80px; }
+
+        .page-header { margin-bottom: 40px; }
+
+        .page-header h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 3rem;
+            color: var(--white);
+            margin: 0;
+            position: relative;
+            padding-bottom: 16px;
+        }
+
+        .page-header h1::after {
+            content: '';
+            display: block;
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 48px; height: 2px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        .form-card {
+            background: rgba(58,79,66,0.35);
+            border: 1px solid rgba(168,197,160,0.14);
+            border-radius: 16px;
+            padding: 32px;
+            backdrop-filter: blur(6px);
+        }
+
+        .form-group { margin-bottom: 24px; }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--sage);
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        input[type="file"] {
+            width: 100%;
+            background: rgba(26,36,32,0.6);
+            border: 1px solid rgba(168,197,160,0.2);
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: var(--white);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus,
+        input[type="file"]:focus { border-color: rgba(200,217,110,0.5); }
+
+        .field-hint { font-size: 0.78rem; color: var(--sage); opacity: 0.65; margin-top: 6px; }
+
+        .current-file {
+            font-size: 0.82rem;
+            color: var(--sage);
+            margin-top: 6px;
+            opacity: 0.8;
+        }
+
+        .form-actions { display: flex; gap: 12px; margin-top: 8px; }
+
+        .btn-accent {
+            background: var(--accent);
+            color: var(--bark);
+            border: none;
+            border-radius: 10px;
+            padding: 11px 28px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.15s;
+        }
+
+        .btn-accent:hover { opacity: 0.88; transform: translateY(-1px); }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--sage);
+            border: 1px solid rgba(168,197,160,0.25);
+            border-radius: 10px;
+            padding: 11px 24px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .btn-ghost:hover { border-color: rgba(168,197,160,0.5); color: var(--white); }
+
+        .flash-error {
+            background: rgba(224,112,112,0.1);
+            border: 1px solid rgba(224,112,112,0.3);
+            color: var(--danger);
+            border-radius: 12px;
+            padding: 14px 20px;
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+    </style>
+</head>
+<body>
+<main>
+    <div class="page-header">
+        <h1>Edit Map</h1>
+    </div>
+
+    <div th:if="${error}" class="flash-error" th:text="${error}"></div>
+
+    <div class="form-card">
+        <form th:action="@{'/maps/' + ${map.id} + '/edit'}" method="post" enctype="multipart/form-data">
+
+            <div class="form-group">
+                <label for="file">Replace Map File</label>
+                <input type="file" id="file" name="file" accept=".pdf,.jpg,.jpeg,.png">
+                <p class="field-hint">Leave empty to keep the current file. Accepted: PDF, JPEG, PNG</p>
+                <p class="current-file">
+                    Current: <span th:text="${map.fileType}">image/jpeg</span>
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label for="title">Map Title</label>
+                <input type="text" id="title" name="title"
+                       th:value="${map.title}"
+                       placeholder="e.g. Conference Centre Overview">
+            </div>
+
+            <div class="form-group">
+                <label for="floorLevel">Floor Level</label>
+                <input type="text" id="floorLevel" name="floorLevel"
+                       th:value="${map.floorLevel}"
+                       placeholder="e.g. Floor 3, Main Lobby">
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-accent">Save Changes</button>
+                <a th:href="@{/maps}" class="btn-ghost">Cancel</a>
+            </div>
+
+        </form>
+    </div>
+</main>
+</body>
+</html>
