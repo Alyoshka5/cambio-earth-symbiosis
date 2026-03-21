@@ -9,6 +9,9 @@
     --white:      #ffffff;
     --accent:     #c8d96e; /* lichen yellow-green */
     --danger:     #e07070;
+    
+    /* Sidebar width for consistent spacing */
+    --sidebar-width: 250px;
 }
 
 * { box-sizing: border-box; }
@@ -31,6 +34,15 @@ body {
     margin: 0;
 }
 
+/* MAIN CONTENT WRAPPER - This is key for proper sidebar offset */
+.page-content {
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
 /* ── Top bar ── */
 .admin-topbar {
     background: rgba(26, 36, 32, 0.95);
@@ -43,6 +55,7 @@ body {
     top: 0;
     z-index: 100;
     backdrop-filter: blur(8px);
+    width: 100%;
 }
 
 .topbar-brand {
@@ -69,6 +82,7 @@ body {
     max-width: 760px;
     margin: 0 auto;
     padding: 48px 24px 80px;
+    width: 100%;
 }
 
 /* ── Page header ── */
@@ -395,4 +409,26 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     border-color: rgba(168,197,160,0.5);
     color: var(--white);
 }
+
 #speakersHidden { display: none; }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .page-content {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .admin-topbar {
+        padding: 14px 20px;
+    }
+    
+    .form-card {
+        padding: 24px;
+    }
+    
+    .datetime-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+}
