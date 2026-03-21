@@ -16,19 +16,23 @@ import com.cambio_earth.symbiosis.models.User;
 import com.cambio_earth.symbiosis.models.UserRepository;
 
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class AuthenticationService {
     private final UserRepository userRepository;
+    private JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;
 
-    public AuthenticationService(UserRepository userRepository, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, EmailService emailService) {
+    public AuthenticationService(UserRepository userRepository, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, EmailService emailService, JwtService jwtService) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
+        this.jwtService = jwtService;
     }
 
     public User signup(RegisterUserDto input) {
@@ -120,5 +124,28 @@ public class AuthenticationService {
         Random random = new Random();
         int code = random.nextInt(900000) + 100000;
         return String.valueOf(code);
+    }
+
+    // Helper method to extract user from JWT cookie
+    public User getUserFromRequest(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("jwt-token".equals(cookie.getName())) {
+                    String token = cookie.getValue();
+                    try {
+                        String username = jwtService.extractUsername(token);
+                        Optional<User> userOpt = userRepository.findByEmail(username);
+                        if (userOpt.isPresent() && jwtService.isTokenValid(token, userOpt.get())) {
+                            return userOpt.get();
+                        }
+                    } catch (Exception e) {
+                        // Token invalid or expired
+                        return null;
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

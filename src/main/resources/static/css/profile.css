@@ -1,0 +1,107 @@
+body {
+    background-color: var(--bark);
+    background-image:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(107,143,113,0.18) 0%, transparent 70%),
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 60px,
+            rgba(255,255,255,0.015) 60px,
+            rgba(255,255,255,0.015) 61px
+        );
+    min-height: 100vh;
+}
+
+/* ── Page layout ── */
+main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+}
+
+.divider {
+    height: 1px;
+    background-color: var(--accent);
+    margin: 20px 0;
+}
+
+/* -- Headers -- */
+h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 3rem;
+}
+
+h2 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.25rem;
+    opacity: 0.75;
+    margin-bottom: 20px;
+}
+
+/* -- Buttons -- */
+.btn-secondary {
+    background: transparent;
+    color: var(--sage);
+    border: 1px solid rgba(168,197,160,0.25);
+    border-radius: 10px;
+    padding: 11px 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: border-color 0.2s, color 0.2s;
+}
+
+.btn-secondary:hover {
+    border-color: rgba(168,197,160,0.5);
+    color: var(--white);
+}
+
+.logout {
+    padding: 11px 40px;
+}
+
+/* -- Posts -- */
+.post {
+    object-fit: cover;
+    aspect-ratio: 1;
+    padding: 5px;
+    border-radius: 10px;
+    transition: 0.1s ease-in-out;
+}
+
+.post:hover {
+    cursor: pointer;
+    filter: brightness(0.8);
+}
+
+/* -- Post modal -- */
+#modal-caption {
+    margin: 5px 0;
+}
+
+#modal-created-at {
+    font-size: 0.9rem;
+    opacity: 0.75;
+}
+
+#modal-like-container {
+    display: flex;
+    gap: 5px;
+    margin-top: 5px;
+}
+
+#modal-like-icon {
+    width: 24px;
+}
+
+#modal-like-icon:hover {
+    cursor: pointer;
+}
+
+.white-filter {
+    filter: brightness(0) invert();
+}

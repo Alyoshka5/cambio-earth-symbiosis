@@ -8,13 +8,23 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cambio_earth.symbiosis.models.Post;
 import com.cambio_earth.symbiosis.models.PostRepository;
 import com.cambio_earth.symbiosis.models.User;
 import com.cambio_earth.symbiosis.models.UserRepository;
+
+import org.springframework.web.bind.annotation.RequestBody;
+
+import com.cambio_earth.symbiosis.services.AuthenticationService;
+import com.cambio_earth.symbiosis.services.PostService;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 
 
 
@@ -26,6 +36,12 @@ public class PostController {
 
     @Autowired
     PostRepository postRepository;
+
+    @Autowired
+    PostService postService;
+
+    @Autowired
+    AuthenticationService authenticationService;
 
     // Load the add post details form page
     @GetMapping("posts/form")
@@ -86,6 +102,15 @@ public class PostController {
         Post newPost = new Post(currentUser, newImg, newTitle, newCaption);
         postRepository.save(newPost);
         return "redirect:/home";
+    }
+    
+    
+    @PostMapping("/posts/{postId}/like")
+    @ResponseBody
+    public void likePost(HttpServletRequest request, @PathVariable Long postId) {
+        User user = authenticationService.getUserFromRequest(request);
+
+        postService.toggleLike(postId, user.getId());
     }
     
 }
