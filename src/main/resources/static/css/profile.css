@@ -70,4 +70,38 @@ h2 {
     aspect-ratio: 1;
     padding: 5px;
     border-radius: 10px;
+    transition: 0.1s ease-in-out;
+}
+
+.post:hover {
+    cursor: pointer;
+    filter: brightness(0.8);
+}
+
+/* -- Post modal -- */
+#modal-caption {
+    margin: 5px 0;
+}
+
+#modal-created-at {
+    font-size: 0.9rem;
+    opacity: 0.75;
+}
+
+#modal-like-container {
+    display: flex;
+    gap: 5px;
+    margin-top: 5px;
+}
+
+#modal-like-icon {
+    width: 24px;
+}
+
+#modal-like-icon:hover {
+    cursor: pointer;
+}
+
+.white-filter {
+    filter: brightness(0) invert();
 }

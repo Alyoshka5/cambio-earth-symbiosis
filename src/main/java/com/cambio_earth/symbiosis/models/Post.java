@@ -1,8 +1,19 @@
 package com.cambio_earth.symbiosis.models;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
+import java.util.Set;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name="posts")
@@ -21,6 +32,14 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @ManyToMany
+    @JoinTable(
+        name = "post_likes",
+        joinColumns = @JoinColumn(name = "post_id"),
+        inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private Set<User> likedBy = new HashSet<>();
 
     // Constructors
     public Post() {}
@@ -73,6 +92,10 @@ public class Post {
         return this.user;
     }
 
+    public Set<User> getLikedBy() {
+        return this.likedBy;
+    }
+
     // Setters
     public void setId(Long id) {
         this.id = id;
@@ -104,5 +127,24 @@ public class Post {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public void setLikedBy(Set<User> likedBy) {
+        this.likedBy = likedBy;
+    }
+
+    // Helper methods
+    public String toJSON(User user) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mma, MMM dd");
+        String formattedCreatedAt = createdAt.format(formatter);
+        if (formattedCreatedAt.charAt(0) == '0') {
+            formattedCreatedAt = formattedCreatedAt.substring(1);
+        }
+        formattedCreatedAt = formattedCreatedAt.replaceAll("[.]", "");
+
+
+        String json = "{\"id\": %d, \"title\": \"%s\", \"caption\": \"%s\", \"img\": \"%s\", \"likes\": %d, \"createdAt\": \"%s\", \"liked\": %b}";
+
+        return String.format(json, id, title, caption, img, likes, formattedCreatedAt, likedBy.contains(user));
     }
 }

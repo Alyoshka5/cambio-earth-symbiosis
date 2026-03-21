@@ -1,5 +1,7 @@
 package com.cambio_earth.symbiosis.controllers;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.cambio_earth.symbiosis.dto.LoginUserDto;
 import com.cambio_earth.symbiosis.dto.RegisterUserDto;
 import com.cambio_earth.symbiosis.dto.VerifyUserDto;
+import com.cambio_earth.symbiosis.models.BreakoutBlockRanking;
+import com.cambio_earth.symbiosis.models.Post;
 import com.cambio_earth.symbiosis.models.User;
 import com.cambio_earth.symbiosis.models.UserRepository;
 import com.cambio_earth.symbiosis.services.AuthenticationService;
@@ -158,8 +162,11 @@ public class UserController {
             return "redirect:/auth/login";
         }
 
+        List<Post> userPosts = user.getPosts();
+        userPosts.sort(Comparator.comparing(Post::getCreatedAt));
+        
         model.addAttribute("user", user);
-        model.addAttribute("posts", user.getPosts());
+        model.addAttribute("posts", userPosts);
 
         return "profile";
     }
