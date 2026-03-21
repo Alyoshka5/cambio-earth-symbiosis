@@ -1,5 +1,7 @@
 package com.cambio_earth.symbiosis.controllers;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +15,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.cambio_earth.symbiosis.dto.LoginUserDto;
 import com.cambio_earth.symbiosis.dto.RegisterUserDto;
 import com.cambio_earth.symbiosis.dto.VerifyUserDto;
+import com.cambio_earth.symbiosis.models.BreakoutBlockRanking;
+import com.cambio_earth.symbiosis.models.Post;
 import com.cambio_earth.symbiosis.models.User;
 import com.cambio_earth.symbiosis.models.UserRepository;
 import com.cambio_earth.symbiosis.services.AuthenticationService;
 import com.cambio_earth.symbiosis.services.JwtService;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
@@ -149,4 +154,21 @@ public class UserController {
 
         return "redirect:/auth/login";
     }
+
+    @GetMapping("/profile")
+    public String getProfilePage(HttpServletRequest request, Model model) {
+        User user = authenticationService.getUserFromRequest(request);
+        if (user == null) {
+            return "redirect:/auth/login";
+        }
+
+        List<Post> userPosts = user.getPosts();
+        userPosts.sort(Comparator.comparing(Post::getCreatedAt));
+        
+        model.addAttribute("user", user);
+        model.addAttribute("posts", userPosts);
+
+        return "profile";
+    }
+    
 }

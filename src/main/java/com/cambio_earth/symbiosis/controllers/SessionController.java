@@ -22,11 +22,9 @@ import com.cambio_earth.symbiosis.models.Role;
 import com.cambio_earth.symbiosis.models.Session;
 import com.cambio_earth.symbiosis.models.SessionRepository;
 import com.cambio_earth.symbiosis.models.User;
-import com.cambio_earth.symbiosis.models.UserRepository;
-import com.cambio_earth.symbiosis.services.JwtService;
+import com.cambio_earth.symbiosis.services.AuthenticationService;
 import com.cambio_earth.symbiosis.services.SessionService;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
@@ -43,17 +41,15 @@ public class SessionController {
     
     @Autowired
     private ParticipationRepository participationRepository;
-    
+
     @Autowired
-    private UserRepository userRepository;
-    
-    @Autowired
-    private JwtService jwtService;
+    private AuthenticationService authenticationService;
+
 
     @GetMapping("/breakout")
     public String getBreakoutPreferencesPage(HttpServletRequest request, Model model) {
         // Get user from JWT token in cookie
-        User user = getUserFromRequest(request);
+        User user = authenticationService.getUserFromRequest(request);
         if (user == null) {
             return "redirect:/auth/login";
         }
@@ -82,7 +78,7 @@ public class SessionController {
             HttpServletRequest request,
             RedirectAttributes redirectAttributes) {
         // Get user from JWT token in cookie
-        User user = getUserFromRequest(request);
+        User user = authenticationService.getUserFromRequest(request);
         if (user == null) {
             return "redirect:/auth/login";
         }
@@ -124,7 +120,7 @@ public class SessionController {
 
     @GetMapping("/sessions/thankYou")
     public String getThankYouPage(HttpServletRequest request, Model model) {
-        User user = getUserFromRequest(request);
+        User user = authenticationService.getUserFromRequest(request);
         if (user == null) {
             return "redirect:/auth/login";
         }
@@ -139,7 +135,7 @@ public class SessionController {
             @RequestParam Long sessionId,
             HttpServletRequest request
     ) {
-        User user = getUserFromRequest(request);
+        User user = authenticationService.getUserFromRequest(request);
         if (user == null) {
             return "User not authenticated";
         }
@@ -162,7 +158,7 @@ public class SessionController {
 
     @GetMapping("/sessions/schedule")
     public String getSchedulePage(HttpServletRequest request, Model model) {
-        User user = getUserFromRequest(request);
+        User user = authenticationService.getUserFromRequest(request);
         if (user == null) {
             return "redirect:/auth/login";
         }
@@ -172,29 +168,6 @@ public class SessionController {
         model.addAttribute("isAdmin", user.getRole().equals(Role.ADMIN));
 
         return "sessions/eventSchedule";
-    }
-    
-    // Helper method to extract user from JWT cookie
-    private User getUserFromRequest(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("jwt-token".equals(cookie.getName())) {
-                    String token = cookie.getValue();
-                    try {
-                        String username = jwtService.extractUsername(token);
-                        Optional<User> userOpt = userRepository.findByEmail(username);
-                        if (userOpt.isPresent() && jwtService.isTokenValid(token, userOpt.get())) {
-                            return userOpt.get();
-                        }
-                    } catch (Exception e) {
-                        // Token invalid or expired
-                        return null;
-                    }
-                }
-            }
-        }
-        return null;
     }
 
     @PostMapping("/launch")
