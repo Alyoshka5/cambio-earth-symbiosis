@@ -50,7 +50,6 @@ public class SessionController {
     public String getBreakoutPreferencesPage(HttpServletRequest request, Model model) {
         // Get user from JWT token in cookie
         User user = authenticationService.getUserFromRequest(request);
-        System.out.println("NULLLLL\n\n");
         if (user == null) {
             return "redirect:/auth/login";
         }
