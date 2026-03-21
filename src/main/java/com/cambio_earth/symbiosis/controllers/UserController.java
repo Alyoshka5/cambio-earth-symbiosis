@@ -19,6 +19,7 @@ import com.cambio_earth.symbiosis.services.AuthenticationService;
 import com.cambio_earth.symbiosis.services.JwtService;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
@@ -149,4 +150,17 @@ public class UserController {
 
         return "redirect:/auth/login";
     }
+
+    @GetMapping("/profile")
+    public String getProfilePage(HttpServletRequest request, Model model) {
+        User user = authenticationService.getUserFromRequest(request);
+        if (user == null) {
+            return "redirect:/auth/login";
+        }
+
+        model.addAttribute("user", user);
+
+        return "profile";
+    }
+    
 }
