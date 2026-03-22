@@ -32,10 +32,8 @@ public class PostService {
 
             if (post.getLikedBy().contains(user)) {
                 post.getLikedBy().remove(user);
-                post.setLikes(post.getLikes() - 1);
             } else {
                 post.getLikedBy().add(user);
-                post.setLikes(post.getLikes() + 1);
             }
         }
     }

@@ -24,7 +24,6 @@ public class Post {
     private String img;
     private String title;
     private String caption;
-    private int likes;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -76,10 +75,6 @@ public class Post {
         return this.caption;
     }
 
-    public int getLikes() {
-        return this.likes;
-    }
-
     public LocalDateTime getCreatedAt() {
         return this.createdAt;
     }
@@ -111,10 +106,6 @@ public class Post {
 
     public void setCaption(String caption) {
         this.caption = caption;
-    }
-
-    public void setLikes(int likes) {
-        this.likes = likes;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {
