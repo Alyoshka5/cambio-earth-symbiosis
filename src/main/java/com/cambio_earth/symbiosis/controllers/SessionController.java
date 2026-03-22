@@ -177,4 +177,5 @@ public class SessionController {
 
         return "redirect:/sessions/schedule";
     }
+    
 }
