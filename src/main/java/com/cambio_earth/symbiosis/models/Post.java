@@ -145,6 +145,6 @@ public class Post {
 
         String json = "{\"id\": %d, \"title\": \"%s\", \"caption\": \"%s\", \"img\": \"%s\", \"likes\": %d, \"createdAt\": \"%s\", \"liked\": %b}";
 
-        return String.format(json, id, title, caption, img, likes, formattedCreatedAt, likedBy.contains(user));
+        return String.format(json, id, title, caption, img, likedBy.size(), formattedCreatedAt, likedBy.contains(user));
     }
 }
