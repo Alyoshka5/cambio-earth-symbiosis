@@ -174,7 +174,8 @@ public class UserController {
             model.addAttribute("currUserCanDeletePosts", true);
         }
         
-        model.addAttribute("user", profileOwner);
+        model.addAttribute("currentUser", currUser);
+        model.addAttribute("profileOwner", profileOwner);
         model.addAttribute("posts", userPosts);
 
         return "profile";
