@@ -24,7 +24,6 @@ public class Post {
     private String img;
     private String title;
     private String caption;
-    private int likes;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -76,10 +75,6 @@ public class Post {
         return this.caption;
     }
 
-    public int getLikes() {
-        return this.likes;
-    }
-
     public LocalDateTime getCreatedAt() {
         return this.createdAt;
     }
@@ -113,10 +108,6 @@ public class Post {
         this.caption = caption;
     }
 
-    public void setLikes(int likes) {
-        this.likes = likes;
-    }
-
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
@@ -145,6 +136,6 @@ public class Post {
 
         String json = "{\"id\": %d, \"title\": \"%s\", \"caption\": \"%s\", \"img\": \"%s\", \"likes\": %d, \"createdAt\": \"%s\", \"liked\": %b}";
 
-        return String.format(json, id, title, caption, img, likes, formattedCreatedAt, likedBy.contains(user));
+        return String.format(json, id, title, caption, img, likedBy.size(), formattedCreatedAt, likedBy.contains(user));
     }
 }
