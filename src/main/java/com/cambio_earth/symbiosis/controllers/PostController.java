@@ -19,9 +19,6 @@ import com.cambio_earth.symbiosis.models.Post;
 import com.cambio_earth.symbiosis.models.PostRepository;
 import com.cambio_earth.symbiosis.models.User;
 import com.cambio_earth.symbiosis.models.UserRepository;
-
-import org.springframework.web.bind.annotation.RequestBody;
-
 import com.cambio_earth.symbiosis.services.AuthenticationService;
 import com.cambio_earth.symbiosis.services.PostService;
 
@@ -145,6 +142,14 @@ public class PostController {
 
         redirectAttributes.addFlashAttribute("successful", "Post was deleted.");
         return "redirect:/profile/" + user.getId();
+    }
+
+    @GetMapping("/home")
+    public String showHomePage(Model model) {
+        List<Post> posts = postRepository.findAll(); // get all posts
+        model.addAttribute("posts", posts);
+
+        return "homePage"; // this loads homePage.html
     }
     
 }

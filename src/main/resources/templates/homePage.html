@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Symbiosis</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Global + sidebar theme -->
+    <link rel="stylesheet" href="/css/global.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+
+    <style>
+        body {
+            background-color: var(--bark);
+            background-image:
+                radial-gradient(ellipse 80% 60% at 50% 0%, rgba(107,143,113,0.18) 0%, transparent 70%),
+                repeating-linear-gradient(
+                    0deg, transparent, transparent 60px,
+                    rgba(255,255,255,0.015) 60px, rgba(255,255,255,0.015) 61px
+                );
+            color: var(--cream);
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            margin: 0; padding: 0;
+        }
+
+        .home-layout {
+            margin-left: 250px;
+            min-height: 100vh;
+            padding: 36px 40px;
+        }
+
+        .home-shell {
+            max-width: 780px;
+            margin: 0 auto;
+        }
+
+        .home-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+
+        .home-title-wrap h1 {
+            font-family: "DM Serif Display", serif;
+            font-size: 2.3rem;
+            color: var(--white);
+            margin: 0;
+            line-height: 1.1;
+        }
+
+        .home-title-wrap p {
+            color: var(--sage);
+            margin: 8px 0 0;
+            font-size: 0.98rem;
+        }
+
+        .participants-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: rgba(58, 79, 44, 0.5);
+            border: 1px solid rgba(168, 197, 160, 0.18);
+            text-decoration: none;
+            transition: 0.2s ease;
+        }
+
+        .participants-btn:hover {
+            background: rgba(58, 79, 44, 0.8);
+            transform: translateY(-2px);
+        }
+
+        .participants-icon {
+            font-size: 1.7rem;
+            line-height: 1;
+        }
+
+        .quick-post-card {
+            background: rgba(43, 57, 48, 0.96);
+            border: 1px solid rgba(168, 197, 160, 0.16);
+            border-radius: 18px;
+            padding: 18px 20px;
+            margin-bottom: 28px;
+        }
+
+        .quick-post-top {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .quick-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--forest-light), var(--forest));
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .quick-post-input {
+            flex: 1;
+            display: block;
+            text-decoration: none;
+            color: var(--sage);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 999px;
+            padding: 13px 18px;
+            transition: 0.2s ease;
+        }
+
+        .quick-post-input:hover {
+            border-color: rgba(168, 197, 160, 0.35);
+            color: var(--white);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .feed-list {
+            display: flex;
+            flex-direction: column;
+            gap: 26px;
+        }
+
+        .post-card {
+            background: rgba(43, 57, 48, 0.96);
+            border: 1px solid rgba(168, 197, 160, 0.14);
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+        }
+
+        .post-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 18px 18px 14px 18px;
+        }
+
+        .post-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .post-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--forest-light), var(--forest));
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .post-user-meta h3 {
+            margin: 0;
+            font-size: 1rem;
+            color: var(--white);
+            font-weight: 700;
+        }
+
+        .post-user-meta p {
+            margin: 3px 0 0;
+            color: var(--sage);
+            font-size: 0.85rem;
+        }
+
+        .post-menu {
+            color: var(--sage);
+            font-size: 1.4rem;
+            line-height: 1;
+            padding: 4px 8px;
+        }
+
+        .post-title {
+            padding: 0 18px;
+            margin: 0 0 8px 0;
+            color: var(--white);
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .post-caption {
+            padding: 0 18px 14px 18px;
+            color: var(--cream);
+            margin: 0;
+        }
+
+        .post-image-wrap {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.12);
+        }
+
+        .post-image {
+            width: 100%;
+            max-height: 520px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .post-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 18px 18px 18px;
+        }
+
+        .post-like {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--cream);
+            font-size: 0.94rem;
+        }
+
+        .post-like-icon {
+            font-size: 1.05rem;
+        }
+
+        .post-actions a {
+            color: var(--sage);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: 0.2s ease;
+        }
+
+        .post-actions a:hover {
+            color: var(--white);
+        }
+
+        .empty-feed {
+            background: rgba(58, 79, 44, 0.25);
+            border: 1px dashed rgba(168, 197, 160, 0.25);
+            border-radius: 18px;
+            padding: 40px 24px;
+            text-align: center;
+            color: var(--sage);
+        }
+
+        .empty-feed h3 {
+            font-family: "DM Serif Display", serif;
+            color: var(--white);
+            margin-bottom: 10px;
+        }
+
+        .empty-feed p {
+            margin-bottom: 18px;
+        }
+
+        .btn-save {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--dark);
+            text-decoration: none;
+            padding: 10px 18px;
+            border-radius: 999px;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .home-layout {
+                margin-left: 0;
+                padding: 24px 16px 96px 16px;
+            }
+
+            .home-header {
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .home-title-wrap h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="fragments/sidebar :: sidebar"></div>
+
+    <main class="home-layout">
+        <div class="home-shell">
+            <div class="home-header">
+                <div class="home-title-wrap">
+                    <h1>Community Feed</h1>
+                    <p>See what everyone is sharing with the Symbiosis community.</p>
+                </div>
+
+                <a href="/navigation" class="participants-btn" title="Participants">
+                    <span class="participants-icon">👥</span>
+                </a>
+            </div>
+
+            <!-- quick create post box -->
+            <div class="quick-post-card">
+                <div class="quick-post-top">
+                    <div class="quick-avatar"
+                         th:text="${user != null and user.firstName != null and !#strings.isEmpty(user.firstName)} ? ${#strings.substring(user.firstName,0,1)} : 'U'">
+                        U
+                    </div>
+
+                    <a href="/posts/add" class="quick-post-input">
+                        Share something with the community...
+                    </a>
+                </div>
+            </div>
+
+            <!-- posts feed -->
+            <section class="feed-list" th:if="${posts != null and !#lists.isEmpty(posts)}">
+                <article class="post-card" th:each="post : ${posts}">
+                    <div class="post-card-header">
+                        <div class="post-user">
+                            <div class="post-avatar"
+                                 th:text="${post.user != null and post.user.firstName != null and !#strings.isEmpty(post.user.firstName)} ? ${#strings.substring(post.user.firstName,0,1)} : 'U'">
+                                U
+                            </div>
+
+                            <div class="post-user-meta">
+                                <h3 th:text="${post.user != null ? post.user.firstName + ' ' + post.user.lastName : 'Community Member'}">
+                                    Helena User
+                                </h3>
+                                <p th:text="${post.createdAt != null ? #temporals.format(post.createdAt, 'MMM d, yyyy • h:mm a') : 'Recently posted'}">
+                                    Recently posted
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="post-menu">•••</div>
+                    </div>
+
+                    <h2 class="post-title" th:text="${post.title}">Post title</h2>
+
+                    <p class="post-caption"
+                       th:if="${post.caption != null and !#strings.isEmpty(post.caption)}"
+                       th:text="${post.caption}">
+                        Post caption goes here.
+                    </p>
+
+                    <div class="post-image-wrap" th:if="${post.img != null and !#strings.isEmpty(post.img)}">
+                        <img class="post-image"
+                             th:src="${post.img}"
+                             alt="Post image">
+                    </div>
+
+                    <div class="post-footer">
+                        <div class="post-like">
+                            <span class="post-like-icon">♡</span>
+                            <span>Community post</span>
+                        </div>
+
+                        <div class="post-actions">
+                            <a th:href="@{/profile}">View profile</a>
+                        </div>
+                    </div>
+                </article>
+            </section>
+
+            <!-- empty state -->
+            <section class="empty-feed" th:if="${posts == null or #lists.isEmpty(posts)}">
+                <h3>No posts yet</h3>
+                <p>Be the first to share something with the community.</p>
+                <a href="/posts/add" class="btn-save">Create first post</a>
+            </section>
+        </div>
+    </main>
+</body>
+</html>
