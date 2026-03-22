@@ -6,6 +6,7 @@ const modalLikes = document.querySelector('#modal-likes');
 const modalCaption = document.querySelector('#modal-caption');
 const modalCreatedAt = document.querySelector('#modal-created-at');
 const postIdInput = document.querySelector('#post-id-input');
+const deleteForm = document.querySelector('#delete-post-form');
 
 posts.forEach(post => post.addEventListener('click', () => {
     // Add post info to modal
@@ -16,6 +17,9 @@ posts.forEach(post => post.addEventListener('click', () => {
     modalCaption.textContent = postData.caption;
     modalCreatedAt.textContent = postData.createdAt;
     postIdInput.value = postData.id;
+    if (deleteForm) {
+        deleteForm.action = `/posts/delete/${postData.id}`;
+    }
 
     // Set like button
     modalLikeButton.dataset.liked = !postData.liked;
