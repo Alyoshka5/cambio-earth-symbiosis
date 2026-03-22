@@ -60,6 +60,35 @@ h2 {
     color: var(--white);
 }
 
+.modal-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.delete-post-form {
+    align-self: flex-end;
+}
+
+.delete-post-btn {
+    background: transparent;
+    color: var(--danger);
+    border: 1px solid rgba(224,112,112,0.35);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.83rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    display: block;
+    margin-left: auto;
+}
+
+.delete-post-btn:hover {
+    background: rgba(224, 112, 112, 0.1);
+    border-color: rgba(255, 75, 75, 0.94);
+}
+
 .logout {
     padding: 11px 40px;
 }
@@ -104,4 +133,21 @@ h2 {
 
 .white-filter {
     filter: brightness(0) invert();
+}
+
+/* Alert warning */
+.alert-warning {
+    --bs-alert-color: #747531;
+    color: var(--bark);
+}
+
+.alert .btn-close {
+    filter: none;
+    opacity: 0.6;
+    cursor: pointer;
+    pointer-events: all;
+}
+
+.alert .btn-close:hover {
+    opacity: 1;
 }

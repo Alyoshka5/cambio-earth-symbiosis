@@ -30,6 +30,17 @@
 
         <div class="divider"></div>
 
+        <!-- Error message -->
+        <div th:if="${deleteErr}" class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>Error! </strong> <span th:text="${deleteErr}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <!-- Success message -->
+        <div th:if="${successful}" class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>Success! </strong> <span th:text="${successful}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
         <!-- Posts -->
         <section class="container-fluid">
             <div class="row">
@@ -55,6 +66,10 @@
                         </div>
                         <p id="modal-caption"></p>
                         <p id="modal-created-at"></p>
+
+                        <form th:if="${currUserCanDeletePosts}" id="delete-post-form" action="posts/delete/0" method="post" class="delete-post-form">
+                            <button type="submit" class="delete-post-btn">Delete post</button>
+                        </form>
                     </div>
                 </div>
             </div>

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -17,6 +18,7 @@ import com.cambio_earth.symbiosis.dto.RegisterUserDto;
 import com.cambio_earth.symbiosis.dto.VerifyUserDto;
 import com.cambio_earth.symbiosis.models.BreakoutBlockRanking;
 import com.cambio_earth.symbiosis.models.Post;
+import com.cambio_earth.symbiosis.models.Role;
 import com.cambio_earth.symbiosis.models.User;
 import com.cambio_earth.symbiosis.models.UserRepository;
 import com.cambio_earth.symbiosis.services.AuthenticationService;
@@ -155,17 +157,24 @@ public class UserController {
         return "redirect:/auth/login";
     }
 
-    @GetMapping("/profile")
-    public String getProfilePage(HttpServletRequest request, Model model) {
-        User user = authenticationService.getUserFromRequest(request);
-        if (user == null) {
+    @GetMapping("/profile/{uid}")
+    public String getProfilePage(@PathVariable Long uid, HttpServletRequest request, Model model) {
+        User currUser = authenticationService.getUserFromRequest(request);
+        User profileOwner = userRepository.findById(uid).orElse(null);
+
+        if (currUser == null || profileOwner == null) {
             return "redirect:/auth/login";
         }
 
-        List<Post> userPosts = user.getPosts();
+        List<Post> userPosts = profileOwner.getPosts();
         userPosts.sort(Comparator.comparing(Post::getCreatedAt));
+
+        // Determine if the current user has permission to delete posts on a profile
+        if (currUser.getRole().equals(Role.ADMIN) || currUser.getId().equals(uid)) {
+            model.addAttribute("currUserCanDeletePosts", true);
+        }
         
-        model.addAttribute("user", user);
+        model.addAttribute("user", profileOwner);
         model.addAttribute("posts", userPosts);
 
         return "profile";

@@ -2,6 +2,7 @@ package com.cambio_earth.symbiosis.controllers;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.cambio_earth.symbiosis.models.Post;
 import com.cambio_earth.symbiosis.models.PostRepository;
@@ -111,6 +113,38 @@ public class PostController {
         User user = authenticationService.getUserFromRequest(request);
 
         postService.toggleLike(postId, user.getId());
+    }
+
+    // Process deleteing a post
+    @PostMapping("/posts/delete/{postId}")
+    public String deletePost(@PathVariable Long postId, @RequestParam Map<String,String> inputs, Model model, RedirectAttributes redirectAttributes) {
+
+        // Find the user who made the post to return to their profile
+        Post unwantedPost = postRepository.findById(postId).orElse(null);
+        Optional<User> userWithPost = userRepository.findByPostId(postId);
+        User user = userWithPost.orElse(null);
+
+        // Error handle the profile or post no longer existing
+        if (unwantedPost == null) {
+            if (user == null) {
+                redirectAttributes.addFlashAttribute("profileErr", "Could not delete post. User no longer exists");
+                return "redirect:/home";
+            } 
+            else {
+                redirectAttributes.addFlashAttribute("deleteErr", "Could not delete post. Post doesn't exist");
+                return "redirect:/profile/" + user.getId();
+            }
+        }
+
+        try {
+            postRepository.delete(unwantedPost);
+        } catch (Exception e) {
+            model.addAttribute("deleteErr", "Could not delete post: " + e.getMessage());
+            return "/profile/" + user.getId();
+        }
+
+        redirectAttributes.addFlashAttribute("successful", "Post was deleted.");
+        return "redirect:/profile/" + user.getId();
     }
     
 }
