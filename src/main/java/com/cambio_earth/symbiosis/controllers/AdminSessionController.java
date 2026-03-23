@@ -69,7 +69,8 @@ public class AdminSessionController {
             @RequestParam(required = false) String date,
             @RequestParam(required = false) String startTime,
             @RequestParam(required = false) String endTime,
-            @RequestParam(required = false) String speakersRaw
+            @RequestParam(required = false) String speakersRaw,
+            @RequestParam(required = false) Integer capacity
         ) {
 
         Session session;
@@ -114,6 +115,12 @@ public class AdminSessionController {
         }
 
         session.setBreakout(formSessionData.isBreakout());
+
+        if (formSessionData.isBreakout() && capacity != null && capacity > 0) {
+            session.setCapacity(capacity);
+        } else {
+            session.setCapacity(null); // clear it if not a breakout
+        }
 
         sessionRepository.save(session);
         return "redirect:/sessions/" + session.getId();
