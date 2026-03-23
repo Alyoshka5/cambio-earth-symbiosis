@@ -180,5 +180,10 @@ public class UserController {
 
         return "profile";
     }
-    
+
+    @GetMapping("/profile")
+    public String getCurrentUserProfilePage(HttpServletRequest request, Model model) {
+        User currUser = authenticationService.getUserFromRequest(request);
+        return "redirect:/profile/" + currUser.getId();
+    }
 }

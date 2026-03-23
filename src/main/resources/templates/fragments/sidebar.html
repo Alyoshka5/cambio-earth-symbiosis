@@ -71,7 +71,7 @@
             } else if (path === "/navigation") {
                 document.getElementById("nav-navigation")?.classList.add("sidebar-active");
                 document.getElementById("mobile-nav-navigation")?.classList.add("sidebar-active");
-            } else if (path === "/profile") {
+            } else if (path.startsWith("/profile")) {
                 document.getElementById("nav-profile")?.classList.add("sidebar-active");
                 document.getElementById("mobile-nav-profile")?.classList.add("sidebar-active");
             }
