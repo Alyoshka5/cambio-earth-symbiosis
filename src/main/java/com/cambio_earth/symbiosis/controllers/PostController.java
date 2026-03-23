@@ -123,8 +123,6 @@ public class PostController {
         User user = userWithPost.orElse(null);
         String redirectUrl = "redirect:/home";
 
-        System.out.println("DEBUG — postId: " + postId + " | redirectTo: " + redirectTo);
-
         // Error handle the profile or post no longer existing
         if (unwantedPost == null) {
             if (user == null) {
