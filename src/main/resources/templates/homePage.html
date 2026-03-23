@@ -373,8 +373,79 @@
         .alert .btn-close:hover {
             opacity: 1;
         }
+
+        .post-like-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: none;
+            border: none;
+            color: var(--cream);
+            cursor: pointer;
+            font-size: 0.94rem;
+            padding: 0;
+        }
+
+        .post-like-btn:hover {
+            opacity: 0.9;
+        }
+
+        .post-like-icon {
+            width: 18px;
+            height: 18px;
+            display: inline-block;
+            background: url('/images/heart-outline-icon.svg') center/contain no-repeat;
+        }
+
+        .post-like-icon.liked {
+            background: url('/images/heart-filled-icon.svg') center/contain no-repeat;
+        }
+
+        .post-like-text {
+            color: var(--cream);
+        }
     </style>
 </head>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const likeButtons = document.querySelectorAll(".post-like-btn");
+
+    likeButtons.forEach(button => {
+        button.addEventListener("click", async function () {
+            const postId = this.dataset.postId;
+            const icon = this.querySelector(".post-like-icon");
+            const text = this.querySelector(".post-like-text");
+
+            try {
+                const response = await fetch(`/posts/${postId}/like`, {
+                    method: "POST",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    text.textContent = `${data.likes} likes`;
+
+                    if (data.liked) {
+                        icon.classList.add("liked");
+                    } else {
+                        icon.classList.remove("liked");
+                    }
+                } else {
+                    console.error(data.message);
+                }
+            } catch (error) {
+                console.error("Failed to toggle like:", error);
+            }
+        });
+    });
+});
+</script>
+
 <body>
     <div th:replace="fragments/sidebar :: sidebar"></div>
 
@@ -464,13 +535,22 @@
                     </div>
 
                     <div class="post-footer">
-                        <div class="post-like">
-                            <span class="post-like-icon">♡</span>
-                            <span>Community post</span>
-                        </div>
+                        <button
+                            type="button"
+                            class="post-like-btn"
+                            th:attr="data-post-id=${post.id}, data-liked=${currUser != null and post.likedBy.contains(currUser)}"
+                        >
+                            <span
+                                class="post-like-icon"
+                                th:classappend="${currUser != null and post.likedBy.contains(currUser)} ? ' liked' : ''"
+                            ></span>
+                            <span class="post-like-text">
+                                <span th:text="${post.likedBy.size()}">0</span> likes
+                            </span>
+                        </button>
 
                         <div class="post-actions">
-                            <a th:href="@{/profile}">View profile</a>
+                            <a th:href="@{'/profile/' + ${post.user.id}}">View profile</a>
                         </div>
                     </div>
                 </article>

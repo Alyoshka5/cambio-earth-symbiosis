@@ -22,9 +22,9 @@ public class PostService {
     UserRepository userRepository;
 
     @Transactional
-    public void toggleLike(Long postId, Long userId) {
+    public Post toggleLike(Long postId, Long userId) {
         Optional<User> optionalUser = userRepository.findById(userId);
-        Optional<Post> optionalPost = postRepository.findById(postId);
+        Optional<Post> optionalPost = postRepository.findById(postId.intValue());
 
         if (optionalUser.isPresent() && optionalPost.isPresent()) {
             Post post = optionalPost.get();
@@ -35,6 +35,10 @@ public class PostService {
             } else {
                 post.getLikedBy().add(user);
             }
+
+            return postRepository.save(post);
         }
+
+        return null;
     }
 }

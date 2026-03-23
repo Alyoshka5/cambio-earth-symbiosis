@@ -1,5 +1,6 @@
 package com.cambio_earth.symbiosis.controllers;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -107,10 +108,30 @@ public class PostController {
     
     @PostMapping("/posts/{postId}/like")
     @ResponseBody
-    public void likePost(HttpServletRequest request, @PathVariable Long postId) {
+    public Map<String, Object> likePost(HttpServletRequest request, @PathVariable Long postId) {
         User user = authenticationService.getUserFromRequest(request);
 
-        postService.toggleLike(postId, user.getId());
+        Map<String, Object> response = new HashMap<>();
+
+        if (user == null) {
+            response.put("success", false);
+            response.put("message", "User not authenticated.");
+            return response;
+        }
+
+        Post updatedPost = postService.toggleLike(postId, user.getId());
+
+        if (updatedPost == null) {
+            response.put("success", false);
+            response.put("message", "Post or user not found.");
+            return response;
+        }
+
+        response.put("success", true);
+        response.put("likes", updatedPost.getLikedBy().size());
+        response.put("liked", updatedPost.getLikedBy().contains(user));
+
+        return response;
     }
 
     // Process deleteing a post
@@ -167,7 +188,7 @@ public class PostController {
         boolean canDeleteAll = currUser.getRole().equals(Role.ADMIN);
         model.addAttribute("currUserCanDeletePosts", canDeleteAll);
 
-        List<Post> posts = postRepository.findAll(); // get all posts
+        List<Post> posts = postRepository.findAllByOrderByCreatedAtDesc();
         model.addAttribute("posts", posts);
 
         return "homePage"; // this loads homePage.html
