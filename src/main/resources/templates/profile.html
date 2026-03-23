@@ -23,7 +23,7 @@
         <section>
             <h1 th:text="${profileOwner.firstName} + ' ' + ${profileOwner.lastName}">profile</h1>
             <h2 th:text="${profileOwner.email}"></h2>
-            <form action="/auth/logout" method="post">
+            <form th:if="${profileOwner.id == currentUser.id}" action="/auth/logout" method="post">
                 <button class="btn-secondary logout">Log Out</button>
             </form>
         </section>
