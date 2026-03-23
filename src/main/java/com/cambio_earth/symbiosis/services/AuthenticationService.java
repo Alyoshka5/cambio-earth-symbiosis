@@ -98,17 +98,17 @@ public class AuthenticationService {
         }
     }
 
-    private void sendVerificationEmail(User user) { //TODO: Update with company logo
+    private void sendVerificationEmail(User user) {
         String subject = "Symbiosis Account Verification";
-        String verificationCode = "VERIFICATION CODE " + user.getVerificationCode();
+        String verificationCode = user.getVerificationCode();
         String htmlMessage = "<html>"
             + "<body style=\"font-family: Arial, sans-serif;\">"
-            + "<div style=\"background-color: #f5f5f5; padding: 20px;\">"
-            + "<h2 style=\"color: #333;\">Welcome to Cambio Earth Symbiosis!</h2>"
-            + "<p style=\"font-size: 16px;\">Please enter the verification code below to continue:</p>"
+            + "<div style=\"padding: 20px;\">"
+            + "<h2 style=\"color: #3a4f42;\">Welcome to Cambio Earth Symbiosis!</h2>"
+            + "<p style=\"font-size: 16px; margin: 0;\">Please enter the verification code below to continue</p>"
             + "<div style=\"background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">"
             + "<h3 style=\"color: #333;\">Verification Code:</h3>"
-            + "<p style=\"font-size: 18px; font-weight: bold; color: #007bff;\">" + verificationCode + "</p>"
+            + "<p style=\"font-size: 24px; font-weight: bold; margin: 0; color: #3a4f42;\">" + verificationCode + "</p>"
             + "</div>"
             + "</div>"
             + "</body>"
