@@ -7,7 +7,7 @@
     --sage:       #a8c5a0;
     --cream:      #f0ede6;
     --white:      #ffffff;
-    --accent:     #c8d96e; /* lichen yellow-green */
+    --accent:     #c8d96e; 
     --danger:     #e07070;
     
     /* Sidebar width for consistent spacing */
@@ -412,7 +412,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 #speakersHidden { display: none; }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
     .page-content {
         margin-left: 0;
