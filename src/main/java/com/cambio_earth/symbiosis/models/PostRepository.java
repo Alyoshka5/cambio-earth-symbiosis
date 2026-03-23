@@ -13,4 +13,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     // Get all posts by a specific user, newest first (descending order)
     List<Post> findByUserIdOrderByCreatedAtDesc(Long userId);
+
+    List<Post> findAllByOrderByCreatedAtDesc();
 }

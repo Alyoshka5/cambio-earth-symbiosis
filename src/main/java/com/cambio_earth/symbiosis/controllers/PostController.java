@@ -167,7 +167,7 @@ public class PostController {
         boolean canDeleteAll = currUser.getRole().equals(Role.ADMIN);
         model.addAttribute("currUserCanDeletePosts", canDeleteAll);
 
-        List<Post> posts = postRepository.findAll(); // get all posts
+        List<Post> posts = postRepository.findAllByOrderByCreatedAtDesc();
         model.addAttribute("posts", posts);
 
         return "homePage"; // this loads homePage.html
