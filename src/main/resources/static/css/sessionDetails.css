@@ -23,6 +23,10 @@ body {
     min-height: 100vh;
 }
 
+.page-content {
+    margin-left: 250px;
+}
+
 /* ── Top bar ── */
 .topbar {
     background: rgba(26, 36, 32, 0.95);
@@ -371,6 +375,12 @@ body {
     .hero   { padding: 40px 20px 32px; }
     .body-wrapper { padding: 32px 20px 60px; }
     .session-title { font-size: 1.8rem; }
+}
+
+@media (max-width: 768px) {
+    .page-content {
+        margin-left: 0;
+    }
 }
 
 .tab-container {
