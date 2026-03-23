@@ -157,15 +157,24 @@
     <div th:if="${error}" class="flash-error" th:text="${error}"></div>
 
     <div class="form-card">
-        <form th:action="@{'/maps/' + ${map.id} + '/edit'}" method="post" enctype="multipart/form-data">
+        <form th:action="@{'/maps/' + ${map.id} + '/edit'}" method="post">
 
             <div class="form-group">
-                <label for="file">Replace Map File</label>
-                <input type="file" id="file" name="file" accept=".pdf,.jpg,.jpeg,.png">
-                <p class="field-hint">Leave empty to keep the current file. Accepted: PDF, JPEG, PNG</p>
-                <p class="current-file">
-                    Current: <span th:text="${map.fileType}">image/jpeg</span>
-                </p>
+                <label>Replace Map File</label>
+                <label for="file" class="file-upload-area" id="fileLabel" style="padding: 20px 16px;">
+                    <div class="file-upload-text">Click to replace file (optional)</div>
+                    <p class="file-hint">PDF, JPEG, or PNG</p>
+                    <input type="file" id="file"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        style="display:none"
+                        onchange="handleFileSelected(this)">
+                </label>
+                <p class="current-file">Current type: <span th:text="${map.fileType}">image/jpeg</span></p>
+                <p class="file-name-display" id="fileNameDisplay"></p>
+                <p id="uploadStatus" style="font-size:0.82rem; color: var(--sage); margin-top:6px;"></p>
+
+                <input type="hidden" id="imgUrlField" name="fileUrl">
+                <input type="hidden" id="fileType" name="fileType">
             </div>
 
             <div class="form-group">
@@ -190,5 +199,61 @@
         </form>
     </div>
 </main>
+
+<script>
+    const CLOUD_NAME = "dm7jfvl1p";
+    const UPLOAD_PRESET = "symbiosis_images";
+
+    function handleFileSelected(input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        document.getElementById('fileNameDisplay').style.display = 'none';
+        document.getElementById('uploadStatus').textContent = 'Uploading...';
+        document.getElementById('uploadStatus').style.color = 'var(--sage)';
+
+        uploadToCloudinary(file);
+    }
+
+    async function uploadToCloudinary(file) {
+        const status = document.getElementById('uploadStatus');
+        const imgUrlField = document.getElementById('imgUrlField');
+        const fileTypeField = document.getElementById('fileType');
+        const display = document.getElementById('fileNameDisplay');
+        const label = document.getElementById('fileLabel');
+
+        // PDFs need a different Cloudinary resource type
+        const resourceType = file.type === 'application/pdf' ? 'raw' : 'image';
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', UPLOAD_PRESET);
+
+        try {
+            const response = await fetch(
+                `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${resourceType}/upload`,
+                { method: 'POST', body: formData }
+            );
+            const data = await response.json();
+
+            if (data.secure_url) {
+                imgUrlField.value = data.secure_url;   // <-- URL stored here, submitted with form
+                fileTypeField.value = file.type;
+                display.textContent = '✓ ' + file.name;
+                display.style.display = 'block';
+                label.style.borderColor = 'rgba(200,217,110,0.5)';
+                status.textContent = 'Upload successful!';
+                status.style.color = 'var(--accent)';
+            } else {
+                status.textContent = 'Upload failed: ' + (data.error?.message || 'unknown error');
+                status.style.color = 'var(--danger)';
+            }
+        } catch (err) {
+            status.textContent = 'Upload failed. Check your connection.';
+            status.style.color = 'var(--danger)';
+            console.error(err);
+        }
+    }
+</script>
 </body>
 </html>
