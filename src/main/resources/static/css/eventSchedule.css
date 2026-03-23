@@ -54,6 +54,10 @@ body {
 }
 
 /* ── Page layout ── */
+.schedule-layout {
+    margin-left: 250px;
+}
+
 main {
     max-width: 860px;
     margin: 0 auto;
@@ -302,4 +306,11 @@ main {
 .schedule-card:hover .arrow-icon {
     opacity: 0.75;
     transform: translateX(3px);
+}
+
+/* -- Media queries -- */
+@media (max-width: 768px) {
+    .schedule-layout {
+        margin-left: 0;
+    }
 }
