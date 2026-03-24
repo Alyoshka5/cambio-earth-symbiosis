@@ -1,5 +1,6 @@
 package com.cambio_earth.symbiosis.controllers;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.cambio_earth.symbiosis.models.Post;
 import com.cambio_earth.symbiosis.models.PostRepository;
+import com.cambio_earth.symbiosis.models.Role;
 import com.cambio_earth.symbiosis.models.User;
 import com.cambio_earth.symbiosis.models.UserRepository;
 import com.cambio_earth.symbiosis.services.AuthenticationService;
@@ -106,20 +108,41 @@ public class PostController {
     
     @PostMapping("/posts/{postId}/like")
     @ResponseBody
-    public void likePost(HttpServletRequest request, @PathVariable Long postId) {
+    public Map<String, Object> likePost(HttpServletRequest request, @PathVariable Long postId) {
         User user = authenticationService.getUserFromRequest(request);
 
-        postService.toggleLike(postId, user.getId());
+        Map<String, Object> response = new HashMap<>();
+
+        if (user == null) {
+            response.put("success", false);
+            response.put("message", "User not authenticated.");
+            return response;
+        }
+
+        Post updatedPost = postService.toggleLike(postId, user.getId());
+
+        if (updatedPost == null) {
+            response.put("success", false);
+            response.put("message", "Post or user not found.");
+            return response;
+        }
+
+        response.put("success", true);
+        response.put("likes", updatedPost.getLikedBy().size());
+        response.put("liked", updatedPost.getLikedBy().contains(user));
+
+        return response;
     }
 
     // Process deleteing a post
     @PostMapping("/posts/delete/{postId}")
-    public String deletePost(@PathVariable Long postId, @RequestParam Map<String,String> inputs, Model model, RedirectAttributes redirectAttributes) {
+    public String deletePost(@PathVariable Long postId, @RequestParam(value = "redirectUrl", defaultValue = "/home") String redirectTo, Model model, RedirectAttributes redirectAttributes) {
 
         // Find the user who made the post to return to their profile
         Post unwantedPost = postRepository.findById(postId).orElse(null);
         Optional<User> userWithPost = userRepository.findByPostId(postId);
         User user = userWithPost.orElse(null);
+        String redirectUrl = "redirect:/home";
 
         // Error handle the profile or post no longer existing
         if (unwantedPost == null) {
@@ -129,24 +152,43 @@ public class PostController {
             } 
             else {
                 redirectAttributes.addFlashAttribute("deleteErr", "Could not delete post. Post doesn't exist");
-                return "redirect:/profile/" + user.getId();
+                if (redirectTo.equals("/profile")) {
+                    redirectUrl = "redirect:/profile/" + user.getId();
+                }
+                return redirectUrl;
             }
+        }
+
+        if (redirectTo.equals("/profile")) {
+            redirectUrl = "redirect:/profile/" + user.getId();
         }
 
         try {
             postRepository.delete(unwantedPost);
         } catch (Exception e) {
             model.addAttribute("deleteErr", "Could not delete post: " + e.getMessage());
-            return "/profile/" + user.getId();
+            return redirectUrl;
         }
 
         redirectAttributes.addFlashAttribute("successful", "Post was deleted.");
-        return "redirect:/profile/" + user.getId();
+        return redirectUrl;
     }
 
     @GetMapping("/home")
-    public String showHomePage(Model model) {
-        List<Post> posts = postRepository.findAll(); // get all posts
+    public String showHomePage(Model model, HttpServletRequest request) {
+
+        // Add the current user to the model to check if the current user owns a posts on the home page
+        User currUser = authenticationService.getUserFromRequest(request);
+        if (currUser == null) {
+            return "redirect:/auth/login";
+        }
+        model.addAttribute("currUser", currUser);
+
+        // Determine if the current user is an admin
+        boolean canDeleteAll = currUser.getRole().equals(Role.ADMIN);
+        model.addAttribute("currUserCanDeletePosts", canDeleteAll);
+
+        List<Post> posts = postRepository.findAllByOrderByCreatedAtDesc();
         model.addAttribute("posts", posts);
 
         return "homePage"; // this loads homePage.html

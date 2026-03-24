@@ -44,7 +44,7 @@ public class UserController {
 
     @GetMapping("/")
     public String home() {
-        return "redirect:/auth/signup";
+        return "redirect:/auth/login";
     }
 
     @GetMapping("/auth/signup")
@@ -58,7 +58,7 @@ public class UserController {
 
         if (email == null || !email.matches("^[A-Za-z0-9._%+-]+@cambioearth\\.com$")) {
             model.addAttribute("error", "Not Valid Information.");
-            return "signup";
+            return "signUp";
         }
 
         try {
@@ -66,7 +66,7 @@ public class UserController {
             return "redirect:/auth/verify?email=" + registerUserDto.getEmail();
         } catch (RuntimeException e) {
             model.addAttribute("error", "Unable to create account.");
-            return "signup";
+            return "signUp";
         }
     }
 
@@ -208,5 +208,11 @@ public class UserController {
         model.addAttribute("posts", userPosts);
 
         return "profile";
+    }
+
+    @GetMapping("/profile")
+    public String getCurrentUserProfilePage(HttpServletRequest request, Model model) {
+        User currUser = authenticationService.getUserFromRequest(request);
+        return "redirect:/profile/" + currUser.getId();
     }
 }

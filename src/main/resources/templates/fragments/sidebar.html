@@ -1,5 +1,4 @@
 <div th:fragment="sidebar">
-
     <!-- DESKTOP SIDEBAR -->
     <div id="sidebar">
 
@@ -7,50 +6,75 @@
             <img src="/images/CambioEarth_Primary.png" alt="Cambio Earth">
         </a>
 
-        <a href="/home" class="nav-item">
+        <a href="/home" class="nav-item" id="nav-home">
             <span class="nav-icon home"></span>
             <span>Home</span>
         </a>
-        
-        <a href="/ranking" class="nav-item">
+
+        <a href="/ranking" class="nav-item" id="nav-ranking">
             <span class="nav-icon ranking"></span>
             <span>Ranking</span>
         </a>
-        
-        <a href="/sessions/schedule" class="nav-item sidebar-active">
+
+        <a href="/sessions/schedule" class="nav-item" id="nav-schedule">
             <span class="nav-icon schedule"></span>
             <span>Schedule</span>
         </a>
-        
-        <a href="/navigation" class="nav-item">
+
+        <a href="/navigation" class="nav-item" id="nav-navigation">
             <span class="nav-icon navigation"></span>
             <span>Navigation</span>
         </a>
-        
-        <a href="/profile" class="nav-item">
+
+        <a href="/profile" class="nav-item" id="nav-profile">
             <span class="nav-icon profile"></span>
             <span>Profile</span>
         </a>
-
     </div>
 
     <!-- MOBILE NAV -->
     <div class="mobile-nav">
-        <a href="/home">
+        <a href="/home" class="mobile-nav-item" id="mobile-nav-home">
             <span class="mobile-icon home"></span>
         </a>
-        <a href="/ranking">
+
+        <a href="/ranking" class="mobile-nav-item" id="mobile-nav-ranking">
             <span class="mobile-icon ranking"></span>
         </a>
-        <a href="/sessions/schedule">
+
+        <a href="/sessions/schedule" class="mobile-nav-item" id="mobile-nav-schedule">
             <span class="mobile-icon schedule"></span>
         </a>
-        <a href="/navigation">
+
+        <a href="/navigation" class="mobile-nav-item" id="mobile-nav-navigation">
             <span class="mobile-icon navigation"></span>
         </a>
-        <a href="/profile">
+
+        <a href="/profile" class="mobile-nav-item" id="mobile-nav-profile">
             <span class="mobile-icon profile"></span>
         </a>
     </div>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const path = window.location.pathname;
+
+            if (path === "/home") {
+                document.getElementById("nav-home")?.classList.add("sidebar-active");
+                document.getElementById("mobile-nav-home")?.classList.add("sidebar-active");
+            } else if (path === "/ranking") {
+                document.getElementById("nav-ranking")?.classList.add("sidebar-active");
+                document.getElementById("mobile-nav-ranking")?.classList.add("sidebar-active");
+            } else if (path.startsWith("/sessions")) {
+                document.getElementById("nav-schedule")?.classList.add("sidebar-active");
+                document.getElementById("mobile-nav-schedule")?.classList.add("sidebar-active");
+            } else if (path === "/navigation") {
+                document.getElementById("nav-navigation")?.classList.add("sidebar-active");
+                document.getElementById("mobile-nav-navigation")?.classList.add("sidebar-active");
+            } else if (path.startsWith("/profile")) {
+                document.getElementById("nav-profile")?.classList.add("sidebar-active");
+                document.getElementById("mobile-nav-profile")?.classList.add("sidebar-active");
+            }
+        });
+    </script>
 </div>

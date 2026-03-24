@@ -8,68 +8,74 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/global.css">
     <link rel="stylesheet" href="/css/profile.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
     <script src="/js/profile.js" defer></script>
     <title>Profile — Symbiosis</title>
 </head>
 
 <body>
+    <div th:replace="fragments/sidebar :: sidebar"></div>
+    
+    <div class="profile-layout">
+        <nav class="topbar">
+            <a href="/home" class="topbar-brand">Symbiosis</a>
+        </nav>
 
-    <nav class="topbar">
-        <a href="#" class="topbar-brand">Symbiosis</a>
-    </nav>
+        
+        <main>
+            <!-- User info and logout -->
+            <section>
+                <h1 th:text="${profileOwner.firstName} + ' ' + ${profileOwner.lastName}">profile</h1>
+                <h2 th:text="${profileOwner.email}"></h2>
+                <form th:if="${profileOwner.id == currentUser.id}" action="/auth/logout" method="post">
+                    <button class="btn-secondary logout">Log Out</button>
+                </form>
+            </section>
 
-    <main>
-        <!-- User info and logout -->
-        <section>
-            <h1 th:text="${profileOwner.firstName} + ' ' + ${profileOwner.lastName}">profile</h1>
-            <h2 th:text="${profileOwner.email}"></h2>
-            <form action="/auth/logout" method="post">
-                <button class="btn-secondary logout">Log Out</button>
-            </form>
-        </section>
+            <div class="divider"></div>
 
-        <div class="divider"></div>
-
-        <!-- Error message -->
-        <div th:if="${deleteErr}" class="alert alert-warning alert-dismissible fade show" role="alert">
-            <strong>Error! </strong> <span th:text="${deleteErr}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        <!-- Success message -->
-        <div th:if="${successful}" class="alert alert-warning alert-dismissible fade show" role="alert">
-            <strong>Success! </strong> <span th:text="${successful}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-
-        <!-- Posts -->
-        <section class="container-fluid">
-            <div class="row">
-                <img th:each="post: ${posts}" th:src="${post.img}" alt="User post" class="post col-4" th:data-post="${post.toJSON(currentUser)}" data-bs-toggle="modal" data-bs-target="#modal">
+            <!-- Error message -->
+            <div th:if="${deleteErr}" class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Error! </strong> <span th:text="${deleteErr}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-        </section>
-    </main>
+            <!-- Success message -->
+            <div th:if="${successful}" class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Success! </strong> <span th:text="${successful}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
 
-    <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content-container">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="modal-title"></h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <img src="" alt="User post expanded" id="modal-post-img">
-                        <div id="modal-like-container">
-                            <img src="/images/heart-outline-icon.svg" alt="Like icon" data-liked="false" id="modal-like-icon" class="white-filter">
-                            <p><span id="modal-likes"></span> likes</p>
-                            <input type="hidden" id="post-id-input">
+            <!-- Posts -->
+            <section class="container-fluid">
+                <div class="row">
+                    <img th:each="post: ${posts}" th:src="${post.img}" alt="User post" class="post col-4" th:data-post="${post.toJSON(currentUser)}" data-bs-toggle="modal" data-bs-target="#modal">
+                </div>
+            </section>
+        </main>
+
+        <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content-container">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="modal-title"></h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <p id="modal-caption"></p>
-                        <p id="modal-created-at"></p>
+                        <div class="modal-body">
+                            <img src="" alt="User post expanded" id="modal-post-img">
+                            <div id="modal-like-container">
+                                <img src="/images/heart-outline-icon.svg" alt="Like icon" data-liked="false" id="modal-like-icon" class="white-filter">
+                                <p><span id="modal-likes"></span> likes</p>
+                                <input type="hidden" id="post-id-input">
+                            </div>
+                            <p id="modal-caption"></p>
+                            <p id="modal-created-at"></p>
 
-                        <form th:if="${currUserCanDeletePosts}" id="delete-post-form" action="posts/delete/0" method="post" class="delete-post-form">
-                            <button type="submit" class="delete-post-btn">Delete post</button>
-                        </form>
+                            <form th:if="${currUserCanDeletePosts}" id="delete-post-form" action="/posts/delete/0" method="post" class="delete-post-form">
+                                <input id="redirect-Url" type="hidden" name="redirectUrl" value="/profile">
+                                <button type="submit" class="delete-post-btn">Delete post</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>

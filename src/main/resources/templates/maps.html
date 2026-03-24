@@ -326,14 +326,12 @@
 
                 <!-- Preview: image vs PDF -->
                 <img th:if="${map.fileType == 'image/jpeg' or map.fileType == 'image/png'}"
-                     th:src="@{'/maps/file/' + ${map.id}}"
-                     class="map-card-preview" alt="Map preview" />
+                    th:src="${map.filePath}"
+                    class="map-card-preview" alt="Map preview" />
 
                 <a th:if="${map.fileType == 'application/pdf'}"
-                   th:href="@{'/maps/file/' + ${map.id}}"
-                   class="map-card-pdf" target="_blank">
-                    📄 View PDF
-                </a>
+                    th:href="${map.filePath}"
+                    class="map-card-pdf" target="_blank">
 
                 <!-- Admin actions -->
                 <div th:if="${isAdmin}" class="map-card-actions">
