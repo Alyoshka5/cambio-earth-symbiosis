@@ -16,6 +16,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.cambio_earth.symbiosis.models.BreakoutBlockRanking;
 import com.cambio_earth.symbiosis.models.BreakoutBlockRankingRepository;
+import com.cambio_earth.symbiosis.models.LauanchEventRepository;
+import com.cambio_earth.symbiosis.models.LaunchEvent;
 import com.cambio_earth.symbiosis.models.Participation;
 import com.cambio_earth.symbiosis.models.ParticipationRepository;
 import com.cambio_earth.symbiosis.models.Role;
@@ -45,12 +47,20 @@ public class SessionController {
     @Autowired
     private AuthenticationService authenticationService;
 
+    @Autowired
+    private LauanchEventRepository launchEventRepository;
+
 
     @GetMapping("/breakout")
     public String getBreakoutPreferencesPage(HttpServletRequest request, Model model) {
         User user = authenticationService.getUserFromRequest(request);
         if (user == null) {
             return "redirect:/auth/login";
+        }
+
+        List<LaunchEvent> events = launchEventRepository.findAll();
+        if (!events.isEmpty() && events.get(0).isStarted()) {
+            return "redirect:/home";
         }
         
         List<Session> breakoutSessions = sessionService.getBreakoutSessions();
@@ -162,14 +172,10 @@ public class SessionController {
         model.addAttribute("schedule", schedule);
         model.addAttribute("isAdmin", user.getRole().equals(Role.ADMIN));
 
+        List<LaunchEvent> events = launchEventRepository.findAll();
+        boolean eventNotLaunched = events.isEmpty() || !events.get(0).isStarted();
+        model.addAttribute("eventNotLaunched", eventNotLaunched);
+
         return "sessions/eventSchedule";
-    }
-
-    @PostMapping("/launch")
-    public String launchEvent() {
-        sessionService.registerUsersForMandatorySessions();
-        sessionService.registerUsersForBreakoutSessions();
-
-        return "redirect:/sessions/schedule";
     }
 }
