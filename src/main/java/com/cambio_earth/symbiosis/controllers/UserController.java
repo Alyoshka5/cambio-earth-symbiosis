@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.cambio_earth.symbiosis.dto.LoginUserDto;
 import com.cambio_earth.symbiosis.dto.RegisterUserDto;
 import com.cambio_earth.symbiosis.dto.VerifyUserDto;
+import com.cambio_earth.symbiosis.models.LauanchEventRepository;
+import com.cambio_earth.symbiosis.models.LaunchEvent;
 import com.cambio_earth.symbiosis.models.Post;
 import com.cambio_earth.symbiosis.models.Role;
 import com.cambio_earth.symbiosis.models.User;
@@ -33,6 +35,9 @@ public class UserController {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    LauanchEventRepository launchEventRepository;
 
     private final JwtService jwtService;
     private final AuthenticationService authenticationService;
@@ -93,6 +98,11 @@ public class UserController {
             cookie.setPath("/");
             cookie.setMaxAge(3600);
             response.addCookie(cookie);
+
+            List<LaunchEvent> events = launchEventRepository.findAll();
+            if (!events.isEmpty() && events.get(0).isStarted()) {
+                return "redirect:/home";
+            }
 
             return "redirect:/breakout";
         } catch (RuntimeException e) {

@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.cambio_earth.symbiosis.models.LauanchEventRepository;
+import com.cambio_earth.symbiosis.models.LaunchEvent;
 import com.cambio_earth.symbiosis.models.Participation;
 import com.cambio_earth.symbiosis.models.ParticipationRepository;
 import com.cambio_earth.symbiosis.models.Role;
@@ -37,6 +39,9 @@ public class AdminSessionController {
 
     @Autowired
     ParticipationRepository participationRepository;
+
+    @Autowired
+    private LauanchEventRepository launchEventRepository;
 
     // Show blank form (create new)
     @GetMapping("/admin/sessions/new")
@@ -171,6 +176,20 @@ public class AdminSessionController {
     @PostMapping("/admin/sessions/{id}/delete")
     public String deleteSession(@PathVariable("id") Long id) {
         sessionRepository.deleteById(id);
+        return "redirect:/sessions/schedule";
+    }
+
+    @PostMapping("/launch")
+    public String launchEvent(RedirectAttributes redirectAttributes) {
+
+        LaunchEvent event = launchEventRepository.findAll().stream().findFirst().orElse(null);
+        if (event != null) {
+            event.setStarted(true);
+            launchEventRepository.save(event);
+            redirectAttributes.addFlashAttribute("launchSuccess", "Event has successfully been launched!");
+        } else {
+            redirectAttributes.addFlashAttribute("launchErr", "Event could not be launched. Please try again.");
+        }
         return "redirect:/sessions/schedule";
     }
 }
