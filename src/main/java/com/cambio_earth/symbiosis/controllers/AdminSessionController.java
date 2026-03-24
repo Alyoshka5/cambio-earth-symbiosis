@@ -59,7 +59,7 @@ public class AdminSessionController {
         model.addAttribute("showSidebar", true);
         model.addAttribute("currentPage", "schedule");
 
-        return "sessions/adminSessionForm";
+        return "sessions/AdminSessionForm";
     }
 
     // Show pre-filled form (edit existing)
@@ -71,7 +71,7 @@ public class AdminSessionController {
         model.addAttribute("showSidebar", true);
         model.addAttribute("currentPage", "schedule");
 
-        return "sessions/adminSessionForm";
+        return "sessions/AdminSessionForm";
     }
 
     // Handle form submission (create or update)

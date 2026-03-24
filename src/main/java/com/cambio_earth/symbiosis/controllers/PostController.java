@@ -47,7 +47,7 @@ public class PostController {
     // Load the add post details form page
     @GetMapping("posts/form")
     public String getPostFormPage() {
-        return "/addPost";
+        return "addPost";
     }
     
     // Process adding a new post
@@ -97,7 +97,7 @@ public class PostController {
             }
         }
         if (errors) {
-            return "/addPost";
+            return "addPost";
         }
         // Add the post to the database
         Post newPost = new Post(currentUser, newImg, newTitle, newCaption);

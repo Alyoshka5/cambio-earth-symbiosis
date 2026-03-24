@@ -91,7 +91,7 @@ public class AdminSessionControllerTest {
     void testGetNewSessionForm_Success() {
         String result = adminSessionController.getNewSessionForm(model);
 
-        assertEquals("sessions/adminSessionForm", result);
+        assertEquals("sessions/AdminSessionForm", result);
         verify(model).addAttribute(eq("eventSession"), any(Session.class));
     }
 
@@ -101,7 +101,7 @@ public class AdminSessionControllerTest {
 
         String result = adminSessionController.getEditSessionForm(1L, model);
 
-        assertEquals("sessions/adminSessionForm", result);
+        assertEquals("sessions/AdminSessionForm", result);
         verify(model).addAttribute(eq("eventSession"), eq(breakoutSession));
     }
 }
