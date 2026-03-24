@@ -48,7 +48,6 @@ public class SessionController {
 
     @GetMapping("/breakout")
     public String getBreakoutPreferencesPage(HttpServletRequest request, Model model) {
-        // Get user from JWT token in cookie
         User user = authenticationService.getUserFromRequest(request);
         if (user == null) {
             return "redirect:/auth/login";
@@ -56,7 +55,6 @@ public class SessionController {
         
         List<Session> breakoutSessions = sessionService.getBreakoutSessions();
         
-        // Get user's existing participations to pre-select their ranked sessions
         List<BreakoutBlockRanking> userRankings = breakoutBlockRankingRepository.findByUser(user);
         List<Long> selectedSessionIds = new ArrayList<>();
         for (BreakoutBlockRanking ranking : userRankings) {
@@ -70,14 +68,13 @@ public class SessionController {
         return "sessions/breakoutRoomPreferences";
     }
 
-    // register user for sessions
     @PostMapping("/sessions/register")
     public String registerUser(
             @RequestParam(required = false) List<Long> sessionIds,
             @RequestParam(required = false) List<Integer> rankings,
             HttpServletRequest request,
             RedirectAttributes redirectAttributes) {
-        // Get user from JWT token in cookie
+
         User user = authenticationService.getUserFromRequest(request);
         if (user == null) {
             return "redirect:/auth/login";
@@ -94,7 +91,6 @@ public class SessionController {
         }
 
         try {
-            // First, remove any existing participations for this user
             List<BreakoutBlockRanking> existingRankings = breakoutBlockRankingRepository.findByUser(user);
             breakoutBlockRankingRepository.deleteAll(existingRankings);
 
@@ -112,7 +108,7 @@ public class SessionController {
             
             return "redirect:/sessions/thankYou";
         } catch (Exception e) {
-            e.printStackTrace(); // Log the error
+            e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Unable to save your preferences. Please try again.");
             return "redirect:/breakout";
         }
@@ -128,7 +124,6 @@ public class SessionController {
         return "sessions/thankYou";
     }
 
-    // unregister user from a specific session
     @PostMapping("/sessions/unregister")
     @ResponseBody
     public String unregisterUser(
@@ -177,5 +172,4 @@ public class SessionController {
 
         return "redirect:/sessions/schedule";
     }
-    
 }

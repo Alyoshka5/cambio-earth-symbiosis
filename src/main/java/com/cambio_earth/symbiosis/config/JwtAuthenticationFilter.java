@@ -16,6 +16,7 @@ import com.cambio_earth.symbiosis.services.JwtService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
@@ -33,23 +34,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.userDetailsService = userDetailsService;
         this.handlerExceptionResolver = handlerExceptionResolver;
     }
+    
     @Override
-        protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-            String path = request.getServletPath();
-            return path.startsWith("/auth/") ||  
-                path.startsWith("/js/") ||
-                path.startsWith("/css/")  ||
-                path.startsWith("/images/") ||
-                path.equals("/favicon.ico") || path.equals("/");
-}
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getServletPath();
+        return path.startsWith("/auth/") ||  
+            path.startsWith("/js/") ||
+            path.startsWith("/css/")  ||
+            path.startsWith("/images/") ||
+            path.equals("/favicon.ico") || path.equals("/");
+    }
+    
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain) throws ServletException, IOException {
         
         String jwt = null;
 
         if (request.getCookies() != null) {
-            for (jakarta.servlet.http.Cookie cookie : request.getCookies()) {
-                if ("jwt-token".equals(cookie.getName())) { // Must match the name set in Controller
+            for (Cookie cookie : request.getCookies()) {
+                if ("jwt-token".equals(cookie.getName())) {
                     jwt = cookie.getValue();
                     break;
                 }
@@ -57,7 +60,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         if (jwt == null) {
-            filterChain.doFilter(request, response);
+            addCacheControlHeaders(response);
+            response.sendRedirect("/auth/login");
             return;
         }
 
@@ -78,12 +82,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
  
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                    
+                    addCacheControlHeaders(response);
                 }
             }
 
             filterChain.doFilter(request, response);
         } catch (Exception exception) {
+            Cookie cookie = new Cookie("jwt-token", null);
+            cookie.setPath("/");
+            cookie.setHttpOnly(true);
+            cookie.setMaxAge(0);
+            response.addCookie(cookie);
+            
+            addCacheControlHeaders(response);
+            
             handlerExceptionResolver.resolveException(request, response, null, exception);
         }
+    }
+    
+    private void addCacheControlHeaders(HttpServletResponse response) {
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Expires", "0");
     }
 }
