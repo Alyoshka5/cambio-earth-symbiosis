@@ -1,182 +1,178 @@
 package com.cambio_earth.symbiosis;
+import com.cambio_earth.symbiosis.controllers.PostController;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+import static org.mockito.ArgumentMatchers.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import static org.mockito.Mockito.*;
+
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.cambio_earth.symbiosis.controllers.PostController;
 import com.cambio_earth.symbiosis.models.Post;
+import com.cambio_earth.symbiosis.models.PostRepository;
+import com.cambio_earth.symbiosis.models.User;
+import com.cambio_earth.symbiosis.models.UserRepository;
+import com.cambio_earth.symbiosis.services.AuthenticationService;
+import com.cambio_earth.symbiosis.services.PostService;
 
-class PostControllerTest {
+import jakarta.servlet.http.HttpServletRequest;
 
-    private List<Post> postDB;
+@ExtendWith(MockitoExtension.class)
+public class PostControllerTest {
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private PostRepository postRepository;
+
+    @Mock
+    private PostService postService;
+
+    @Mock
+    private AuthenticationService authenticationService;
+
+    @Mock
+    private Model model;
+
+    @Mock
+    private RedirectAttributes redirectAttributes;
+
+    @Mock
+    private HttpServletRequest request;
+
+    @InjectMocks
+    private PostController postController;
+
+    private User testUser;
+    private Post testPost;
 
     @BeforeEach
-    void setup() {
-        postDB = new ArrayList<>();
+    void setUp() {
+        testUser = new User();
+        testUser.setId(1L);
+        testUser.setEmail("test@cambioearth.com");
+
+        testPost = new Post();
+        testPost.setId(1L);
+        testPost.setTitle("Test Post");
+        testPost.setCaption("Test Caption");
+        testPost.setImg("https://res.cloudinary.com/test/image.jpg");
+        testPost.setUser(testUser);
     }
 
-    // Add valid post
     @Test
-    void testAddPost_valid() {
-        Post post = new Post();
-        post.setId(1L);
-        post.setCaption("Hello");
+    void testAddPost_ValidPhoto_Success() {
+        Map<String, String> inputs = new HashMap<>();
+        inputs.put("title", "My Conference Photo");
+        inputs.put("caption", "Having a great time!");
+        inputs.put("img", "https://res.cloudinary.com/test/photo.jpg");
 
-        postDB.add(post);
+        String result = postController.addPost(inputs, model, testUser);
 
-        assertEquals(1, postDB.size());
+        assertEquals("redirect:/home", result);
+        verify(postRepository, times(1)).save(any(Post.class));
     }
 
-    // Verify post data integrity
     @Test
-    void testAddPost_dataIntegrity() {
-        Post post = new Post();
-        post.setId(10L);
-        post.setCaption("Test");
+    void testAddPost_InvalidFileType_ErrorDisplayed() {
+        Map<String, String> inputs = new HashMap<>();
+        inputs.put("title", "Invalid Type");
+        inputs.put("caption", "This has wrong format");
+        inputs.put("img", "https://example.com/image.gif");
 
-        postDB.add(post);
+        String result = postController.addPost(inputs, model, testUser);
 
-        assertEquals(10L, postDB.get(0).getId());
-        assertEquals("Test", postDB.get(0).getCaption());
+        assertEquals("/addPost", result);
+        verify(model).addAttribute(eq("imgFormatErr"), anyString());
+        verify(postRepository, never()).save(any(Post.class));
     }
 
-    // Reject large file
     @Test
-    void testAddPost_largeFile() {
-        String file = "large.jpg";
-        boolean allowed = !file.contains("large");
+    void testAddPost_EmptyTitle_ErrorDisplayed() {
+        Map<String, String> inputs = new HashMap<>();
+        inputs.put("title", "");
+        inputs.put("caption", "Valid caption");
+        inputs.put("img", "https://res.cloudinary.com/test/image.jpg");
 
-        assertFalse(allowed);
+        String result = postController.addPost(inputs, model, testUser);
+
+        assertEquals("/addPost", result);
+        verify(model).addAttribute(eq("titleErr"), anyString());
+        verify(postRepository, never()).save(any(Post.class));
     }
 
-    // Large file error message
     @Test
-    void testAddPost_largeFileErrorMessage() {
-        String file = "large.jpg";
-        String error = file.contains("large") ? "file size too large" : "";
+    void testAddPost_EmptyCaption_ErrorDisplayed() {
+        Map<String, String> inputs = new HashMap<>();
+        inputs.put("title", "Valid Title");
+        inputs.put("caption", "");
+        inputs.put("img", "https://res.cloudinary.com/test/image.jpg");
 
-        assertEquals("file size too large", error);
+        String result = postController.addPost(inputs, model, testUser);
+
+        assertEquals("/addPost", result);
+        verify(model).addAttribute(eq("captionErr"), anyString());
+        verify(postRepository, never()).save(any(Post.class));
     }
 
-    // Delete existing post
     @Test
-    void testDeletePost_exists() {
-        Post post = new Post();
-        postDB.add(post);
+    void testLikePost_Success() {
+        when(authenticationService.getUserFromRequest(request)).thenReturn(testUser);
+        doNothing().when(postService).toggleLike(1L, testUser.getId());
 
-        assertTrue(postDB.remove(post));
-        assertEquals(0, postDB.size());
+        postController.likePost(request, 1L);
+
+        verify(postService, times(1)).toggleLike(1L, testUser.getId());
     }
 
-    // Delete non-existing post
     @Test
-    void testDeletePost_notExists() {
-        Post post = new Post();
+    void testDeletePost_PostExists_Success() {
+        Map<String, String> inputs = new HashMap<>();
 
-        assertFalse(postDB.remove(post));
+        when(postRepository.findById(1L)).thenReturn(Optional.of(testPost));
+        when(userRepository.findByPostId(1L)).thenReturn(Optional.of(testUser));
+        doNothing().when(postRepository).delete(testPost);
+
+        String result = postController.deletePost(1L, inputs, model, redirectAttributes);
+
+        assertEquals("redirect:/profile/1", result);
+        verify(postRepository, times(1)).delete(testPost);
     }
 
-    // Ensure DB unchanged when deleting non-existing post
     @Test
-    void testDeletePost_noDBChange() {
-        Post post = new Post();
-        postDB.add(post);
+    void testDeletePost_PostDoesNotExist_ErrorDisplayed() {
+        Map<String, String> inputs = new HashMap<>();
 
-        Post fake = new Post();
-        postDB.remove(fake);
+        when(postRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findByPostId(1L)).thenReturn(Optional.of(testUser));
 
-        assertEquals(1, postDB.size());
+        String result = postController.deletePost(1L, inputs, model, redirectAttributes);
+
+        assertEquals("redirect:/profile/1", result);
+        verify(redirectAttributes).addFlashAttribute(eq("deleteErr"), anyString());
+        verify(postRepository, never()).delete(any(Post.class));
     }
 
-    // Like increment
     @Test
-    void testLikePost_success() {
-        int likes = 0;
-        likes++;
+    void testHomePage_DisplaysPosts() {
+        when(postRepository.findAll()).thenReturn(java.util.Arrays.asList(testPost));
 
-        assertEquals(1, likes);
-    }
+        String result = postController.showHomePage(model);
 
-    // Prevent double like
-    @Test
-    void testLikePost_alreadyLiked() {
-        Set<String> likedUsers = new HashSet<>();
-        likedUsers.add("user1");
-
-        boolean canLike = !likedUsers.contains("user1");
-
-        assertFalse(canLike);
-    }
-
-    // Toggle like
-    @Test
-    void testLikePost_toggle() {
-        boolean liked = false;
-        liked = !liked;
-        liked = !liked;
-
-        assertFalse(liked);
-    }
-
-    // Like stored in database
-    @Test
-    void testLikePost_databaseStored() {
-        Map<Post, Integer> likeDB = new HashMap<>();
-        Post post = new Post();
-
-        likeDB.put(post, 0);
-        likeDB.put(post, likeDB.get(post) + 1);
-
-        assertEquals(1, likeDB.get(post));
-    }
-
-    // Cannot like deleted post
-    @Test
-    void testLikePost_deletedPost() {
-        Post post = null;
-
-        assertNull(post);
-    }
-
-    // Admin deletes post
-    @Test
-    void testAdminDeletePost_success() {
-        Post post = new Post();
-        postDB.add(post);
-
-        assertTrue(postDB.remove(post));
-    }
-
-    // Admin deletes non-existing post
-    @Test
-    void testAdminDeletePost_notFound() {
-        Post post = new Post();
-
-        assertFalse(postDB.remove(post));
-    }
-
-    // Admin delete removes metadata
-    @Test
-    void testAdminDeletePost_removesMetadata() {
-        Map<Post, Integer> likes = new HashMap<>();
-        Post post = new Post();
-
-        likes.put(post, 5);
-        postDB.add(post);
-
-        postDB.remove(post);
-        likes.remove(post);
-
-        assertFalse(likes.containsKey(post));
+        assertEquals("homePage", result);
+        verify(model).addAttribute(eq("posts"), anyList());
     }
 }

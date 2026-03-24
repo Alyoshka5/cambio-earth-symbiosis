@@ -1,93 +1,140 @@
 package com.cambio_earth.symbiosis;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
+import org.mockito.Mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.ui.Model;
 
+import com.cambio_earth.symbiosis.controllers.UserController;
+import com.cambio_earth.symbiosis.models.Post;
 import com.cambio_earth.symbiosis.models.User;
+import com.cambio_earth.symbiosis.models.UserRepository;
+import com.cambio_earth.symbiosis.services.AuthenticationService;
+import com.cambio_earth.symbiosis.services.JwtService;
 
-class UserControllerTest {
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
-    private User user;
+@ExtendWith(MockitoExtension.class)
+public class UserControllerTest {
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private JwtService jwtService;
+
+    @Mock
+    private AuthenticationService authenticationService;
+
+    @Mock
+    private Model model;
+
+    @Mock
+    private HttpServletRequest request;
+
+    @Mock
+    private HttpServletResponse response;
+
+    private UserController userController;
+
+    private User testUser;
+    private User profileOwner;
+    private Post testPost1;
+    private Post testPost2;
 
     @BeforeEach
-    void setup() {
-        user = new User();
-        user.setPassword("Correct123!");
-    }
+    void setUp() {
 
-    // Successful password update
-    @Test
-    void testEditProfile_success() {
-        user.setPassword("NewPass123!");
-        assertEquals("NewPass123!", user.getPassword());
-    }
+        userController = new UserController(jwtService, authenticationService);
 
-    // Login with new password
-    @Test
-    void testEditProfile_login() {
-        user.setPassword("NewPass123!");
-        assertTrue(user.getPassword().equals("NewPass123!"));
-    }
-
-    // Wrong current password
-    @Test
-    void testEditProfile_wrongPassword() {
-        assertFalse("Wrong123!".equals("Correct123!"));
-    }
-
-    // Password complexity
-    @Test
-    void testPassword_complexity() {
-        String password = "weak";
-
-        boolean valid = password.length() >= 8 &&
-                        password.matches(".*\\d.*") &&
-                        password.matches(".*[!@#$%^&*].*");
-
-        assertFalse(valid);
-    }
-
-    // Database failure
-    @Test
-    void testEditProfile_databaseFailure() {
-        String original = user.getPassword();
-
-        boolean dbSuccess = false;
-
-        if (dbSuccess) {
-            user.setPassword("NewPass123!");
+        try {
+            java.lang.reflect.Field userRepoField = UserController.class.getDeclaredField("userRepository");
+            userRepoField.setAccessible(true);
+            userRepoField.set(userController, userRepository);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
-        assertEquals(original, user.getPassword());
+        // setup users
+        testUser = new User();
+        testUser.setId(1L);
+
+        profileOwner = new User();
+        profileOwner.setId(2L);
+
+        // setup posts
+        testPost1 = new Post();
+        testPost1.setId(1L);
+        testPost1.setUser(profileOwner);
+        testPost1.setCreatedAt(java.time.LocalDateTime.now()); // 🔥 FIX
+
+        testPost2 = new Post();
+        testPost2.setId(2L);
+        testPost2.setUser(profileOwner);
+        testPost2.setCreatedAt(java.time.LocalDateTime.now()); // 🔥 FIX
     }
 
-    // View profile - user exists
     @Test
-    void testViewProfile_userExists() {
-        assertTrue(user != null);
+    void testViewProfile_Success_UserNameAndPostsDisplayed() {
+
+        when(authenticationService.getUserFromRequest(request)).thenReturn(testUser);
+        when(userRepository.findById(2L)).thenReturn(Optional.of(profileOwner));
+
+        profileOwner.setPosts(new ArrayList<>(Arrays.asList(testPost1, testPost2)));
+
+        String result = userController.getProfilePage(2L, request, response, model);
+
+        assertEquals("profile", result);
+        verify(model).addAttribute(eq("profileOwner"), eq(profileOwner));
+        verify(model).addAttribute(eq("posts"), anyList());
+        verify(model).addAttribute(eq("currentUser"), eq(testUser));
     }
 
-    // View profile shows posts
     @Test
-    void testViewProfile_displaysPosts() {
-        int postCount = 3;
-        assertEquals(3, postCount);
+    void testViewProfile_UserHasNoPosts_NoPostsDisplayed() {
+
+        when(authenticationService.getUserFromRequest(request)).thenReturn(testUser);
+        when(userRepository.findById(2L)).thenReturn(Optional.of(profileOwner));
+
+        profileOwner.setPosts(new ArrayList<>());
+
+        String result = userController.getProfilePage(2L, request, response, model);
+
+        assertEquals("profile", result);
+        verify(model).addAttribute(eq("profileOwner"), eq(profileOwner));
     }
 
-    // Redirect to profile page
     @Test
-    void testViewProfile_redirect() {
-        String page = "profile";
-        assertEquals("profile", page);
+    void testViewProfile_UserNotLoggedIn_RedirectsToLogin() {
+
+        when(authenticationService.getUserFromRequest(request)).thenReturn(null);
+
+        String result = userController.getProfilePage(1L, request, response, model);
+
+        assertEquals("redirect:/auth/login", result);
+
     }
 
-    // User has no posts
     @Test
-    void testViewProfile_noPosts() {
-        int postCount = 0;
-        assertEquals(0, postCount);
+    void testViewProfile_ProfileOwnerNotFound_RedirectsToLogin() {
+
+        when(authenticationService.getUserFromRequest(request)).thenReturn(testUser);
+        when(userRepository.findById(999L)).thenReturn(Optional.empty());
+
+        String result = userController.getProfilePage(999L, request, response, model);
+
+        assertEquals("redirect:/auth/login", result);
     }
 }
