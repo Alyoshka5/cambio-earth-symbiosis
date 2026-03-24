@@ -17,9 +17,6 @@
     <div class="schedule-layout">
         <nav class="topbar">
             <a href="/home" class="topbar-brand">Symbiosis</a>
-            <a th:if="${isAdmin}" href="/admin/event" class="topbar-link">
-                Event Settings
-            </a>
             <a th:if="${isAdmin}" href="#" class="topbar-link" data-bs-toggle="modal" data-bs-target="#modal">
                 Launch Event
             </a>
