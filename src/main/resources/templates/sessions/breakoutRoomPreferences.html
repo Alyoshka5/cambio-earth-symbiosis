@@ -39,19 +39,22 @@
         </div>
 
         <div id="sessionInputs"></div>
-        
-        <div class="buttons">
-
-            <button type="button" class="btn btn-secondary" onclick="window.location.href='/auth/login'">
-                Log Out
-            </button>
-            
-            <a th:if="${isAdmin}" href="/sessions/schedule" class="btn btn-secondary">
-                Manage Sessions
-            </a>
-
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </div>
     </form>
+
+    <div class="buttons" style="display: flex; gap: 12px; align-items: center; margin-top: 30px;">
+
+        <form action="/auth/logout" method="post" style="margin: 0;">
+            <button type="submit" class="btn btn-secondary">Log Out</button>
+        </form>
+
+        <button type="submit" form="registerForm" class="btn btn-primary">
+            Submit
+        </button>
+
+        <a th:if="${isAdmin}" href="/sessions/schedule" class="btn btn-secondary">
+            Manage Sessions
+        </a>
+
+    </div>
 </body>
 </html>

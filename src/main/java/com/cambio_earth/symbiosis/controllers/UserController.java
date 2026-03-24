@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.cambio_earth.symbiosis.dto.LoginUserDto;
 import com.cambio_earth.symbiosis.dto.RegisterUserDto;
 import com.cambio_earth.symbiosis.dto.VerifyUserDto;
-import com.cambio_earth.symbiosis.models.BreakoutBlockRanking;
 import com.cambio_earth.symbiosis.models.Post;
 import com.cambio_earth.symbiosis.models.Role;
 import com.cambio_earth.symbiosis.models.User;
@@ -27,6 +26,7 @@ import com.cambio_earth.symbiosis.services.JwtService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class UserController {
@@ -41,8 +41,6 @@ public class UserController {
         this.jwtService = jwtService;
         this.authenticationService = authenticationService;
     }
-
-
 
     @GetMapping("/")
     public String home() {
@@ -73,7 +71,12 @@ public class UserController {
     }
 
     @GetMapping("/auth/login")
-    public String getLoginPage() {
+    public String getLoginPage(HttpServletResponse response, @RequestParam(required = false) String logout) {
+        // Add cache control headers to prevent back button access
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Expires", "0");
+        
         return "login";
     }
 
@@ -146,19 +149,46 @@ public class UserController {
     }
 
     @PostMapping("/auth/logout")
-    public String logout(HttpServletResponse response) {
-
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+        // Clear the JWT cookie
         Cookie cookie = new Cookie("jwt-token", null);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setMaxAge(0);
         response.addCookie(cookie);
-
-        return "redirect:/auth/login";
+        
+        // Invalidate session if exists
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        
+        // Add cache control headers
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Expires", "0");
+        
+        // Redirect to logout page
+        return "redirect:/logout";
+    }
+    
+    @GetMapping("/logout")
+    public String logoutPage(HttpServletResponse response) {
+        // Add cache control headers to prevent back button access
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Expires", "0");
+        
+        return "logout";
     }
 
     @GetMapping("/profile/{uid}")
-    public String getProfilePage(@PathVariable Long uid, HttpServletRequest request, Model model) {
+    public String getProfilePage(@PathVariable Long uid, HttpServletRequest request, HttpServletResponse response, Model model) {
+        // Add cache control headers to prevent back button access
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Expires", "0");
+        
         User currUser = authenticationService.getUserFromRequest(request);
         User profileOwner = userRepository.findById(uid).orElse(null);
 
@@ -169,7 +199,6 @@ public class UserController {
         List<Post> userPosts = profileOwner.getPosts();
         userPosts.sort(Comparator.comparing(Post::getCreatedAt));
 
-        // Determine if the current user has permission to delete posts on a profile
         if (currUser.getRole().equals(Role.ADMIN) || currUser.getId().equals(uid)) {
             model.addAttribute("currUserCanDeletePosts", true);
         }
