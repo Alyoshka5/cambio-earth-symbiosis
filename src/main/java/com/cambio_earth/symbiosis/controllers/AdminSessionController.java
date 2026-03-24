@@ -1,5 +1,6 @@
 package com.cambio_earth.symbiosis.controllers;
 
+import com.cambio_earth.symbiosis.services.SessionService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -31,6 +32,8 @@ import com.cambio_earth.symbiosis.models.UserRepository;
 @Controller
 public class AdminSessionController {
 
+    private final SessionService sessionService;
+
     @Autowired
     SessionRepository sessionRepository;
 
@@ -42,6 +45,10 @@ public class AdminSessionController {
 
     @Autowired
     private LauanchEventRepository launchEventRepository;
+
+    AdminSessionController(SessionService sessionService) {
+        this.sessionService = sessionService;
+    }
 
     // Show blank form (create new)
     @GetMapping("/admin/sessions/new")
@@ -181,6 +188,8 @@ public class AdminSessionController {
 
     @PostMapping("/launch")
     public String launchEvent(RedirectAttributes redirectAttributes) {
+        sessionService.registerUsersForMandatorySessions();
+        sessionService.registerUsersForBreakoutSessions();
 
         LaunchEvent event = launchEventRepository.findAll().stream().findFirst().orElse(null);
         if (event != null) {
