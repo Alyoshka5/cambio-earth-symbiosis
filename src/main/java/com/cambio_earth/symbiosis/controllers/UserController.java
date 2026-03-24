@@ -215,4 +215,14 @@ public class UserController {
         User currUser = authenticationService.getUserFromRequest(request);
         return "redirect:/profile/" + currUser.getId();
     }
+    
+   @GetMapping("/navigation")
+    public String getNavigationPage(HttpServletRequest request, Model model) {
+        User currUser = authenticationService.getUserFromRequest(request);
+        if (currUser == null) return "redirect:/auth/login";
+
+        model.addAttribute("currentUser", currUser);
+        model.addAttribute("isAdmin", currUser.getRole() == Role.ADMIN);
+        return "addMap";
+    }
 }
