@@ -63,42 +63,34 @@ public class VenueMapControllerTest {
                 "test image content".getBytes()
         );
 
-        String result = venueMapController.addMap(request, validFile, "Main Lobby Map", "Floor 1", model);
+        String result = venueMapController.addMap(request, "https://example.com/map.jpg", "image/jpeg", "Main Lobby Map", "Floor 1", model);
 
         assertEquals("redirect:/maps", result);
-        verify(venueMapService, times(1)).addMap(validFile, "Main Lobby Map", "Floor 1");
+        verify(venueMapService, times(1)).addMap("https://example.com/map.jpg", "image/jpeg", "Main Lobby Map", "Floor 1");
     }
 
     @Test
     void testAddMap_InvalidFileType_ErrorDisplayed() throws Exception {
         when(authenticationService.getUserFromRequest(request)).thenReturn(adminUser);
 
-        MockMultipartFile invalidFile = new MockMultipartFile(
-                "file",
-                "map.txt",
-                "text/plain",
-                "invalid content".getBytes()
-        );
-
         doThrow(new IllegalArgumentException("Invalid file type"))
-                .when(venueMapService).addMap(invalidFile, "Test Map", "Floor 1");
+                .when(venueMapService).addMap("https://example.com/map.txt", "text/plain", "Test Map", "Floor 1");
 
-        String result = venueMapController.addMap(request, invalidFile, "Test Map", "Floor 1", model);
+        String result = venueMapController.addMap(request, "https://example.com/map.txt", "text/plain", "Test Map", "Floor 1", model);
 
         assertEquals("addMap", result);
         verify(model).addAttribute(eq("error"), anyString());
     }
 
+
     @Test
     void testAddMap_EmptyFile_ErrorDisplayed() throws Exception {
         when(authenticationService.getUserFromRequest(request)).thenReturn(adminUser);
 
-        MockMultipartFile emptyFile = new MockMultipartFile("file", "", "image/jpeg", new byte[0]);
-
         doThrow(new IllegalArgumentException("A map file must be provided."))
-                .when(venueMapService).addMap(emptyFile, "Test Map", "Floor 1");
+                .when(venueMapService).addMap(null, null, "Test Map", "Floor 1");
 
-        String result = venueMapController.addMap(request, emptyFile, "Test Map", "Floor 1", model);
+        String result = venueMapController.addMap(request, null, null, "Test Map", "Floor 1", model);
 
         assertEquals("addMap", result);
         verify(model).addAttribute(eq("error"), anyString());
@@ -108,43 +100,29 @@ public class VenueMapControllerTest {
     void testUpdateMap_ValidFile_Success() throws Exception {
         when(authenticationService.getUserFromRequest(request)).thenReturn(adminUser);
 
-        MockMultipartFile validFile = new MockMultipartFile(
-                "file",
-                "map.jpg",
-                "image/jpeg",
-                "test image content".getBytes()
-        );
-
-        String result = venueMapController.updateMap(request, 1L, validFile, "Updated Map Title", "Floor 2", model);
+        String result = venueMapController.updateMap(request, 1L, "https://example.com/map.jpg", "image/jpeg", "Updated Map Title", "Floor 2", model);
 
         assertEquals("redirect:/maps", result);
         verify(venueMapService, times(1))
-                .updateMap(eq(1L), any(), eq("Updated Map Title"), eq("Floor 2"));
+                .updateMap(eq(1L), eq("https://example.com/map.jpg"), eq("image/jpeg"), eq("Updated Map Title"), eq("Floor 2"));
     }
 
     @Test
     void testUpdateMap_InvalidFileType_ErrorDisplayed() throws Exception {
         when(authenticationService.getUserFromRequest(request)).thenReturn(adminUser);
 
-        MockMultipartFile invalidFile = new MockMultipartFile(
-                "file",
-                "map.txt",
-                "text/plain",
-                "invalid content".getBytes()
-        );
-
         when(venueMapService.getMapById(1L)).thenReturn(new VenueMap());
 
         doThrow(new IllegalArgumentException("Invalid file type"))
                 .when(venueMapService)
-                .updateMap(eq(1L), eq(invalidFile), eq("Updated Map"), eq("Floor 2"));
+                .updateMap(eq(1L), eq("https://example.com/map.txt"), eq("text/plain"), eq("Updated Map"), eq("Floor 2"));
 
-        String result = venueMapController.updateMap(request, 1L, invalidFile, "Updated Map", "Floor 2", model);
+        String result = venueMapController.updateMap(request, 1L, "https://example.com/map.txt", "text/plain", "Updated Map", "Floor 2", model);
 
         assertEquals("editMap", result);
         verify(model).addAttribute(eq("error"), anyString());
     }
-
+    
     @Test
     void testDeleteMap_MapExists_Success() throws Exception {
         when(authenticationService.getUserFromRequest(request)).thenReturn(adminUser);

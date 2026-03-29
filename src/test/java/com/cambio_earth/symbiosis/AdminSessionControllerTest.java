@@ -70,7 +70,7 @@ public class AdminSessionControllerTest {
         });
 
         String result = adminSessionController.saveSession(
-                breakoutSession, "2024-12-15", "10:00", "11:00", "Speaker 1,Speaker 2"
+                breakoutSession, "2024-12-15", "10:00", "11:00", "Speaker 1,Speaker 2", 50
         );
 
         assertEquals("redirect:/sessions/1", result);
