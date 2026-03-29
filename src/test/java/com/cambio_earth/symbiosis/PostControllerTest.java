@@ -56,6 +56,7 @@ public class PostControllerTest {
     @InjectMocks
     private PostController postController;
 
+
     private User testUser;
     private Post testPost;
 
@@ -146,7 +147,7 @@ public class PostControllerTest {
         when(userRepository.findByPostId(1L)).thenReturn(Optional.of(testUser));
         doNothing().when(postRepository).delete(testPost);
 
-        String result = postController.deletePost(1L, inputs, model, redirectAttributes);
+        String result = postController.deletePost(1L, "/profile" , model, redirectAttributes);
 
         assertEquals("redirect:/profile/1", result);
         verify(postRepository, times(1)).delete(testPost);
@@ -159,7 +160,8 @@ public class PostControllerTest {
         when(postRepository.findById(1L)).thenReturn(Optional.empty());
         when(userRepository.findByPostId(1L)).thenReturn(Optional.of(testUser));
 
-        String result = postController.deletePost(1L, inputs, model, redirectAttributes);
+        String result = postController.deletePost(1L, "/profile" , model, redirectAttributes);
+
 
         assertEquals("redirect:/profile/1", result);
         verify(redirectAttributes).addFlashAttribute(eq("deleteErr"), anyString());
@@ -168,9 +170,10 @@ public class PostControllerTest {
 
     @Test
     void testHomePage_DisplaysPosts() {
+        
         when(postRepository.findAll()).thenReturn(java.util.Arrays.asList(testPost));
 
-        String result = postController.showHomePage(model);
+        String result = postController.showHomePage(model, request);
 
         assertEquals("homePage", result);
         verify(model).addAttribute(eq("posts"), anyList());
