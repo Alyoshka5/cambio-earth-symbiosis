@@ -43,6 +43,21 @@ h2 {
 }
 
 /* -- Buttons -- */
+.header-button-container {
+    display: flex;
+    gap: 10px;
+}
+
+.header-button-container form {
+    width: auto;
+}
+
+.header-button-container button {
+    width: min(200px, 40vw);
+    display: flex;
+    justify-content: center;
+}
+
 .btn-secondary {
     background: transparent;
     color: var(--sage);
@@ -91,10 +106,6 @@ h2 {
 .delete-post-btn:hover {
     background: rgba(224, 112, 112, 0.1);
     border-color: rgba(255, 75, 75, 0.94);
-}
-
-.logout {
-    padding: 11px 40px;
 }
 
 /* -- Posts -- */
