@@ -235,4 +235,18 @@ public class UserController {
         model.addAttribute("isAdmin", currUser.getRole() == Role.ADMIN);
         return "addMap";
     }
+
+    @GetMapping("/participants")
+    public String getParticipantsPage(HttpServletRequest request, Model model) {
+        User currUser = authenticationService.getUserFromRequest(request);
+        if (currUser == null) return "redirect:/auth/login";
+    
+        List<User> participants = userRepository.findAll();
+    
+        model.addAttribute("currentUser", currUser);
+        model.addAttribute("participants", participants);
+        model.addAttribute("isAdmin", currUser.getRole() == Role.ADMIN);
+    
+        return "participants";
+    }
 }
