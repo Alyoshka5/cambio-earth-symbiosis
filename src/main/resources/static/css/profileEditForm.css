@@ -1,0 +1,248 @@
+:root {
+    --forest:     #2b3930;
+    --forest-mid: #3a4f42;
+    --forest-light: #4d6657;
+    --bark:       #1a2420;
+    --moss:       #6b8f71;
+    --sage:       #a8c5a0;
+    --cream:      #f0ede6;
+    --white:      #ffffff;
+    --accent:     #c8d96e; 
+    --danger:     #e07070;
+    
+    /* Sidebar width for consistent spacing */
+    --sidebar-width: 250px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    background-color: var(--bark);
+    background-image:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(107,143,113,0.18) 0%, transparent 70%),
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 60px,
+            rgba(255,255,255,0.015) 60px,
+            rgba(255,255,255,0.015) 61px
+        );
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+}
+
+/* MAIN CONTENT WRAPPER - This is key for proper sidebar offset */
+.page-content {
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── Top bar ── */
+.topbar {
+    background: rgba(26, 36, 32, 0.95);
+    border-bottom: 1px solid rgba(168,197,160,0.15);
+    padding: 14px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+    width: 100%;
+}
+
+.topbar-brand {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    color: var(--white);
+    letter-spacing: 0.5px;
+    text-decoration: none;
+}
+
+.topbar-back {
+    font-size: 0.82rem;
+    color: var(--sage);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+}
+
+.topbar-back:hover { color: var(--white); }
+
+/* ── Page wrapper ── */
+.page-wrapper {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+    width: 100%;
+}
+
+/* ── Page header ── */
+.page-header {
+    margin-bottom: 40px;
+}
+
+.page-header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.4rem;
+    color: var(--white);
+    margin: 0 0 6px;
+    line-height: 1.15;
+}
+
+.page-header p {
+    color: var(--sage);
+    font-size: 0.9rem;
+    margin: 0;
+    font-weight: 300;
+}
+
+.header-line {
+    width: 48px;
+    height: 2px;
+    background: var(--accent);
+    margin: 14px 0 16px;
+    border-radius: 2px;
+}
+
+/* ── Card ── */
+.form-card {
+    background: rgba(58, 79, 66, 0.35);
+    border: 1px solid rgba(168,197,160,0.14);
+    border-radius: 16px;
+    padding: 40px;
+    backdrop-filter: blur(6px);
+}
+
+/* ── Section divider ── */
+.section-label {
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(168,197,160,0.1);
+}
+
+.section-label:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+}
+
+/* ── Form controls ── */
+.form-label {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--sage);
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+}
+
+.form-label span.required {
+    color: var(--accent);
+    margin-left: 3px;
+}
+
+.form-control {
+    background-color: rgba(26, 36, 32, 0.7) !important;
+    border: 1px solid rgba(168,197,160,0.2) !important;
+    color: var(--white) !important;
+    border-radius: 10px !important;
+    padding: 11px 14px !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 0.9rem !important;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px rgba(200,217,110,0.12) !important;
+    outline: none !important;
+    background-color: rgba(26, 36, 32, 0.9) !important;
+}
+
+.form-control::placeholder {
+    color: rgba(168,197,160,0.4) !important;
+}
+
+/* ── Action buttons ── */
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 36px;
+    padding-top: 28px;
+    border-top: 1px solid rgba(168,197,160,0.1);
+}
+
+.btn-save {
+    background: var(--accent);
+    color: var(--bark);
+    border: none;
+    border-radius: 10px;
+    padding: 12px 32px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    flex: 1;
+    transition: opacity 0.2s, transform 0.15s;
+}
+
+.btn-save:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+}
+
+.btn-save:active {
+    transform: translateY(0);
+}
+
+.btn-cancel {
+    background: transparent;
+    color: var(--sage);
+    border: 1px solid rgba(168,197,160,0.25);
+    border-radius: 10px;
+    padding: 12px 24px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.btn-cancel:hover {
+    border-color: rgba(168,197,160,0.5);
+    color: var(--white);
+}
+
+@media (max-width: 768px) {
+    .page-content {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .topbar {
+        padding: 14px 20px;
+    }
+    
+    .form-card {
+        padding: 24px;
+    }
+}
