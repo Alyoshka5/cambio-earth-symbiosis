@@ -70,6 +70,8 @@ public class User implements UserDetails {
     @ManyToMany(mappedBy = "likedBy")
     private Set<Post> likedPosts = new HashSet<>();
 
+    private Long points = (long)0;
+
     // Constructors
     public User() {}
 
@@ -123,6 +125,9 @@ public class User implements UserDetails {
 
     public Set<Post> getLikedPosts() { return likedPosts; }
     public void setLikedPosts(Set<Post> likedPosts) { this.likedPosts = likedPosts; }
+
+    public Long getPoints() {return points;}
+    public void setPoints(Long points) {this.points = points;}
 
 
     // Authentication

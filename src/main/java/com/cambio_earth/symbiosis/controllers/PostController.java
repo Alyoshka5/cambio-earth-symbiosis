@@ -63,12 +63,8 @@ public class PostController {
             model.addAttribute("titleErr", "A title must be entered");
             errors = true;
         }
-        if (newCaption == null || newCaption.isBlank()) {
-            model.addAttribute("captionErr", "A caption must be entered");
-            errors = true;
-        }
         if (currentUser == null) {
-            model.addAttribute("err", "Could not remove post. User no longer exists.");
+            model.addAttribute("err", "Could not add post. User no longer exists.");
             errors = true;
         }
         if (newImg == null || newImg.isBlank()) {
@@ -102,6 +98,15 @@ public class PostController {
         // Add the post to the database
         Post newPost = new Post(currentUser, newImg, newTitle, newCaption);
         postRepository.save(newPost);
+
+        // Give the user 5 points for making a post
+        User thisUser = userRepository.findById(currentUser.getId()).orElse(null);
+        if (thisUser == null) {
+            return "redirect:/login";
+        } else {
+            thisUser.setPoints(thisUser.getPoints() + 5);
+            userRepository.save(thisUser);
+        }
         return "redirect:/home";
     }
     
