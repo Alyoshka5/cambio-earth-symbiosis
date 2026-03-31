@@ -66,6 +66,11 @@ public class UserController {
             return "signUp";
         }
 
+        if (!registerUserDto.getPassword().equals(registerUserDto.getConfirmPassword())) {
+            model.addAttribute("error", "Passwords must match.");
+            return "signUp";
+        }
+
         try {
             authenticationService.signup(registerUserDto);
             return "redirect:/auth/verify?email=" + registerUserDto.getEmail();
