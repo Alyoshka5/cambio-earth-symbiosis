@@ -209,6 +209,13 @@
             border-radius: 10px;
             background: rgba(26,36,32,0.5);
             border: 1px solid rgba(168,197,160,0.1);
+            cursor: zoom-in;
+            transition: opacity 0.2s, border-color 0.2s;
+        }
+
+        .map-card-preview:hover {
+            opacity: 0.88;
+            border-color: rgba(168,197,160,0.35);
         }
 
         .map-card-pdf {
@@ -293,6 +300,94 @@
         }
 
         .modal-actions { display: flex; gap: 12px; justify-content: center; }
+
+        /* ── Lightbox ── */
+        .lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+            z-index: 300;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .lightbox.open { display: flex; }
+
+        .lightbox-inner {
+            position: relative;
+            max-width: min(90vw, 1100px);
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .lightbox-img {
+            max-width: 100%;
+            max-height: calc(90vh - 80px);
+            object-fit: contain;
+            border-radius: 12px;
+            border: 1px solid rgba(168,197,160,0.18);
+            display: block;
+        }
+
+        .lightbox-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            gap: 16px;
+        }
+
+        .lightbox-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .lightbox-floor {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent);
+        }
+
+        .lightbox-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.2rem;
+            color: var(--white);
+            margin: 0;
+        }
+
+        .lightbox-close {
+            position: fixed;
+            top: 20px;
+            right: 24px;
+            background: rgba(58,79,66,0.7);
+            border: 1px solid rgba(168,197,160,0.25);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--cream);
+            font-size: 1.2rem;
+            line-height: 1;
+            transition: background 0.2s, border-color 0.2s;
+            z-index: 301;
+        }
+
+        .lightbox-close:hover {
+            background: rgba(58,79,66,1);
+            border-color: rgba(168,197,160,0.5);
+        }
     </style>
 </head>
 <body>
@@ -327,11 +422,19 @@
                 <!-- Preview: image vs PDF -->
                 <img th:if="${map.fileType == 'image/jpeg' or map.fileType == 'image/png'}"
                     th:src="${map.filePath}"
-                    class="map-card-preview" alt="Map preview" />
+                    class="map-card-preview" alt="Map preview"
+                    th:attr="onclick='openLightbox(this, \'' + ${map.floorLevel} + '\', \'' + ${map.title} + '\')'"
+                    title="Click to enlarge" />
 
                 <a th:if="${map.fileType == 'application/pdf'}"
                     th:href="${map.filePath}"
                     class="map-card-pdf" target="_blank">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                    View PDF
+                </a>
 
                 <!-- Admin actions -->
                 <div th:if="${isAdmin}" class="map-card-actions">
@@ -369,7 +472,22 @@
     </div>
 </div>
 
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightboxOnBackdrop(event)">
+    <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close">&times;</button>
+    <div class="lightbox-inner">
+        <img id="lightboxImg" class="lightbox-img" src="" alt="Map enlarged view" />
+        <div class="lightbox-meta">
+            <div class="lightbox-info">
+                <span class="lightbox-floor" id="lightboxFloor"></span>
+                <p class="lightbox-title" id="lightboxTitle"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
+    /* ── Delete modal ── */
     function openDeleteModal(id, title) {
         document.getElementById('deleteModalMsg').textContent = `This will permanently remove "${title}".`;
         document.getElementById('deleteForm').action = `/maps/${id}/delete`;
@@ -379,6 +497,30 @@
     function closeDeleteModal() {
         document.getElementById('deleteModal').classList.remove('open');
     }
+
+    /* ── Lightbox ── */
+    function openLightbox(imgEl, floor, title) {
+        document.getElementById('lightboxImg').src = imgEl.src;
+        document.getElementById('lightboxFloor').textContent = floor;
+        document.getElementById('lightboxTitle').textContent = title;
+        document.getElementById('lightbox').classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+        document.getElementById('lightbox').classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    function closeLightboxOnBackdrop(event) {
+        if (event.target === document.getElementById('lightbox')) {
+            closeLightbox();
+        }
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeLightbox();
+    });
 </script>
 
 </body>
