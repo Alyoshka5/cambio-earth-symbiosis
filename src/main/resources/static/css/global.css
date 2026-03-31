@@ -61,7 +61,8 @@ a {
 }
 
 a:hover {
-    text-decoration: underline;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 
