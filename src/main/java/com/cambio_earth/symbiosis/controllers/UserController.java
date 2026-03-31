@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cambio_earth.symbiosis.dto.LoginUserDto;
+import com.cambio_earth.symbiosis.dto.ProfileDto;
 import com.cambio_earth.symbiosis.dto.RegisterUserDto;
 import com.cambio_earth.symbiosis.dto.VerifyUserDto;
 import com.cambio_earth.symbiosis.models.LauanchEventRepository;
@@ -32,7 +34,6 @@ import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class UserController {
-
     @Autowired
     UserRepository userRepository;
 
@@ -41,10 +42,12 @@ public class UserController {
 
     private final JwtService jwtService;
     private final AuthenticationService authenticationService;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserController(JwtService jwtService, AuthenticationService authenticationService) {
+    public UserController(JwtService jwtService, AuthenticationService authenticationService, PasswordEncoder passwordEncoder) {
         this.jwtService = jwtService;
         this.authenticationService = authenticationService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/")
@@ -236,6 +239,63 @@ public class UserController {
 
         model.addAttribute("user", currUser);
         return "profileEditForm";
+    }
+
+    @PostMapping("/profile/edit")
+    public String saveProfileInfo(HttpServletRequest request, Model model, ProfileDto profileDto) {
+        User currUser = authenticationService.getUserFromRequest(request);
+
+        if (currUser == null) {
+            System.out.println("TRUE");
+            return "redirect:/auth/login";
+        }
+
+        boolean validChanges = true;
+
+        String firstName = profileDto.getFirstName();
+        if (firstName.length() < 2 || firstName.length() > 100) {
+            model.addAttribute("firstNameError", "First name must be between 2 and 100 characters");
+            validChanges = false;
+        }
+        currUser.setFirstName(firstName);
+
+        String lastName = profileDto.getLastName();
+        if (lastName.length() < 2 || lastName.length() > 100) {
+            model.addAttribute("lastNameError", "Last name must be between 2 and 100 characters");
+            validChanges = false;
+        }
+        currUser.setLastName(lastName);
+
+        if (!profileDto.getCurrentPassword().equals("") || !profileDto.getNewPassword().equals("") || !profileDto.getConfirmNewPassword().equals("")) {
+            LoginUserDto authenticationDto = new LoginUserDto();
+            authenticationDto.setEmail(currUser.getEmail());
+            authenticationDto.setPassword(profileDto.getCurrentPassword());
+            try {
+                authenticationService.authenticate(authenticationDto);
+                if (profileDto.getNewPassword().length() >= 8) {
+                    if (profileDto.getNewPassword().equals(profileDto.getConfirmNewPassword())) {
+                        currUser.setPassword(passwordEncoder.encode(profileDto.getNewPassword()));
+                    } else {
+                        model.addAttribute("confirmNewPasswordError", "Passwords must match");
+                        validChanges = false;
+                    }
+                } else {
+                    model.addAttribute("newPasswordError", "Password must be at least 8 characters long");
+                    validChanges = false;
+                }
+            } catch (RuntimeException e) {
+                model.addAttribute("currentPasswordError", "Incorrect Password");
+                validChanges = false;
+            }
+        }
+
+        if (validChanges) {
+            userRepository.save(currUser);
+            return "redirect:/profile";
+        } else {
+            model.addAttribute("user", currUser);
+            return "profileEditForm";
+        }
     }
     
    @GetMapping("/navigation")

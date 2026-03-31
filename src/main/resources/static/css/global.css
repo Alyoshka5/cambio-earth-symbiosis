@@ -166,6 +166,7 @@ input:focus {
 
 /* ERROR MESSAGES */
 
+.error,
 .first-name-error,
 .last-name-error,
 .email-blank-error,

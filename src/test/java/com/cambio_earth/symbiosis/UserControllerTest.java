@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.ui.Model;
 
 import com.cambio_earth.symbiosis.controllers.UserController;
@@ -46,6 +47,9 @@ public class UserControllerTest {
 
     @Mock
     private HttpServletResponse response;
+    
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     private UserController userController;
 
@@ -57,7 +61,7 @@ public class UserControllerTest {
     @BeforeEach
     void setUp() {
 
-        userController = new UserController(jwtService, authenticationService);
+        userController = new UserController(jwtService, authenticationService, passwordEncoder);
 
         try {
             java.lang.reflect.Field userRepoField = UserController.class.getDeclaredField("userRepository");
