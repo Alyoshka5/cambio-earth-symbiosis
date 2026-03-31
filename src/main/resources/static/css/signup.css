@@ -120,6 +120,15 @@ legend + p {
 
 
 /* Input fields */
+.name-input-container {
+    display: flex;
+    gap: 15px;
+}
+
+.name-input-container * {
+    flex: 1;
+}
+
 .form-control,
 .form-select {
     background-color: rgba(26, 36, 32, 0.7) !important;
