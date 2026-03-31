@@ -232,8 +232,9 @@ public class UserController {
         if (currUser == null) return "redirect:/auth/login";
 
         model.addAttribute("currentUser", currUser);
+        model.addAttribute("user", currUser);
         model.addAttribute("isAdmin", currUser.getRole() == Role.ADMIN);
-        return "addMap";
+        return "maps";
     }
 
     @GetMapping("/participants")

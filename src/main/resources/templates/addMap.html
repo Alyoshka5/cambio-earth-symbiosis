@@ -3,9 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Map</title>
+
+    <!-- Bootstrap & Fonts -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
-    <title>Add Map</title>
+
+    <!-- Global & Sidebar Styles -->
+    <link rel="stylesheet" href="/css/global.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+
     <style>
         :root {
             --forest-mid:   #3a4f42;
@@ -30,10 +37,21 @@
             color: var(--cream);
             font-family: 'DM Sans', sans-serif;
             min-height: 100vh;
-            margin: 0; padding: 0;
+            margin: 0;
+            padding: 0;
         }
 
-        main { max-width: 560px; margin: 0 auto; padding: 48px 24px 80px; }
+        /* Layout with sidebar */
+        .maps-layout {
+            margin-left: 250px;
+            min-height: 100vh;
+        }
+
+        .maps-container {
+            max-width: 560px;
+            margin: 0 auto;
+            padding: 48px 24px 80px;
+        }
 
         .page-header { margin-bottom: 40px; }
 
@@ -91,7 +109,7 @@
 
         input[type="text"]:focus { border-color: rgba(200,217,110,0.5); }
 
-        /* ── File upload area ── */
+        /* File upload area */
         .file-upload-area {
             display: flex;
             flex-direction: column;
@@ -136,7 +154,6 @@
             display: none;
         }
 
-        /* ── Form actions ── */
         .form-actions {
             display: flex;
             gap: 12px;
@@ -184,58 +201,74 @@
             font-size: 0.9rem;
             margin-bottom: 24px;
         }
+
+        @media (max-width: 768px) {
+            .maps-layout {
+                margin-left: 0;
+            }
+            .maps-container {
+                padding: 24px 16px 96px;
+            }
+        }
     </style>
 </head>
 <body>
-<main>
-    <div class="page-header">
-        <h1>Add Map</h1>
-    </div>
 
-    <div th:if="${error}" class="flash-error" th:text="${error}"></div>
+<!-- Sidebar fragment -->
+<div th:replace="fragments/sidebar :: sidebar"></div>
 
-    <div class="form-card">
-        <form th:action="@{/maps/add}" method="post">
-            <!-- File upload -->
-            <div class="form-group">
-                <label>Map File</label>
-                <label for="file" class="file-upload-area" id="fileLabel">
-                    <div class="file-upload-icon">📁</div>
-                    <div class="file-upload-text">Click to choose a file</div>
-                    <p class="file-hint">PDF, JPEG, or PNG</p>
-                    <input type="file" id="file"
-                        accept=".pdf,.jpg,.jpeg,.png"
-                        style="display:none"
-                        onchange="handleFileSelected(this)">
-                </label>
-                <p class="file-name-display" id="fileNameDisplay"></p>
-                <p id="uploadStatus" style="font-size:0.82rem; color: var(--sage); margin-top:6px;"></p>
+<main class="maps-layout">
+    <nav class="topbar">
+        <a href="/home" class="topbar-brand">Symbiosis</a>
+    </nav>
+    <div class="maps-container">
+        <div class="page-header">
+            <h1>Add Map</h1>
+        </div>
 
-                <!-- These two hidden fields are what actually get submitted to the controller -->
-                <input type="hidden" id="imgUrlField" name="fileUrl">
-                <input type="hidden" id="fileType" name="fileType">
-            </div>
+        <div th:if="${error}" class="flash-error" th:text="${error}"></div>
 
-            <!-- Title -->
-            <div class="form-group">
-                <label for="title">Map Title</label>
-                <input type="text" id="title" name="title"
-                       placeholder="e.g. Conference Centre Overview">
-            </div>
+        <div class="form-card">
+            <form th:action="@{/maps/add}" method="post">
+                <!-- File upload -->
+                <div class="form-group">
+                    <label>Map File</label>
+                    <label for="file" class="file-upload-area" id="fileLabel">
+                        <div class="file-upload-icon">📁</div>
+                        <div class="file-upload-text">Click to choose a file</div>
+                        <p class="file-hint">PDF, JPEG, or PNG</p>
+                        <input type="file" id="file"
+                               accept=".pdf,.jpg,.jpeg,.png"
+                               style="display:none"
+                               onchange="handleFileSelected(this)">
+                    </label>
+                    <p class="file-name-display" id="fileNameDisplay"></p>
+                    <p id="uploadStatus" style="font-size:0.82rem; color: var(--sage); margin-top:6px;"></p>
 
-            <!-- Floor level -->
-            <div class="form-group">
-                <label for="floorLevel">Floor Level</label>
-                <input type="text" id="floorLevel" name="floorLevel"
-                       placeholder="e.g. Floor 3, Main Lobby">
-            </div>
+                    <input type="hidden" id="imgUrlField" name="fileUrl">
+                    <input type="hidden" id="fileType" name="fileType">
+                </div>
 
-            <div class="form-actions">
-                <button type="submit" class="btn-accent">Save Changes</button>
-                <a th:href="@{/maps}" class="btn-ghost">Cancel</a>
-            </div>
+                <!-- Title -->
+                <div class="form-group">
+                    <label for="title">Map Title</label>
+                    <input type="text" id="title" name="title"
+                           placeholder="e.g. Conference Centre Overview">
+                </div>
 
-        </form>
+                <!-- Floor level -->
+                <div class="form-group">
+                    <label for="floorLevel">Floor Level</label>
+                    <input type="text" id="floorLevel" name="floorLevel"
+                           placeholder="e.g. Floor 3, Main Lobby">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-accent">Save Changes</button>
+                    <a th:href="@{/maps}" class="btn-ghost">Cancel</a>
+                </div>
+            </form>
+        </div>
     </div>
 </main>
 
@@ -273,7 +306,6 @@
         const display = document.getElementById('fileNameDisplay');
         const label = document.getElementById('fileLabel');
 
-        // PDFs need a different Cloudinary resource type
         const resourceType = file.type === 'application/pdf' ? 'raw' : 'image';
 
         const formData = new FormData();
@@ -288,7 +320,7 @@
             const data = await response.json();
 
             if (data.secure_url) {
-                imgUrlField.value = data.secure_url;   // <-- URL stored here, submitted with form
+                imgUrlField.value = data.secure_url;
                 fileTypeField.value = file.type;
                 display.textContent = '✓ ' + file.name;
                 display.style.display = 'block';
