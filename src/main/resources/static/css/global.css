@@ -61,7 +61,8 @@ a {
 }
 
 a:hover {
-    text-decoration: underline;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 
@@ -165,6 +166,7 @@ input:focus {
 
 /* ERROR MESSAGES */
 
+.error,
 .first-name-error,
 .last-name-error,
 .email-blank-error,

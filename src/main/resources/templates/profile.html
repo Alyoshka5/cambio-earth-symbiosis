@@ -27,9 +27,14 @@
             <section>
                 <h1 th:text="${profileOwner.firstName} + ' ' + ${profileOwner.lastName}">profile</h1>
                 <h2 th:text="${profileOwner.email}"></h2>
-                <form th:if="${profileOwner.id == currentUser.id}" action="/auth/logout" method="post">
-                    <button class="btn-secondary logout">Log Out</button>
-                </form>
+                <div class="header-button-container">
+                    <form th:if="${profileOwner.id == currentUser.id}" action="/profile/edit" method="get">
+                        <button class="btn-secondary">Edit Profile</button>
+                    </form>
+                    <form th:if="${profileOwner.id == currentUser.id}" action="/auth/logout" method="post">
+                        <button class="btn-secondary">Log Out</button>
+                    </form>
+                </div>
             </section>
 
             <div class="divider"></div>
