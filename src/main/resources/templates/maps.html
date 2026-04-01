@@ -3,10 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Venue Maps</title>
+
+    <!-- Bootstrap & Fonts -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
-    <title>Venue Maps</title>
+
+    <!-- Global & Sidebar Styles -->
+    <link rel="stylesheet" href="/css/global.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+
     <style>
+        /* Your original map‑specific styles – only minor adjustments for sidebar compatibility */
         :root {
             --forest:       #2b3930;
             --forest-mid:   #3a4f42;
@@ -37,7 +45,14 @@
             padding: 0;
         }
 
-        main {
+        /* Main content area – shifted right for sidebar */
+        .maps-layout {
+            margin-left: 250px;      /* matches sidebar width */
+            min-height: 100vh;
+        }
+
+        /* Inner container that preserves original map page spacing and max-width */
+        .maps-container {
             max-width: 860px;
             margin: 0 auto;
             padding: 48px 24px 80px;
@@ -388,75 +403,99 @@
             background: rgba(58,79,66,1);
             border-color: rgba(168,197,160,0.5);
         }
+
+        .publish-bar {
+            left: 250px;
+        }
+
+        @media (max-width: 768px) {
+            .maps-layout {
+                margin-left: 0;
+            }
+            .maps-container {
+                padding: 24px 16px 96px;
+            }
+            .publish-bar {
+                left: 0;
+            }
+        }
     </style>
 </head>
 <body>
 
-<main>
-    <!-- Page header -->
-    <div class="page-header">
-        <h1>Maps</h1>
-        <a th:if="${isAdmin}" th:href="@{/maps/add}" class="btn-accent">+ Add Map</a>
-    </div>
+<!-- Sidebar fragment (same as homepage) -->
+<div th:replace="fragments/sidebar :: sidebar"></div>
 
-    <!-- Flash messages -->
-    <div th:if="${publishSuccess}" class="flash flash-success" th:text="${publishSuccess}"></div>
-    <div th:if="${error}" class="flash flash-error" th:text="${error}"></div>
+<!-- Main content area shifted right for sidebar -->
+<main class="maps-layout">
 
-    <!-- Empty state -->
-    <div th:if="${maps.isEmpty()}" class="empty-state">
-        <p>No maps have been uploaded yet.</p>
-    </div>
+     <nav class="topbar">
+        <a href="/home" class="topbar-brand">Symbiosis</a>
+    </nav>
 
-    <!-- Map slider -->
-    <div th:if="${!maps.isEmpty()}" class="slider-wrapper">
-        <div class="slider-track">
-            <div th:each="map : ${maps}" class="map-card">
+    <div class="maps-container">
 
-                <!-- Floor label + title -->
-                <div>
-                    <p class="map-card-label" th:text="${map.floorLevel}">Floor 1</p>
-                    <p class="map-card-title" th:text="${map.title}">Main Lobby</p>
+        <!-- Page header (original) -->
+        <div class="page-header">
+            <h1>Maps</h1>
+            <a th:if="${isAdmin}" th:href="@{/maps/add}" class="btn-accent">+ Add Map</a>
+        </div>
+
+        <!-- Flash messages -->
+        <div th:if="${publishSuccess}" class="flash flash-success" th:text="${publishSuccess}"></div>
+        <div th:if="${error}" class="flash flash-error" th:text="${error}"></div>
+
+        <!-- Empty state -->
+        <div th:if="${maps.isEmpty()}" class="empty-state">
+            <p>No maps have been uploaded yet.</p>
+        </div>
+
+        <!-- Map slider -->
+        <div th:if="${!maps.isEmpty()}" class="slider-wrapper">
+            <div class="slider-track">
+                <div th:each="map : ${maps}" class="map-card">
+
+                    <div>
+                        <p class="map-card-label" th:text="${map.floorLevel}">Floor 1</p>
+                        <p class="map-card-title" th:text="${map.title}">Main Lobby</p>
+                    </div>
+
+                    <img th:if="${map.fileType == 'image/jpeg' or map.fileType == 'image/png'}"
+                         th:src="${map.filePath}"
+                         class="map-card-preview" alt="Map preview"
+                         th:attr="onclick='openLightbox(this, \'' + ${map.floorLevel} + '\', \'' + ${map.title} + '\')'"
+                         title="Click to enlarge" />
+
+                    <a th:if="${map.fileType == 'application/pdf'}"
+                       th:href="${map.filePath}"
+                       class="map-card-pdf" target="_blank">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        View PDF
+                    </a>
+
+                    <div th:if="${isAdmin}" class="map-card-actions">
+                        <a th:href="@{'/maps/' + ${map.id} + '/edit'}" class="btn-outline-sage">Edit</a>
+                        <button class="btn-danger-soft"
+                                th:attr="onclick='openDeleteModal(' + ${map.id} + ', \'' + ${map.title} + '\')'">
+                            Delete
+                        </button>
+                    </div>
                 </div>
-
-                <!-- Preview: image vs PDF -->
-                <img th:if="${map.fileType == 'image/jpeg' or map.fileType == 'image/png'}"
-                    th:src="${map.filePath}"
-                    class="map-card-preview" alt="Map preview"
-                    th:attr="onclick='openLightbox(this, \'' + ${map.floorLevel} + '\', \'' + ${map.title} + '\')'"
-                    title="Click to enlarge" />
-
-                <a th:if="${map.fileType == 'application/pdf'}"
-                    th:href="${map.filePath}"
-                    class="map-card-pdf" target="_blank">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                        <polyline points="14 2 14 8 20 8"/>
-                    </svg>
-                    View PDF
-                </a>
-
-                <!-- Admin actions -->
-                <div th:if="${isAdmin}" class="map-card-actions">
-                    <a th:href="@{'/maps/' + ${map.id} + '/edit'}" class="btn-outline-sage">Edit</a>
-                    <button class="btn-danger-soft"
-                            th:attr="onclick='openDeleteModal(' + ${map.id} + ', \'' + ${map.title} + '\')'">
-                        Delete
-                    </button>
-                </div>
-
             </div>
+        </div>
+
+        <!-- Publish bar (admin only) -->
+        <div th:if="${isAdmin}" class="publish-bar">
+            <p>Ready to push changes live?</p>
+            <form th:action="@{/maps/publish}" method="post">
+                <button type="submit" class="btn-accent">Publish Changes</button>
+            </form>
         </div>
     </div>
 </main>
-
-<!-- Publish bar (admin only) -->
-<div th:if="${isAdmin}" class="publish-bar">
-    <p>Ready to push changes live?</p>
-    <form th:action="@{/maps/publish}" method="post">
-        <button type="submit" class="btn-accent">Publish Changes</button>
-    </form>
-</div>
 
 <!-- Delete confirmation modal -->
 <div class="modal-backdrop-custom" id="deleteModal">
