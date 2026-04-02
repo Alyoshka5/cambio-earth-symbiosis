@@ -32,30 +32,39 @@
           
             <p th:if="${error}" th:text="${error}" class="error-message"></p>
           
-            <div class="mb-3">
-                <label class="form-label" for="input-name">Enter your first name:</label>
-                <input type="text" class="first-name form-control" name="firstName" placeholder="First name">
-                <p class="first-name-error" style="display: none;">Must enter a first name</p>
+            <div class="name-input-container">
+                <div class="mb-3">
+                    <label class="form-label" for="input-name">First Name</label>
+                    <input type="text" class="first-name form-control" name="firstName">
+                    <p class="first-name-error" style="display: none;">Must enter a first name</p>
+                </div>
+    
+                <div class="mb-3">
+                    <label class="form-label" for="input-name">Last Name</label>
+                    <input type="text" class="last-name form-control" name="lastName">
+                    <p class="last-name-error" style="display: none;">Must enter a last name</p>
+                </div>
             </div>
 
             <div class="mb-3">
-                <label class="form-label" for="input-name">Enter your last name:</label>
-                <input type="text" class="last-name form-control" name="lastName" placeholder="Last name">
-                <p class="last-name-error" style="display: none;">Must enter a last name</p>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label" for="input-email">Enter an email:</label>
-                <input type="text" class="input-email form-control" name="email" placeholder="email@domain.com">
+                <label class="form-label" for="input-email">Email</label>
+                <input type="text" class="input-email form-control" name="email" placeholder="email@cambioearth.com">
                 <p class="email-blank-error" style="display: none;">Must enter an email</p>
                 <p class="email-invalid-error" style="display: none;">Email entered is invalid</p>
             </div>
 
             <div class="mb-3">
-                <label class="form-label" for="input-pass">Enter a password:</label>
-                <input type="password" class="input-pass form-control" name="password" placeholder="Password">
+                <label class="form-label" for="input-pass">Password</label>
+                <input type="password" class="input-pass form-control" name="password">
                 <p class="password-error" style="display: none;">Must enter a password</p>
             </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="input-pass">Confirm Password</label>
+                <input type="password" class="input-confirm-pass form-control" name="confirm-password">
+                <p class="confirm-password-error" style="display: none;">Passwords must match</p>
+            </div>
+
             <button type="submit" class="btn btn-primary btn-cont">Continue</button>
 
             <p style="margin-top: 16px; text-align: center; color: #cccccc; font-size: 0.9rem;">
@@ -70,12 +79,14 @@
             const lastNameInput = document.querySelector(".last-name");
             const emailInput = document.querySelector(".input-email");
             const passwordInput = document.querySelector(".input-pass");
+            const confirmPasswordInput = document.querySelector(".input-confirm-pass");
 
             const firstNameError = document.querySelector(".first-name-error");
             const lastNameError = document.querySelector(".last-name-error");
             const emailBlankError = document.querySelector(".email-blank-error");
             const emailInvalidError = document.querySelector(".email-invalid-error");
             const passwordError = document.querySelector(".password-error");
+            const confirmPasswordError = document.querySelector(".confirm-password-error");
 
             function showError(element) {
                 element.style.display = "block";
@@ -92,7 +103,8 @@
                 hideError(lastNameError);
                 hideError(emailBlankError);
                 hideError(emailInvalidError);
-                            hideError(passwordError);
+                hideError(passwordError);
+                hideError(confirmPasswordError);
 
                 if (firstNameInput.value.trim() === "") {
                     showError(firstNameError);
@@ -114,6 +126,11 @@
 
                 if (passwordInput.value.trim() === "") {
                     showError(passwordError);
+                    hasError = true;
+                }
+
+                if (confirmPasswordInput.value !== passwordInput.value) {
+                    showError(confirmPasswordError);
                     hasError = true;
                 }
 
