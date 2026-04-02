@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.cambio_earth.symbiosis.models.BreakoutBlockRanking;
 import com.cambio_earth.symbiosis.models.BreakoutBlockRankingRepository;
+import com.cambio_earth.symbiosis.models.LauanchEventRepository;
 import com.cambio_earth.symbiosis.models.Participation;
 import com.cambio_earth.symbiosis.models.ParticipationRepository;
 import com.cambio_earth.symbiosis.models.Role;
@@ -36,6 +37,8 @@ public class SessionService {
     @Autowired
     BreakoutBlockRankingRepository rankingRepository;
         
+    @Autowired
+    private LauanchEventRepository launchEventRepository;
 
     @Autowired
     private SessionRepository sessionRepository;
