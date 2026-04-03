@@ -94,7 +94,9 @@ public class SessionService {
         for (User user : users) {
             for (Session session : mandatorySessions) {
                 Participation participation = new Participation(user, session);
-                participations.add(participation);
+                if (!participations.contains(participation)) {
+                    participations.add(participation);
+                }
             }
         }
         participationRepository.saveAll(participations);
@@ -129,6 +131,15 @@ public class SessionService {
                 // Find the user's rankings
                 List<BreakoutBlockRanking> userRankings = rankings.stream().filter(ranking -> ranking.getUser().getId().equals(user.getId()) && currentBreakoutSessions.contains(ranking.getSession())).toList();
                 boolean userRegistered = false;
+                
+                // Check if user is already registered for a session in the timeslot
+                for (Session session : currentBreakoutSessions) {
+                    if (participations.contains(new Participation(user, session))) {
+                        userRegistered = true;
+                        break;
+                    }
+                }
+                if (userRegistered) break;
 
                 // Register user based on ranking
                 for (BreakoutBlockRanking ranking : userRankings) {
