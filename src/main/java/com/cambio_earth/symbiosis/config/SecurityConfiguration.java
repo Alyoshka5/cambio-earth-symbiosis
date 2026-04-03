@@ -36,6 +36,9 @@ public class SecurityConfiguration {
                         .requestMatchers("/", "/auth/**", "/js/**", "/css/**", "/images/**").permitAll()
                         .anyRequest().authenticated()
                 )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> response.sendRedirect("/auth/login"))
+                )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
