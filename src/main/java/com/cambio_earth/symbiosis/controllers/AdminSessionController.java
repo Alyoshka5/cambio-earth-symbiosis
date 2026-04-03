@@ -53,7 +53,9 @@ public class AdminSessionController {
     // Show blank form (create new)
     @GetMapping("/admin/sessions/new")
     public String getNewSessionForm(Model model) {
-        model.addAttribute("eventSession", new Session());
+        Session session = new Session();
+        session.setCapacity(100); // Default value for breakout sessions
+        model.addAttribute("eventSession", session);
 
         // Navigation bar control 
         model.addAttribute("showSidebar", true);
@@ -66,6 +68,9 @@ public class AdminSessionController {
     @GetMapping("/admin/sessions/{id}/edit")
     public String getEditSessionForm(@PathVariable Long id, Model model) {
         Session session = sessionRepository.findById(id).orElseThrow();
+        if (!session.isBreakout()) {
+            session.setCapacity(100); // Default capacity for if session is set to breakout
+        }
         model.addAttribute("eventSession", session);
 
         model.addAttribute("showSidebar", true);
@@ -128,8 +133,12 @@ public class AdminSessionController {
 
         session.setBreakout(formSessionData.isBreakout());
 
-        if (formSessionData.isBreakout() && capacity != null && capacity > 0) {
-            session.setCapacity(capacity);
+        if (formSessionData.isBreakout()) {
+            if (capacity != null && capacity > 0) {
+                session.setCapacity(capacity);
+            } else {
+                session.setCapacity(100); // Default capacity if invalid capacity 
+            }
         } else {
             session.setCapacity(null); // clear it if not a breakout
         }
