@@ -1,4 +1,7 @@
 <div th:fragment="sidebar">
+    <!-- CURRENT USER ID DATA -->
+    <input id="navCurrentUserId" type="hidden" th:value="${currentUserId}">
+
     <!-- DESKTOP SIDEBAR -->
     <div id="sidebar">
 
@@ -58,6 +61,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const path = window.location.pathname;
+            const currentUserId = document.getElementById("navCurrentUserId").value;
 
             if (path === "/home" || path === "/participants" || path === "/posts/form") {
                 document.getElementById("nav-home")?.classList.add("sidebar-active");
@@ -71,7 +75,7 @@
             } else if (path.startsWith("/maps")) {
                 document.getElementById("nav-navigation")?.classList.add("sidebar-active");
                 document.getElementById("mobile-nav-navigation")?.classList.add("sidebar-active");
-            } else if (path.startsWith("/profile")) {
+            } else if (path === "/profile/" + currentUserId) {
                 document.getElementById("nav-profile")?.classList.add("sidebar-active");
                 document.getElementById("mobile-nav-profile")?.classList.add("sidebar-active");
             }
