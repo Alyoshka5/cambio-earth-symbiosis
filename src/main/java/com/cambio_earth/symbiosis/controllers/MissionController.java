@@ -11,6 +11,9 @@ import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class MissionController {
@@ -64,6 +67,43 @@ public class MissionController {
         model.addAttribute("currentUser", user);
         System.out.println(missionCards);
         return "missions";
+    }
+    
+    // Process mission completion
+    @PostMapping("/missions/claim")
+    public String processClaimingMission(@RequestParam Long missionId, RedirectAttributes model, HttpServletRequest request) {
+
+        // Get current user
+        User currUser = authenticationService.getUserFromRequest(request);
+        if (currUser == null) {
+            return "redirect:/auth/login";
+        }
+
+        Mission mission = missionRepository.findById(missionId).orElse(null);
+        if (mission == null) {
+            model.addFlashAttribute("missionErr", "Mission could not be found.");
+            return "redirect:/missions";
+        }
+
+        // Give the user mission rewards and add the mission to the completedMissions database
+        CompletedMissions missionCompleted = new CompletedMissions(currUser, mission);
+
+        try {
+            completedMissionsRepository.save(missionCompleted);
+
+            // Get the user directly from the database and update the user with new points attribute
+            User user = userRepository.findById(currUser.getId()).orElse(null);
+            if (user == null) {
+                return "redirect:/login";
+            }
+            user.setPoints(user.getPoints() + mission.getPoints());
+            userRepository.save(user);
+
+        } catch (Exception e) {
+            model.addFlashAttribute("missionErr", "Mission could not be set as complete.");
+        }
+
+        return "redirect:/missions";
     }
 
 }

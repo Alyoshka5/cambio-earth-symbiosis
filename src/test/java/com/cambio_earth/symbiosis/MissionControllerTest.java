@@ -139,4 +139,61 @@ public class MissionControllerTest {
         assertEquals("missions", result);
         assertEquals(3, testUser.getNumberOfPostsCreated());
     }
+    
+    @Test
+    void testClaimingValidMissionSavesCompletionAndPoints() {
+        when(authenticationService.getUserFromRequest(request)).thenReturn(testUser);
+        when(missionRepository.findById(1L)).thenReturn(Optional.of(testMission));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+
+        RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
+        String result = missionController.processClaimingMission(1L, redirectAttributes, request);
+
+        assertEquals("redirect:/missions", result);
+        verify(completedMissionsRepository, times(1)).save(any(CompletedMissions.class));
+        verify(userRepository, times(1)).save(testUser);
+        assertEquals(35L, testUser.getPoints());
+    }
+
+    @Test
+    void testClaimingUnfoundMission() {
+        when(authenticationService.getUserFromRequest(request)).thenReturn(testUser);
+        when(missionRepository.findById(99L)).thenReturn(Optional.empty());
+
+        RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
+        String result = missionController.processClaimingMission(99L, redirectAttributes, request);
+
+        assertEquals("redirect:/missions", result);
+        verify(redirectAttributes).addFlashAttribute(eq("missionErr"), anyString());
+        verify(completedMissionsRepository, never()).save(any(CompletedMissions.class));
+        verify(userRepository, never()).save(any(User.class));
+    }
+
+    @Test
+    void testClaimingMissionWithInvalidUser() {
+        when(authenticationService.getUserFromRequest(request)).thenReturn(null);
+
+        RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
+        String result = missionController.processClaimingMission(1L, redirectAttributes, request);
+
+        assertEquals("redirect:/auth/login", result);
+        verify(completedMissionsRepository, never()).save(any(CompletedMissions.class));
+        verify(userRepository, never()).save(any(User.class));
+    }
+
+    @Test
+    void testClaimingMissionPointsCorrectlyAdded() {
+        testUser.setPoints(100L);
+        testMission.setPoints(35L);
+
+        when(authenticationService.getUserFromRequest(request)).thenReturn(testUser);
+        when(missionRepository.findById(1L)).thenReturn(Optional.of(testMission));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+
+        RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
+        missionController.processClaimingMission(1L, redirectAttributes, request);
+
+        assertEquals(135L, testUser.getPoints());
+        verify(userRepository, times(1)).save(testUser);
+    }
 }
