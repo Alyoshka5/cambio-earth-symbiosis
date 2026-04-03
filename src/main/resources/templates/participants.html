@@ -39,6 +39,26 @@
             margin: 0 auto;
         }
 
+        /* -- Top bar -- */
+        .topbar-back {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.82rem;
+            color: var(--sage);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .topbar-back:hover {
+            color: var(--white);
+        }
+        
+        .back-arrow {
+            font-size: 1rem;
+            line-height: 1;
+        }
+
         /* ── Header ── */
         .page-header {
             display: flex;
@@ -305,7 +325,6 @@
         @media (max-width: 768px) {
             .page-layout {
                 margin-left: 0;
-                padding: 24px 16px 96px 16px;
             }
 
             .page-header {
@@ -328,6 +347,13 @@
     <div th:replace="fragments/sidebar :: sidebar"></div>
 
     <main class="page-layout">
+        <nav class="topbar">
+            <a href="/home" class="topbar-brand">Symbiosis</a>
+            <a href="/home" class="topbar-back">
+                <span class="back-arrow">←</span> Home
+            </a>
+        </nav>
+
         <div class="page-shell">
 
             <!-- Header -->
