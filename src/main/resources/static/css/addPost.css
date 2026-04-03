@@ -58,19 +58,13 @@ body {
     align-items: center;
     gap: 6px;
     font-size: 0.82rem;
-    font-weight: 500;
-    letter-spacing: 0.4px;
     color: var(--sage);
     text-decoration: none;
-    border: 1px solid rgba(168,197,160,0.2);
-    border-radius: 20px;
-    padding: 5px 14px 5px 10px;
-    transition: color 0.2s, border-color 0.2s;
+    transition: color 0.2s;
 }
  
 .topbar-back:hover {
     color: var(--white);
-    border-color: rgba(168,197,160,0.5);
 }
  
 .back-arrow {
