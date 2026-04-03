@@ -79,6 +79,10 @@ body {
 }
  
 /* Page wrapper */
+.post-form-layout {
+    margin-left: 250px;
+}
+
 .page-wrapper {
     max-width: 760px;
     margin: 0 auto;
@@ -370,4 +374,11 @@ body {
 .btn-cancel:hover {
     border-color: rgba(168,197,160,0.5);
     color: var(--white);
+}
+
+/* Media queries */
+@media (max-width: 768px) {
+    .post-form-layout {
+        margin-left: 0;
+    }
 }
