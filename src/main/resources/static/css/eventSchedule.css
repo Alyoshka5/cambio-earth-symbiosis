@@ -165,50 +165,73 @@ main {
     margin: 0;
 }
 
-/* ── Session row ── */
+/* ===== SESSION ROW ===== */
 .session {
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    align-items: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;  /* keep top-aligned */
     gap: 24px;
-    margin-bottom: 14px;
+    margin-bottom: 24px;
     margin-left: 0 !important;
     margin-right: 0 !important;
 }
 
-/* ── Time range ── */
+/* ===== TIME RANGE ===== */
 .time-range {
     font-size: 1rem;
     font-weight: 500;
     color: var(--sage);
     letter-spacing: 0.3px;
-    padding-top: 18px;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
     margin: 0;
     white-space: nowrap;
-    flex: 0 0 auto !important;
-    width: auto !important;
-    max-width: none !important;
+    flex: 0 0 100px;
+    /* Remove padding-top; instead use line-height to align with card's first text */
+    line-height: 1.4;
+    /* Adjust to match the card's first text baseline */
+    /* The card's first text (h4) has line-height ~1.4 and no top margin */
+    /* So we align by giving the time the same line-height and no extra padding */
+    padding-top: 0;
+    /* Add a small top offset to perfectly match the h4's position inside the card */
+    /* The card's padding-top is 18px, and h4 has margin-bottom:4px but no margin-top */
+    /* So the h4's baseline is at 18px + (line-height) from top */
+    /* We can just align by using transform or margin-top */
+    margin-top: 18px;  /* matches card's padding-top */
 }
 
-/* ── Schedule card ── */
+/* ===== SCHEDULE CARD ===== */
 .schedule-card {
     background: rgba(58, 79, 66, 0.35);
     border: 1px solid rgba(168,197,160,0.14);
     border-radius: 14px;
     padding: 18px 20px !important;
     backdrop-filter: blur(6px);
-    display: flex !important;
+    display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
     cursor: pointer;
     transition: border-color 0.2s, background 0.2s;
-    flex: 1 1 0% !important;
-    width: auto !important;
-    max-width: none !important;
+    flex: 1;
+    min-width: 0;
     position: relative;
+}
+
+/* ===== RESPONSIVE (mobile) ===== */
+@media (max-width: 768px) {
+    .session {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .time-range {
+        white-space: normal;
+        flex-basis: auto;
+        margin-top: 0;  /* reset margin on mobile */
+    }
+
+    .schedule-card {
+        width: 100%;
+    }
 }
 
 /* ── Card link overlay ── */

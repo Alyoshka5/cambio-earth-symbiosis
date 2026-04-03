@@ -1,5 +1,6 @@
 package com.cambio_earth.symbiosis.controllers;
 
+import com.cambio_earth.symbiosis.services.EventService;
 import com.cambio_earth.symbiosis.services.SessionService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,8 +20,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.cambio_earth.symbiosis.models.LauanchEventRepository;
-import com.cambio_earth.symbiosis.models.LaunchEvent;
 import com.cambio_earth.symbiosis.models.Participation;
 import com.cambio_earth.symbiosis.models.ParticipationRepository;
 import com.cambio_earth.symbiosis.models.Role;
@@ -31,6 +30,8 @@ import com.cambio_earth.symbiosis.models.UserRepository;
 
 @Controller
 public class AdminSessionController {
+
+    private final EventService eventService;
 
     private final SessionService sessionService;
 
@@ -43,17 +44,17 @@ public class AdminSessionController {
     @Autowired
     ParticipationRepository participationRepository;
 
-    @Autowired
-    private LauanchEventRepository launchEventRepository;
-
-    AdminSessionController(SessionService sessionService) {
+    AdminSessionController(SessionService sessionService, EventService eventService) {
         this.sessionService = sessionService;
+        this.eventService = eventService;
     }
 
     // Show blank form (create new)
     @GetMapping("/admin/sessions/new")
     public String getNewSessionForm(Model model) {
-        model.addAttribute("eventSession", new Session());
+        Session session = new Session();
+        session.setCapacity(100); // Default value for breakout sessions
+        model.addAttribute("eventSession", session);
 
         // Navigation bar control 
         model.addAttribute("showSidebar", true);
@@ -66,6 +67,9 @@ public class AdminSessionController {
     @GetMapping("/admin/sessions/{id}/edit")
     public String getEditSessionForm(@PathVariable Long id, Model model) {
         Session session = sessionRepository.findById(id).orElseThrow();
+        if (!session.isBreakout()) {
+            session.setCapacity(100); // Default capacity for if session is set to breakout
+        }
         model.addAttribute("eventSession", session);
 
         model.addAttribute("showSidebar", true);
@@ -128,8 +132,12 @@ public class AdminSessionController {
 
         session.setBreakout(formSessionData.isBreakout());
 
-        if (formSessionData.isBreakout() && capacity != null && capacity > 0) {
-            session.setCapacity(capacity);
+        if (formSessionData.isBreakout()) {
+            if (capacity != null && capacity > 0) {
+                session.setCapacity(capacity);
+            } else {
+                session.setCapacity(100); // Default capacity if invalid capacity 
+            }
         } else {
             session.setCapacity(null); // clear it if not a breakout
         }
@@ -191,10 +199,7 @@ public class AdminSessionController {
         sessionService.registerUsersForMandatorySessions();
         sessionService.registerUsersForBreakoutSessions();
 
-        LaunchEvent event = launchEventRepository.findAll().stream().findFirst().orElse(null);
-        if (event != null) {
-            event.setStarted(true);
-            launchEventRepository.save(event);
+        if (eventService.launchEvent()) {
             redirectAttributes.addFlashAttribute("launchSuccess", "Event has successfully been launched!");
         } else {
             redirectAttributes.addFlashAttribute("launchErr", "Event could not be launched. Please try again.");

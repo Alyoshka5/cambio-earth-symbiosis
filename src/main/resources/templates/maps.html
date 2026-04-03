@@ -169,23 +169,17 @@
 
         .empty-state p { font-size: 1rem; margin: 0; }
 
-        /* ── Map slider ── */
+        /* ── Map list (vertical scroll) ── */
+        /* ── Map grid (2 per row) ── */
         .slider-wrapper {
-            position: relative;
+            margin-bottom: 32px;
         }
 
         .slider-track {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);  /* two equal columns */
             gap: 20px;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scroll-behavior: smooth;
-            padding-bottom: 12px;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
         }
-
-        .slider-track::-webkit-scrollbar { display: none; }
 
         /* ── Map card ── */
         .map-card {
@@ -194,13 +188,20 @@
             border-radius: 16px;
             padding: 24px;
             backdrop-filter: blur(6px);
-            flex: 0 0 340px;
-            scroll-snap-align: start;
             display: flex;
             flex-direction: column;
             gap: 16px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
+        /* Responsive: on smaller screens, stack to 1 column */
+        @media (max-width: 640px) {
+            .slider-track {
+                grid-template-columns: 1fr;  /* single column on mobile */
+                gap: 16px;
+            }
+        }
         .map-card-label {
             font-size: 0.75rem;
             font-weight: 600;
