@@ -90,12 +90,14 @@ public class SessionService {
     public void registerUsersForMandatorySessions() {
         List<Session> mandatorySessions = sessionRepository.findByIsBreakoutFalse();
         Iterable<User> users = userRepository.findAll();
+        List<Participation> participations = participationRepository.findAll();
         for (User user : users) {
             for (Session session : mandatorySessions) {
                 Participation participation = new Participation(user, session);
-                participationRepository.save(participation);
+                participations.add(participation);
             }
         }
+        participationRepository.saveAll(participations);
     }
 
     public void registerUsersForBreakoutSessions() {
@@ -133,7 +135,7 @@ public class SessionService {
                     Integer sessionParticipationCount = sessionParticipationCounts.get(ranking.getSession());
                     if (sessionParticipationCount < ranking.getSession().getCapacity()) {
                         Participation participation = new Participation(user, ranking.getSession());
-                        participationRepository.save(participation);
+                        participations.add(participation);
                         sessionParticipationCounts.put(ranking.getSession(), sessionParticipationCount + 1);
                         userRegistered = true;
                         break;
@@ -153,7 +155,7 @@ public class SessionService {
                     }
                     if (sessionParticipationCounts.get(leastParticipatedSession) < leastParticipatedSession.getCapacity()) { // If false, then all sessions are at full capacity
                         Participation participation = new Participation(user, leastParticipatedSession);
-                        participationRepository.save(participation);
+                        participations.add(participation);
                         sessionParticipationCounts.put(leastParticipatedSession, sessionParticipationCounts.get(leastParticipatedSession) + 1);
                     } else {
                         break; // Go to next group of breakout sessions since all current sessions are at full capacity
@@ -161,5 +163,7 @@ public class SessionService {
                 }
             }
         }
+
+        participationRepository.saveAll(participations);
     }
 }
