@@ -1,6 +1,5 @@
 package com.cambio_earth.symbiosis.controllers;
 
-import com.cambio_earth.symbiosis.services.EventService;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +23,7 @@ import com.cambio_earth.symbiosis.models.Role;
 import com.cambio_earth.symbiosis.models.User;
 import com.cambio_earth.symbiosis.models.UserRepository;
 import com.cambio_earth.symbiosis.services.AuthenticationService;
+import com.cambio_earth.symbiosis.services.EventService;
 import com.cambio_earth.symbiosis.services.JwtService;
 
 import jakarta.servlet.http.Cookie;
