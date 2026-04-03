@@ -12,7 +12,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" defer></script>
     <script src="/js/missions.js" defer></script>
 
-
 </head>
 <body>
    
@@ -22,7 +21,6 @@
         <nav class="topbar">
             <a href="/home" class="topbar-brand">Symbiosis</a>
         </nav>
-
 
         <main>
             <!-- Page header -->
@@ -43,7 +41,6 @@
                 </div>
             </header>
 
-
             <!-- Error message -->
             <div th:if="${missionErr}" class="alert alert-warning alert-dismissible fade show" role="alert">
                 <strong>Error! </strong> <span th:text="${missionErr}"></span>
@@ -53,9 +50,7 @@
             <!-- Mission cards -->
             <section class="missions-grid">
 
-
                 <div th:each="card : ${missionCards}">
-
 
                     <!-- Base card -->
                     <div class="mission-card"
@@ -66,7 +61,6 @@
                         <div class="claimed-overlay" th:if="${card.rewardClaimed}">
                             <span class="claimed-badge">Completed</span>
                         </div>
-
 
                         <!-- Card content (always shown) -->
                         <div class="mission-card-inner">
@@ -79,9 +73,7 @@
                                 </div>
                             </div>
 
-
                             <p class="mission-description" th:text="${card.mission.description}">Desc</p>
-
 
                             <!-- Progress bar -->
                             <div class="mission-progress-section">
@@ -99,7 +91,6 @@
                                 </div>
                             </div>
 
-
                             <!-- Claim button -->
                             <form th:if="${card.readyToClaim}" th:action="@{/missions/claim}" method="post">
                                 <input type="hidden" name="missionId" th:value="${card.mission.id}">
@@ -113,9 +104,7 @@
                         </div>
                     </div>
 
-
                 </div>
-
 
             </section>
         </main>
