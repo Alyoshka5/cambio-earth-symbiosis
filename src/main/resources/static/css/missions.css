@@ -1,0 +1,336 @@
+body {
+    background-color: var(--bark);
+    background-image:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(107,143,113,0.18) 0%, transparent 70%),
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 60px,
+            rgba(255,255,255,0.015) 60px,
+            rgba(255,255,255,0.015) 61px
+        );
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+}
+
+/* ── Layout ── */
+.missions-layout {
+    margin-left: 250px;
+}
+
+main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+}
+
+/* ── Page header ── */
+.page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 48px;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.title-jura {
+    font-family: 'DM Serif Display', serif;
+    font-size: 4rem;
+    color: var(--white);
+    margin: 0;
+    line-height: 1.1;
+    position: relative;
+    padding-bottom: 18px;
+}
+
+.header-line {
+    width: 48px;
+    height: 2px;
+    background: var(--accent);
+}
+
+.page-subtitle {
+    color: var(--sage);
+    font-size: 0.95rem;
+    font-weight: 300;
+    margin: 0;
+    margin-top: 8px;
+}
+
+/* ── Points badge ── */
+.points-badge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(58, 79, 66, 0.5);
+    border: 1px solid rgba(200,217,110,0.25);
+    border-radius: 16px;
+    padding: 14px 22px;
+    flex-shrink: 0;
+    margin-top: 8px;
+}
+
+.points-icon {
+    font-size: 1.3rem;
+    color: var(--accent);
+    line-height: 1;
+}
+
+.points-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.points-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--sage);
+}
+
+.points-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    color: var(--accent);
+    line-height: 1;
+}
+
+/* ── Missions grid ── */
+.missions-grid {
+    display: grid;
+    grid-template-columns: repeat(1fr);
+    gap: 20px;
+    max-width: 700px;
+    margin: 0 auto;  
+}
+
+/* ── Mission card ── */
+.mission-card {
+    position: relative;
+    border-radius: 18px;
+    border: 1px solid rgba(168,197,160,0.14);
+    background: rgba(58, 79, 66, 0.35);
+    backdrop-filter: blur(6px);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+/* Ready to claim mission state */
+.mission-card.ready {
+    border-color: rgba(200,217,110,0.5);
+    box-shadow: 0 0 0 1px rgba(200,217,110,0.2), 0 8px 32px rgba(200,217,110,0.12);
+    transform: translateY(-4px);
+}
+
+.mission-card.ready:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 0 0 1px rgba(200,217,110,0.35), 0 16px 40px rgba(200,217,110,0.18);
+    border-color: rgba(200,217,110,0.7);
+}
+
+/* Claimed state (dimmed) */
+.mission-card.claimed {
+    border-color: rgba(168,197,160,0.08);
+    background: rgba(43, 57, 48, 0.2);
+}
+
+/* ── Claimed overlay ── */
+.claimed-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(26, 36, 32, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    border-radius: 18px;
+    backdrop-filter: blur(2px);
+}
+
+.claimed-badge {
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--sage);
+    border: 1px solid rgba(168,197,160,0.3);
+    padding: 8px 20px;
+    border-radius: 999px;
+    background: rgba(26, 36, 32, 0.6);
+}
+
+/* ── Card inner ── */
+.mission-card-inner {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    height: 100%;
+}
+
+/* Dim inner content when claimed */
+.mission-card.claimed .mission-card-inner {
+    opacity: 0.35;
+}
+
+/* ── Card top row ── */
+.mission-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.mission-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: var(--white);
+    margin: 0;
+    line-height: 1.25;
+    flex: 1;
+}
+
+/* Points pill */
+.mission-points-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(200,217,110,0.12);
+    border: 1px solid rgba(200,217,110,0.25);
+    border-radius: 999px;
+    padding: 4px 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.pill-star {
+    color: var(--accent);
+    font-size: 0.6rem;
+}
+
+.pill-number {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent);
+}
+
+.pill-label {
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: rgba(200,217,110,0.6);
+}
+
+/* ── Description ── */
+.mission-description {
+    font-size: 0.88rem;
+    font-weight: 300;
+    color: var(--sage);
+    margin: 0;
+    line-height: 1.55;
+    flex: 1;
+}
+
+/* ── Progress section ── */
+.mission-progress-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.progress-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(168,197,160,0.55);
+}
+
+.progress-fraction {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--sage);
+}
+
+/* Segmented progress track */
+.progress-track {
+    display: flex;
+    gap: 3px;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+/* Segments injected by JS */
+.progress-segment {
+    flex: 1;
+    height: 100%;
+    border-radius: 2px;
+    background: rgba(168,197,160,0.12);
+    transition: background 0.3s ease;
+}
+
+.progress-segment.filled {
+    background: var(--accent);
+}
+
+/* ── Claim button ── */
+.btn-claim {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 4px;
+    background: var(--accent);
+    color: var(--bark);
+    border: none;
+    border-radius: 10px;
+    padding: 11px 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+}
+
+.btn-claim:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+}
+
+.btn-claim:active {
+    transform: translateY(0);
+}
+
+.btn-claim-pts {
+    font-size: 0.8rem;
+    font-weight: 600;
+    opacity: 0.7;
+    background: rgba(26,36,32,0.18);
+    border-radius: 999px;
+    padding: 2px 8px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .missions-layout {
+        margin-left: 0;
+    }
+
+
+    .title-jura {
+        font-size: 2.8rem;
+    }
+}
