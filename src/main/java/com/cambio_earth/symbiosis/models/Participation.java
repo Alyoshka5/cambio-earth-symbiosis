@@ -73,7 +73,6 @@ public class Participation {
         
         Participation that = (Participation) o;
         
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (user != null ? !user.equals(that.user) : that.user != null) return false;
         return session != null ? session.equals(that.session) : that.session == null;
     }
