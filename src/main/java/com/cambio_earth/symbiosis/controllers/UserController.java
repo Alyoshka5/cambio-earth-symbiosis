@@ -1,5 +1,6 @@
 package com.cambio_earth.symbiosis.controllers;
 
+import com.cambio_earth.symbiosis.services.EventService;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -18,8 +19,6 @@ import com.cambio_earth.symbiosis.dto.LoginUserDto;
 import com.cambio_earth.symbiosis.dto.ProfileDto;
 import com.cambio_earth.symbiosis.dto.RegisterUserDto;
 import com.cambio_earth.symbiosis.dto.VerifyUserDto;
-import com.cambio_earth.symbiosis.models.LauanchEventRepository;
-import com.cambio_earth.symbiosis.models.LaunchEvent;
 import com.cambio_earth.symbiosis.models.Post;
 import com.cambio_earth.symbiosis.models.Role;
 import com.cambio_earth.symbiosis.models.User;
@@ -34,20 +33,20 @@ import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class UserController {
+    
     @Autowired
     UserRepository userRepository;
-
-    @Autowired
-    LauanchEventRepository launchEventRepository;
-
+    
     private final JwtService jwtService;
     private final AuthenticationService authenticationService;
     private final PasswordEncoder passwordEncoder;
+    private final EventService eventService;
 
-    public UserController(JwtService jwtService, AuthenticationService authenticationService, PasswordEncoder passwordEncoder) {
+    public UserController(JwtService jwtService, AuthenticationService authenticationService, PasswordEncoder passwordEncoder, EventService eventService) {
         this.jwtService = jwtService;
         this.authenticationService = authenticationService;
         this.passwordEncoder = passwordEncoder;
+        this.eventService = eventService;
     }
 
     @GetMapping("/")
@@ -106,9 +105,8 @@ public class UserController {
             cookie.setPath("/");
             cookie.setMaxAge(3600);
             response.addCookie(cookie);
-
-            List<LaunchEvent> events = launchEventRepository.findAll();
-            if (!events.isEmpty() && events.get(0).isStarted()) {
+            
+            if (eventService.isEventLaunched()) {
                 return "redirect:/home";
             }
 
