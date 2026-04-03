@@ -11,7 +11,7 @@
             <span>Home</span>
         </a>
 
-        <a href="/ranking" class="nav-item" id="nav-ranking">
+        <a href="/rankings" class="nav-item" id="nav-ranking">
             <span class="nav-icon ranking"></span>
             <span>Ranking</span>
         </a>
@@ -38,7 +38,7 @@
             <span class="mobile-icon home"></span>
         </a>
 
-        <a href="/ranking" class="mobile-nav-item" id="mobile-nav-ranking">
+        <a href="/rankings" class="mobile-nav-item" id="mobile-nav-ranking">
             <span class="mobile-icon ranking"></span>
         </a>
 
@@ -62,7 +62,7 @@
             if (path === "/home") {
                 document.getElementById("nav-home")?.classList.add("sidebar-active");
                 document.getElementById("mobile-nav-home")?.classList.add("sidebar-active");
-            } else if (path === "/ranking") {
+            } else if (path === "/rankings") {
                 document.getElementById("nav-ranking")?.classList.add("sidebar-active");
                 document.getElementById("mobile-nav-ranking")?.classList.add("sidebar-active");
             } else if (path.startsWith("/sessions")) {
