@@ -472,7 +472,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="quick-post-card">
                 <div class="quick-post-top">
                     <div class="quick-avatar"
-                         th:text="${user != null and user.firstName != null and !#strings.isEmpty(user.firstName)} ? ${#strings.substring(user.firstName,0,1)} : 'U'">
+                         th:text="${currUser != null and currUser.firstName != null and !#strings.isEmpty(currUser.firstName)} ? ${#strings.substring(currUser.firstName,0,1)} : 'U'">
                         U
                     </div>
 
