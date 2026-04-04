@@ -144,6 +144,7 @@ h2 {
 
 #modal-like-icon:hover {
     cursor: pointer;
+    opacity: 0.9;
 }
 
 .white-filter {
