@@ -1,6 +1,7 @@
 package com.cambio_earth.symbiosis.controllers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -24,6 +26,7 @@ import com.cambio_earth.symbiosis.models.Role;
 import com.cambio_earth.symbiosis.models.Session;
 import com.cambio_earth.symbiosis.models.SessionRepository;
 import com.cambio_earth.symbiosis.models.User;
+import com.cambio_earth.symbiosis.models.UserRepository;
 import com.cambio_earth.symbiosis.services.AuthenticationService;
 import com.cambio_earth.symbiosis.services.SessionService;
 
@@ -50,6 +53,8 @@ public class SessionController {
     @Autowired
     private LauanchEventRepository launchEventRepository;
 
+    @Autowired
+    private UserRepository userRepository;
 
     @GetMapping("/breakout")
     public String getBreakoutPreferencesPage(HttpServletRequest request, Model model) {
@@ -177,5 +182,150 @@ public class SessionController {
         model.addAttribute("eventNotLaunched", eventNotLaunched);
 
         return "sessions/eventSchedule";
+    }
+
+    @GetMapping("/sessions/user/{userId}/sessions")
+    @ResponseBody
+    public List<Map<String, Object>> getUserSessions(@PathVariable Long userId, HttpServletRequest request) {
+        User currUser = authenticationService.getUserFromRequest(request);
+        List<Map<String, Object>> response = new ArrayList<>();
+        
+        if (currUser == null || currUser.getRole() != Role.ADMIN) {
+            return response;
+        }
+        
+        User targetUser = userRepository.findById(userId).orElse(null);
+        if (targetUser == null) {
+            return response;
+        }
+        
+        List<Participation> participations = participationRepository.findByUserId(targetUser.getId());
+        for (Participation participation : participations) {
+            Session session = participation.getSession();
+            Map<String, Object> sessionInfo = new HashMap<>();
+            sessionInfo.put("id", session.getId());
+            sessionInfo.put("title", session.getTitle());
+            sessionInfo.put("startDateTime", session.getStartDateTime() != null ? session.getStartDateTime().toString() : "TBA");
+            response.add(sessionInfo);
+        }
+        
+        return response;
+    }
+
+    @GetMapping("/sessions/user/{userId}/available-sessions")
+    @ResponseBody
+    public List<Map<String, Object>> getAvailableSessions(@PathVariable Long userId, HttpServletRequest request) {
+        User currUser = authenticationService.getUserFromRequest(request);
+        List<Map<String, Object>> response = new ArrayList<>();
+        
+        if (currUser == null || currUser.getRole() != Role.ADMIN) {
+            return response;
+        }
+        
+        User targetUser = userRepository.findById(userId).orElse(null);
+        if (targetUser == null) {
+            return response;
+        }
+        
+        List<Participation> userParticipations = participationRepository.findByUserId(targetUser.getId());
+        List<Long> registeredSessionIds = new ArrayList<>();
+        for (Participation p : userParticipations) {
+            registeredSessionIds.add(p.getSession().getId());
+        }
+        
+        List<Session> allSessions = sessionRepository.findAll();
+        for (Session session : allSessions) {
+            if (!registeredSessionIds.contains(session.getId())) {
+                Map<String, Object> sessionInfo = new HashMap<>();
+                sessionInfo.put("id", session.getId());
+                sessionInfo.put("title", session.getTitle());
+                sessionInfo.put("startDateTime", session.getStartDateTime() != null ? session.getStartDateTime().toString() : "TBA");
+                response.add(sessionInfo);
+            }
+        }
+        
+        return response;
+    }
+
+    @PostMapping("/sessions/participants/{userId}/add/{sessionId}")
+    @ResponseBody
+    public Map<String, Object> addUserToSession(@PathVariable Long userId, @PathVariable Long sessionId, HttpServletRequest request) {
+        User currUser = authenticationService.getUserFromRequest(request);
+        Map<String, Object> response = new HashMap<>();
+        
+        if (currUser == null || currUser.getRole() != Role.ADMIN) {
+            response.put("success", false);
+            response.put("message", "Unauthorized");
+            return response;
+        }
+        
+        User targetUser = userRepository.findById(userId).orElse(null);
+        if (targetUser == null) {
+            response.put("success", false);
+            response.put("message", "User not found");
+            return response;
+        }
+        
+        Session session = sessionRepository.findById(sessionId).orElse(null);
+        if (session == null) {
+            response.put("success", false);
+            response.put("message", "Session not found");
+            return response;
+        }
+        
+        Optional<Participation> existingParticipation = participationRepository.findFirstBySessionAndUser(session, targetUser);
+        if (existingParticipation.isPresent()) {
+            response.put("success", false);
+            response.put("message", "User already registered for this session");
+            return response;
+        }
+        
+        Participation participation = new Participation();
+        participation.setSession(session);
+        participation.setUser(targetUser);
+        participationRepository.save(participation);
+        
+        response.put("success", true);
+        response.put("message", "User added to session successfully");
+        return response;
+    }
+
+    @PostMapping("/sessions/participants/{userId}/remove/{sessionId}")
+    @ResponseBody
+    public Map<String, Object> removeUserFromSpecificSession(@PathVariable Long userId, @PathVariable Long sessionId, HttpServletRequest request) {
+        User currUser = authenticationService.getUserFromRequest(request);
+        Map<String, Object> response = new HashMap<>();
+        
+        if (currUser == null || currUser.getRole() != Role.ADMIN) {
+            response.put("success", false);
+            response.put("message", "Unauthorized");
+            return response;
+        }
+        
+        User targetUser = userRepository.findById(userId).orElse(null);
+        if (targetUser == null) {
+            response.put("success", false);
+            response.put("message", "User not found");
+            return response;
+        }
+        
+        Session session = sessionRepository.findById(sessionId).orElse(null);
+        if (session == null) {
+            response.put("success", false);
+            response.put("message", "Session not found");
+            return response;
+        }
+        
+        Optional<Participation> participation = participationRepository.findFirstBySessionAndUser(session, targetUser);
+        if (participation.isPresent()) {
+            participationRepository.delete(participation.get());
+            response.put("success", true);
+            response.put("message", "User removed from session successfully");
+        } else {
+            response.put("success", false);
+            response.put("message", "User not registered for this session");
+        }
+        
+        return response;
     }
 }
