@@ -413,6 +413,17 @@
             stroke: var(--sage);
             stroke-width: 1.5;
         }
+
+        .post-user-name {
+            text-decoration: none;
+            color: inherit;
+            display: inline-block;
+        }
+
+        .post-user-name:hover {
+            color: var(--accent);
+            text-decoration: underline;
+        }
     </style>
 </head>
 
@@ -513,9 +524,10 @@ document.addEventListener("DOMContentLoaded", function () {
                             </div>
 
                             <div class="post-user-meta">
-                                <h3 th:text="${post.user != null ? post.user.firstName + ' ' + post.user.lastName : 'Community Member'}">
-                                    Helena User
-                                </h3>
+                                <a th:if="${post.user != null}" th:href="@{'/profile/' + ${post.user.id}}" class="post-user-name">
+                                    <h3 th:text="${post.user.firstName + ' ' + post.user.lastName}"></h3>
+                                </a>
+                                <h3 th:unless="${post.user != null}" class="post-user-name">Community Member</h3>
                                 <p th:text="${post.createdAt != null ? #temporals.format(post.createdAt, 'MMM d, yyyy • h:mm a') : 'Recently posted'}">
                                     Recently posted
                                 </p>
