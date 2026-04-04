@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Missions</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/global.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/missions.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="/js/missions.js" defer></script>
+
+</head>
+<body>
+   
+    <div th:replace="fragments/sidebar :: sidebar"></div>
+ 
+    <div class="missions-layout">
+        <nav class="topbar">
+            <a href="/home" class="topbar-brand">Symbiosis</a>
+        </nav>
+
+        <main>
+            <!-- Page header -->
+            <header class="page-header">
+                <div class="page-header-text">
+                    <h1 class="title-jura">Missions</h1>
+                    <div class="header-line"></div>
+                    <p class="page-subtitle">Complete missions to earn points and climb the leaderboard.</p>
+                </div>
+ 
+                <!-- Points badge -->
+                <div class="points-badge">
+                    <span class="points-icon">✦</span>
+                    <div class="points-info">
+                        <span class="points-label">Your Points</span>
+                        <span class="points-value" th:text="${currentUser.getPoints()}">0</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Error message -->
+            <div th:if="${missionErr}" class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Error! </strong> <span th:text="${missionErr}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+ 
+            <!-- Mission cards -->
+            <section class="missions-grid">
+
+                <div th:each="card : ${missionCards}">
+
+                    <!-- Base card -->
+                    <div class="mission-card"
+                        th:class="${card.rewardClaimed} ? 'mission-card claimed' : (${card.readyToClaim} ? 'mission-card ready' : 'mission-card')">
+
+
+                        <!-- Claimed overlay (only shown if mission is claimed) -->
+                        <div class="claimed-overlay" th:if="${card.rewardClaimed}">
+                            <span class="claimed-badge">Completed</span>
+                        </div>
+
+                        <!-- Card content (always shown) -->
+                        <div class="mission-card-inner">
+                            <div class="mission-card-top">
+                                <h2 class="mission-title" th:text="${card.mission.title}">Title</h2>
+                                <div class="mission-points-pill">
+                                    <span class="pill-star">✦</span>
+                                    <span class="pill-number" th:text="${card.mission.points}">50</span>
+                                    <span class="pill-label">pts</span>
+                                </div>
+                            </div>
+
+                            <p class="mission-description" th:text="${card.mission.description}">Desc</p>
+
+                            <!-- Progress bar -->
+                            <div class="mission-progress-section">
+                                <div class="progress-header">
+                                    <span class="progress-label">Progress</span>
+                                    <span class="progress-fraction">
+                                        <span th:text="${card.userProgress}">0</span>
+                                        /
+                                        <span th:text="${card.mission.completionReq}">25</span>
+                                    </span>
+                                </div>
+                                <div class="progress-track"
+                                    th:data-total="${card.mission.completionReq}"
+                                    th:data-filled="${card.userProgress}">
+                                </div>
+                            </div>
+
+                            <!-- Claim button -->
+                            <form th:if="${card.readyToClaim}" th:action="@{/missions/claim}" method="post">
+                                <input type="hidden" name="missionId" th:value="${card.mission.id}">
+                                <button type="submit" class="btn-claim">
+                                    Claim Reward
+                                    <span class="btn-claim-pts">
+                                        +<span th:text="${card.mission.points}">50</span> pts
+                                    </span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+        </main>
+    </div>
+</body>
+</html>

@@ -70,6 +70,9 @@ public class User implements UserDetails {
     @ManyToMany(mappedBy = "likedBy")
     private Set<Post> likedPosts = new HashSet<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CompletedMissions> missionsComplete = new ArrayList<>(); 
+
     private Long points = (long)0;
 
     // Constructors
@@ -152,5 +155,9 @@ public class User implements UserDetails {
     
     @Override
     public boolean isEnabled() { return enabled; }
+
+    // Helper functions
+    public int getNumberOfLikedPosts() { return likedPosts.size(); }
+    public int getNumberOfPostsCreated() { return posts.size(); }
 }
 
