@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
@@ -24,6 +23,7 @@ import com.cambio_earth.symbiosis.controllers.UserController;
 import com.cambio_earth.symbiosis.dto.LoginUserDto;
 import com.cambio_earth.symbiosis.dto.ProfileDto;
 import com.cambio_earth.symbiosis.models.Post;
+import com.cambio_earth.symbiosis.models.Role;
 import com.cambio_earth.symbiosis.models.User;
 import com.cambio_earth.symbiosis.models.UserRepository;
 import com.cambio_earth.symbiosis.services.AuthenticationService;
@@ -79,23 +79,21 @@ public class UserControllerTest {
             throw new RuntimeException(e);
         }
 
-        // setup users
         testUser = new User();
         testUser.setId(1L);
 
         profileOwner = new User();
         profileOwner.setId(2L);
 
-        // setup posts
         testPost1 = new Post();
         testPost1.setId(1L);
         testPost1.setUser(profileOwner);
-        testPost1.setCreatedAt(java.time.LocalDateTime.now()); // 🔥 FIX
+        testPost1.setCreatedAt(java.time.LocalDateTime.now());
 
         testPost2 = new Post();
         testPost2.setId(2L);
         testPost2.setUser(profileOwner);
-        testPost2.setCreatedAt(java.time.LocalDateTime.now()); // 🔥 FIX
+        testPost2.setCreatedAt(java.time.LocalDateTime.now());
     }
 
     @Test
@@ -332,5 +330,67 @@ public class UserControllerTest {
 
         assertEquals("profileEditForm", result);
         verify(userRepository, never()).save(testUser);
+    }
+
+    @Test
+    void testSetUserAsAdmin_Success_UserRoleUpdated() {
+        User adminUser = new User();
+        adminUser.setId(1L);
+        adminUser.setRole(Role.ADMIN);
+        
+        User targetUser = new User();
+        targetUser.setId(2L);
+        targetUser.setRole(Role.USER);
+        
+        when(authenticationService.getUserFromRequest(request)).thenReturn(adminUser);
+        when(userRepository.findById(2L)).thenReturn(Optional.of(targetUser));
+        
+        java.util.Map<String, Object> result = userController.setUserAsAdmin(2L, request);
+        
+        assertEquals(true, result.get("success"));
+        assertEquals(Role.ADMIN, targetUser.getRole());
+        verify(userRepository).save(targetUser);
+    }
+
+    @Test
+    void testSetUserAsAdmin_UserNotFound_ReturnsError() {
+        User adminUser = new User();
+        adminUser.setId(1L);
+        adminUser.setRole(Role.ADMIN);
+        
+        when(authenticationService.getUserFromRequest(request)).thenReturn(adminUser);
+        when(userRepository.findById(999L)).thenReturn(Optional.empty());
+        
+        java.util.Map<String, Object> result = userController.setUserAsAdmin(999L, request);
+        
+        assertEquals(false, result.get("success"));
+        assertEquals("User not found", result.get("message"));
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    void testSetUserAsAdmin_NonAdminUser_ReturnsUnauthorized() {
+        User nonAdminUser = new User();
+        nonAdminUser.setId(1L);
+        nonAdminUser.setRole(Role.USER);
+        
+        when(authenticationService.getUserFromRequest(request)).thenReturn(nonAdminUser);
+        
+        java.util.Map<String, Object> result = userController.setUserAsAdmin(2L, request);
+        
+        assertEquals(false, result.get("success"));
+        assertEquals("Unauthorized", result.get("message"));
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    void testSetUserAsAdmin_UserNotLoggedIn_ReturnsUnauthorized() {
+        when(authenticationService.getUserFromRequest(request)).thenReturn(null);
+        
+        java.util.Map<String, Object> result = userController.setUserAsAdmin(2L, request);
+        
+        assertEquals(false, result.get("success"));
+        assertEquals("Unauthorized", result.get("message"));
+        verify(userRepository, never()).save(any());
     }
 }
