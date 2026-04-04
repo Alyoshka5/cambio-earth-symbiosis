@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,7 +51,8 @@ public class PostController {
     
     // Process adding a new post
     @PostMapping("posts/add")
-    public String addPost(@RequestParam Map<String, String> inputs, Model model, @AuthenticationPrincipal User currentUser) {
+    public String addPost(@RequestParam Map<String, String> inputs, Model model, HttpServletRequest request) {
+        User currentUser = authenticationService.getUserFromRequest(request);
         String newTitle = inputs.get("title");
         String newCaption = inputs.get("caption");
         String newImg = inputs.get("img");
@@ -102,7 +102,7 @@ public class PostController {
         // Give the user 5 points for making a post
         User thisUser = userRepository.findById(currentUser.getId()).orElse(null);
         if (thisUser == null) {
-            return "redirect:/login";
+            return "redirect:/auth/login";
         } else {
             thisUser.setPoints(thisUser.getPoints() + 5);
             userRepository.save(thisUser);

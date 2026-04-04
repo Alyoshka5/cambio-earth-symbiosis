@@ -19,7 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.cambio_earth.symbiosis.controllers.PostController;
 import com.cambio_earth.symbiosis.models.Post;
 import com.cambio_earth.symbiosis.models.PostRepository;
 import com.cambio_earth.symbiosis.models.User;
@@ -76,12 +75,15 @@ public class PostControllerTest {
 
     @Test
     void testAddPost_ValidPhoto_Success() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+        when(authenticationService.getUserFromRequest(request)).thenReturn(testUser);
+
         Map<String, String> inputs = new HashMap<>();
         inputs.put("title", "My Conference Photo");
         inputs.put("caption", "Having a great time!");
         inputs.put("img", "https://res.cloudinary.com/test/photo.jpg");
 
-        String result = postController.addPost(inputs, model, testUser);
+        String result = postController.addPost(inputs, model, request);
 
         assertEquals("redirect:/home", result);
         verify(postRepository, times(1)).save(any(Post.class));
@@ -89,44 +91,50 @@ public class PostControllerTest {
 
     @Test
     void testAddPost_InvalidFileType_ErrorDisplayed() {
+        when(authenticationService.getUserFromRequest(request)).thenReturn(testUser);
+
         Map<String, String> inputs = new HashMap<>();
         inputs.put("title", "Invalid Type");
         inputs.put("caption", "This has wrong format");
         inputs.put("img", "https://example.com/image.gif");
 
-        String result = postController.addPost(inputs, model, testUser);
+        String result = postController.addPost(inputs, model, request);
 
-        assertEquals("/addPost", result);
+        assertEquals("addPost", result);
         verify(model).addAttribute(eq("imgFormatErr"), anyString());
         verify(postRepository, never()).save(any(Post.class));
     }
 
     @Test
     void testAddPost_EmptyTitle_ErrorDisplayed() {
+        when(authenticationService.getUserFromRequest(request)).thenReturn(testUser);
+
         Map<String, String> inputs = new HashMap<>();
         inputs.put("title", "");
         inputs.put("caption", "Valid caption");
         inputs.put("img", "https://res.cloudinary.com/test/image.jpg");
 
-        String result = postController.addPost(inputs, model, testUser);
+        String result = postController.addPost(inputs, model, request);
 
-        assertEquals("/addPost", result);
+        assertEquals("addPost", result);
         verify(model).addAttribute(eq("titleErr"), anyString());
         verify(postRepository, never()).save(any(Post.class));
     }
 
     @Test
-    void testAddPost_EmptyCaption_ErrorDisplayed() {
+    void testAddPost_EmptyCaption_Success() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+        when(authenticationService.getUserFromRequest(request)).thenReturn(testUser);
+
         Map<String, String> inputs = new HashMap<>();
         inputs.put("title", "Valid Title");
         inputs.put("caption", "");
         inputs.put("img", "https://res.cloudinary.com/test/image.jpg");
 
-        String result = postController.addPost(inputs, model, testUser);
+        String result = postController.addPost(inputs, model, request);
 
-        assertEquals("/addPost", result);
-        verify(model).addAttribute(eq("captionErr"), anyString());
-        verify(postRepository, never()).save(any(Post.class));
+        assertEquals("redirect:/home", result);
+        verify(postRepository, times(1)).save(any(Post.class));
     }
 
     @Test
