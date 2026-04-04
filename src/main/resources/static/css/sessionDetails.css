@@ -177,6 +177,36 @@ body {
     margin-bottom: 14px;
 }
 
+.session-title-header {
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.capacity-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--sage);
+}
+
+.capacity-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: var(--accent-dim);
+    color: var(--accent);
+    border: 1px solid rgba(200,217,110,0.3);
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-bottom: 18px;
+}
+
 /* Description block */
 .description-block {
     background: rgba(58,79,66,0.25);
