@@ -43,112 +43,101 @@
             <div class="form-card">
                 <form th:action="@{/admin/sessions/save}" th:object="${eventSession}" method="post" id="sessionForm">
 
-                    <!-- Basic Info -->
-                    <div class="section-label">Basic Info</div>
+                <!-- Basic Info -->
+                <div class="section-label">Basic Info</div>
 
-                    <div class="mb-3">
-                        <label class="form-label" for="title">
-                            Title <span class="required">✦</span>
-                        </label>
-                        <input
-                            type="text"
-                            id="title"
-                            name="title"
-                            th:field="*{title}"
-                            class="form-control"
-                            placeholder="e.g. Regenerative Agriculture in Practice"
-                            maxlength="150"
-                            required
-                            oninput="updateCounter(this, 'titleCounter', 150)"
-                        >
-                        <div class="char-counter"><span id="titleCounter">0</span> / 150</div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label" for="description">Description</label>
-                        <textarea
-                            id="description"
-                            name="description"
-                            th:field="*{description}"
-                            class="form-control"
-                            placeholder="What will attendees learn or experience in this session?"
-                        ></textarea>
-                    </div>
-
-                    <div class="section-label">Logistics</div>
-
-                    <div class="mb-3">
-                        <label class="form-label" for="location">Location</label>
-                        <input
-                            type="text"
-                            id="location"
-                            name="location"
-                            th:field="*{location}"
-                            class="form-control"
-                            placeholder="e.g. Room 4B, Main Stage, Outdoor Pavilion"
-                        >
-                    </div>
-
-                <div class="mb-3" id="capacityField" style="display:none">
-                    <label class="form-label" for="capacity">Capacity</label>
-                    <input
-                        type="number"
-                        id="capacity"
-                        name="capacity"
-                        th:field="*{capacity}"
-                        class="form-control"
-                        placeholder="e.g. 30"
-                        min="1"
-                    >
+                <div class="mb-3">
+                    <label class="form-label" for="title">
+                        Title <span class="required">✦</span>
+                    </label>
+                    <input type="text" id="title" name="title" th:field="*{title}" class="form-control"
+                        placeholder="e.g. Regenerative Agriculture in Practice" maxlength="150" required
+                        oninput="updateCounter(this, 'titleCounter', 150)">
+                    <div class="char-counter"><span id="titleCounter">0</span> / 150</div>
                 </div>
 
+                <div class="mb-3">
+                    <label class="form-label" for="description">Description</label>
+                    <textarea id="description" name="description" th:field="*{description}" class="form-control"
+                            placeholder="What will attendees learn or experience in this session?"></textarea>
+                </div>
+
+                <!-- Logistics -->
+                <div class="section-label">Logistics</div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="location">Location</label>
+                    <input type="text" id="location" name="location" th:field="*{location}" class="form-control"
+                        placeholder="e.g. Room 4B, Main Stage, Outdoor Pavilion">
+                </div>
+
+                <!-- Date & Time Fields -->
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label" for="sessionDate">Date <span class="required">✦</span></label>
+                        <input type="date" id="sessionDate" name="sessionDate" 
+                            th:value="${#temporals.format(eventSession.startDateTime, 'yyyy-MM-dd')}" 
+                            class="form-control" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label" for="startTime">Start Time <span class="required">✦</span></label>
+                        <input type="time" id="startTime" name="startTime" 
+                            th:value="${#temporals.format(eventSession.startDateTime, 'HH:mm')}" 
+                            class="form-control" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label" for="endTime">End Time <span class="required">✦</span></label>
+                        <input type="time" id="endTime" name="endTime" 
+                            th:value="${#temporals.format(eventSession.endDateTime, 'HH:mm')}" 
+                            class="form-control" required>
+                    </div>
+                </div>
+
+                <!-- Capacity (hidden unless breakout) -->
+                <div class="mb-3" id="capacityField" style="display:none">
+                    <label class="form-label" for="capacity">Capacity</label>
+                    <input type="number" id="capacity" name="capacity" th:field="*{capacity}" class="form-control"
+                        placeholder="e.g. 30" min="1">
+                </div>
+
+                <!-- Speakers (only ONE heading) -->
                 <div class="section-label">Speakers</div>
 
-                    <div class="section-label">Speakers</div>
+                <div class="speaker-list" id="speakerList" 
+                    th:data-existing-speakers="*{#strings.listJoin(speakers, ',')}">
+                    <!-- Speaker entries injected by JS -->
+                </div>
 
-                    <div class="speaker-list" id="speakerList" th:data-existing-speakers="*{#strings.listJoin(speakers, ',')}">
-                        <!-- Speaker entries injected by JS -->
+                <button type="button" class="btn-add-speaker" onclick="addSpeaker(true)">
+                    + Add Speaker
+                </button>
+
+                <!-- Hidden field: comma-separated speaker names sent to controller -->
+                <input type="hidden" name="speakersRaw" id="speakersHidden">
+
+                <!-- Session Type -->
+                <div class="section-label">Session Type</div>
+
+                <div class="breakout-toggle-wrapper" id="breakoutWrapper" onclick="toggleBreakout()">
+                    <div class="toggle-text">
+                        <h6>Breakout Session</h6>
+                        <p>Optional — attendees can choose whether to join this session.</p>
                     </div>
+                    <label class="toggle-switch" onclick="event.stopPropagation()">
+                        <input type="checkbox" id="isBreakout" name="isBreakout" th:field="*{breakout}" onchange="syncBreakoutWrapper()">
+                        <span class="toggle-track"></span>
+                    </label>
+                </div>
 
-                    <button type="button" class="btn-add-speaker" onclick="addSpeaker(true)">
-                        + Add Speaker
-                    </button>
+                <input type="hidden" th:field="*{id}">
 
-                    <!-- Hidden field: comma-separated speaker names sent to controller -->
-                    <input type="hidden" name="speakersRaw" id="speakersHidden">
+                <div class="form-actions">
+                    <a th:if="*{id == null}" href="/sessions/schedule" class="btn-cancel">Cancel</a>
+                    <a th:if="*{id != null}" th:href="*{'/sessions/' + id}" class="btn-cancel">Cancel</a>
+                    <button type="submit" class="btn-save">Save Session</button>
+                </div>
 
-                    <div class="section-label">Session Type</div>
-
-                    <div
-                        class="breakout-toggle-wrapper"
-                        id="breakoutWrapper"
-                        onclick="toggleBreakout()"
-                    >
-                        <div class="toggle-text">
-                            <h6>Breakout Session</h6>
-                            <p>Optional — attendees can choose whether to join this session.</p>
-                        </div>
-                        <label class="toggle-switch" onclick="event.stopPropagation()">
-                            <input
-                                type="checkbox"
-                                id="isBreakout"
-                                name="isBreakout"
-                                th:field="*{breakout}"
-                                onchange="syncBreakoutWrapper()"
-                            >
-                            <span class="toggle-track"></span>
-                        </label>
-                    </div>
-
-                    <input type="hidden" th:field="*{id}">
-
-                    <div class="form-actions">
-                        <a th:if="*{id == null}" href="/sessions/schedule" class="btn-cancel">Cancel</a>
-                        <a th:if="*{id != null}" th:href="*{'/sessions/' + id}" class="btn-cancel">Cancel</a>
-                        <button type="submit" class="btn-save">Save Session</button>
-                    </div>
-
-                </form>
+            </form>
             </div>
         </div>
     </div>
