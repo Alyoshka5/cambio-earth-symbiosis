@@ -34,6 +34,12 @@ public class PostService {
                 post.getLikedBy().remove(user);
             } else {
                 post.getLikedBy().add(user);
+
+                if (!user.getLikePointAwardedPosts().contains(post)) {
+                    user.setPoints(user.getPoints() + 1);
+                    user.getLikePointAwardedPosts().add(post);
+                    userRepository.save(user);
+                }
             }
 
             return postRepository.save(post);

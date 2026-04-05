@@ -20,6 +20,7 @@ public class RankingService {
     public List<User> getRankedUsers() {
         List<User> users = userRepository.findAll();
 
+
         users.sort(
                 Comparator.comparing(User::getPoints).reversed()
                         .thenComparing(user -> user.getFirstName().toLowerCase())
