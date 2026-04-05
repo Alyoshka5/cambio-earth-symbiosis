@@ -6,9 +6,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,105 +95,112 @@ public class SessionService {
     public void registerUsersForMandatorySessions() {
         List<Session> mandatorySessions = sessionRepository.findByIsBreakoutFalse();
         Iterable<User> users = userRepository.findAll();
-        List<Participation> participations = participationRepository.findAll();
+        Set<String> existingParticipations = participationRepository.findAll().stream()
+            .map(p -> p.getUser().getId() + "_" + p.getSession().getId())
+            .collect(Collectors.toSet());
+        List<Participation> newParticipations = new ArrayList<>();
+        
         for (User user : users) {
-            registerUserForMandatorySessions(user, mandatorySessions, participations);
+            registerUserForMandatorySessions(user, mandatorySessions, existingParticipations, newParticipations);
         }
-        participationRepository.saveAll(participations);
+        participationRepository.saveAll(newParticipations);
     }
 
-    public void registerUserForMandatorySessions(User user, List<Session> mandatorySessions, List<Participation> participations) {
+    public void registerUserForMandatorySessions(User user, List<Session> mandatorySessions, Set<String> existingParticipations, List<Participation> newParticipations) {
         for (Session session : mandatorySessions) {
-            Participation participation = new Participation(user, session);
-            if (!participations.contains(participation)) {
-                participations.add(participation);
+            if (!existingParticipations.contains(user.getId() + "_" + session.getId())) {
+                Participation participation = new Participation(user, session);
+                newParticipations.add(participation);
+                existingParticipations.add(user.getId() + "_" + session.getId());
             }
         }
     }
 
     public void registerUsersForBreakoutSessions() {
         List<User> users = userRepository.findAll();
-
-        List<Participation> participations = participationRepository.findAll();
-
-        List<BreakoutBlockRanking> rankings = rankingRepository.findAll();
-        rankings.sort(Comparator.comparing(BreakoutBlockRanking::getRank)); // Sort rankings so higher ranks are found first
-        
-        // Group sessions by the dateStartTime property
+        List<Participation> allParticipations = participationRepository.findAll();
+        List<BreakoutBlockRanking> allRankings = rankingRepository.findAll();
         List<Session> breakoutSessions = getBreakoutSessions();
-        List<List<Session>> groupedBreakoutSessions = breakoutSessions.stream()
-            .collect(Collectors.groupingBy(Session::getStartDateTime))
-            .values()
-            .stream()
-            .collect(Collectors.toList());
+
+        Map<Long, List<BreakoutBlockRanking>> rankingsByUser = allRankings.stream()
+            .sorted(Comparator.comparing(BreakoutBlockRanking::getRank))
+            .collect(Collectors.groupingBy(ranking -> ranking.getUser().getId()));
+
+        Set<String> existingParticipations = allParticipations.stream()
+            .map(p -> p.getUser().getId() + "_" + p.getSession().getId())
+            .collect(Collectors.toSet());
 
         // Calculate how many users are already registered for each sessions (should be 0 but could have been manually added)
-        Map<Session, Integer> sessionParticipationCounts = new HashMap<>();
-        for (Session breakoutSession : breakoutSessions) {
-            Integer sessionParticipationCount = participations.stream().filter(participation -> participation.getSession().getId().equals(breakoutSession.getId())).toList().size();
-            sessionParticipationCounts.put(breakoutSession, sessionParticipationCount);
+        Map<Long, Integer> sessionParticipationCounts = new HashMap<>();
+        for (Session session : breakoutSessions) {
+            long count = allParticipations.stream().filter(participation -> participation.getSession().getId().equals(session.getId())).count();
+            sessionParticipationCounts.put(session.getId(), (int) count);
         }
+        
+        // Group sessions by the startDateTime property
+        Map<LocalDateTime, List<Session>> groupedBreakoutSessions = breakoutSessions.stream()
+            .collect(Collectors.groupingBy(Session::getStartDateTime));
 
-        for (List<Session> currentBreakoutSessions : groupedBreakoutSessions) {
+        List<Participation> newParticipations = new ArrayList<>();
+
+        for (List<Session> currentBreakoutSessions : groupedBreakoutSessions.values()) {
             Collections.shuffle(users); // Shuffle users to distribute priority fairly
             for (User user : users) {
-                boolean continueToNextUser = registerUserForBreakoutSessions(user, rankings, currentBreakoutSessions, participations, groupedBreakoutSessions, sessionParticipationCounts);
+                List<BreakoutBlockRanking> userRankings = rankingsByUser.getOrDefault(user.getId(), List.of());
+                boolean continueToNextUser = registerUserForBreakoutSessions(user, userRankings, currentBreakoutSessions, existingParticipations, newParticipations, sessionParticipationCounts);
                 if (!continueToNextUser) break; // All current sessions at full capacity
             }
         }
 
-        participationRepository.saveAll(participations);
+        participationRepository.saveAll(newParticipations);
     }
 
     public boolean registerUserForBreakoutSessions(
-        User user, List<BreakoutBlockRanking> rankings,
+        User user, 
+        List<BreakoutBlockRanking> userRankings,
         List<Session> currentBreakoutSessions,
-        List<Participation> participations,
-        List<List<Session>> groupedBreakoutSessions, 
-        Map<Session, Integer> sessionParticipationCounts
+        Set<String> existingParticipations,
+        List<Participation> newParticipations,
+        Map<Long, Integer> sessionParticipationCounts
     ) {
-        // Find the user's rankings
-        List<BreakoutBlockRanking> userRankings = rankings.stream().filter(ranking -> ranking.getUser().getId().equals(user.getId()) && currentBreakoutSessions.contains(ranking.getSession())).toList();
         boolean userRegistered = false;
         
         // Check if user is already registered for a session in the timeslot
-        for (Session session : currentBreakoutSessions) {
-            if (participations.contains(new Participation(user, session))) {
-                userRegistered = true;
-                break;
-            }
+        if (currentBreakoutSessions.stream().anyMatch(session -> existingParticipations.contains(user.getId() + "_" + session.getId()))) {
+            return true;
         }
-        if (userRegistered) return true;
 
         // Register user based on ranking
         for (BreakoutBlockRanking ranking : userRankings) {
-            Integer sessionParticipationCount = sessionParticipationCounts.get(ranking.getSession());
-            if (sessionParticipationCount < ranking.getSession().getCapacity()) {
-                Participation participation = new Participation(user, ranking.getSession());
-                participations.add(participation);
-                sessionParticipationCounts.put(ranking.getSession(), sessionParticipationCount + 1);
+            Session targetSession = ranking.getSession();
+            if (currentBreakoutSessions.contains(targetSession) && sessionParticipationCounts.get(targetSession.getId()) < targetSession.getCapacity()) {
+                Participation participation = new Participation(user, targetSession);
+                Integer sessionParticipationCount = sessionParticipationCounts.get(targetSession.getId());
+                
+                newParticipations.add(participation);
+                sessionParticipationCounts.put(targetSession.getId(), sessionParticipationCount + 1);
+                existingParticipations.add(user.getId() + "_" + targetSession.getId());
+
                 userRegistered = true;
                 break;
             }
         }
 
-        // Register user to least participated-in breakout session
         if (!userRegistered) {
-            Session leastParticipatedSession = currentBreakoutSessions.get(0);
-            double minParticipationRatio = (double) sessionParticipationCounts.get(leastParticipatedSession) / leastParticipatedSession.getCapacity();
-            for (Session session: currentBreakoutSessions) {
-                double sessionParticipationRatio = (double) sessionParticipationCounts.get(session) / session.getCapacity();
-                if (sessionParticipationRatio < minParticipationRatio) {
-                    leastParticipatedSession = session;
-                    minParticipationRatio = sessionParticipationRatio;
-                }
-            }
-            if (sessionParticipationCounts.get(leastParticipatedSession) < leastParticipatedSession.getCapacity()) { // If false, then all sessions are at full capacity
+            Session leastParticipatedSession = currentBreakoutSessions.stream()
+                    .filter(s -> sessionParticipationCounts.get(s.getId()) < s.getCapacity())
+                    .min(Comparator.comparingDouble(s -> (double) sessionParticipationCounts.get(s.getId()) / s.getCapacity()))
+                    .orElse(null);
+
+            if (leastParticipatedSession != null) {
                 Participation participation = new Participation(user, leastParticipatedSession);
-                participations.add(participation);
-                sessionParticipationCounts.put(leastParticipatedSession, sessionParticipationCounts.get(leastParticipatedSession) + 1);
+                Integer sessionParticipationCount = sessionParticipationCounts.get(leastParticipatedSession.getId());
+                
+                newParticipations.add(participation);
+                sessionParticipationCounts.put(leastParticipatedSession.getId(), sessionParticipationCount + 1);
+                existingParticipations.add(user.getId() + "_" + leastParticipatedSession.getId());
             } else {
-                return false; // Go to next group of breakout sessions since all current sessions are at full capacity
+                return false;
             }
         }
 
@@ -201,30 +210,36 @@ public class SessionService {
     public void registerUserAfterLaunch(User user) {
         // Data setup
         List<Session> mandatorySessions = sessionRepository.findByIsBreakoutFalse();
-        List<Participation> participations = new ArrayList<>();
-        List<BreakoutBlockRanking> rankings = new ArrayList<>();
-        
-        // Group sessions by the dateStartTime property
+        Set<String> existingParticipations = new HashSet<>();
+
+        List<Participation> allParticipations = participationRepository.findAll();
+        List<BreakoutBlockRanking> allRankings = rankingRepository.findAll();
         List<Session> breakoutSessions = getBreakoutSessions();
-        List<List<Session>> groupedBreakoutSessions = breakoutSessions.stream()
-            .collect(Collectors.groupingBy(Session::getStartDateTime))
-            .values()
-            .stream()
-            .collect(Collectors.toList());
+
+        Map<Long, List<BreakoutBlockRanking>> rankingsByUser = allRankings.stream()
+            .sorted(Comparator.comparing(BreakoutBlockRanking::getRank))
+            .collect(Collectors.groupingBy(ranking -> ranking.getUser().getId()));
 
         // Calculate how many users are already registered for each sessions (should be 0 but could have been manually added)
-        Map<Session, Integer> sessionParticipationCounts = new HashMap<>();
-        for (Session breakoutSession : breakoutSessions) {
-            Integer sessionParticipationCount = participations.stream().filter(participation -> participation.getSession().getId().equals(breakoutSession.getId())).toList().size();
-            sessionParticipationCounts.put(breakoutSession, sessionParticipationCount);
+        Map<Long, Integer> sessionParticipationCounts = new HashMap<>();
+        for (Session session : breakoutSessions) {
+            long count = allParticipations.stream().filter(participation -> participation.getSession().getId().equals(session.getId())).count();
+            sessionParticipationCounts.put(session.getId(), (int) count);
         }
+        
+        // Group sessions by the startDateTime property
+        Map<LocalDateTime, List<Session>> groupedBreakoutSessions = breakoutSessions.stream()
+            .collect(Collectors.groupingBy(Session::getStartDateTime));
+
+        List<Participation> newParticipations = new ArrayList<>();
 
         // Register user
-        registerUserForMandatorySessions(user, mandatorySessions, participations);
-        for (List<Session> currentBreakoutSessions : groupedBreakoutSessions) {
-            registerUserForBreakoutSessions(user, rankings, currentBreakoutSessions, participations, groupedBreakoutSessions, sessionParticipationCounts);
+        registerUserForMandatorySessions(user, mandatorySessions, existingParticipations, newParticipations);
+        for (List<Session> currentBreakoutSessions : groupedBreakoutSessions.values()) {
+            List<BreakoutBlockRanking> userRankings = rankingsByUser.getOrDefault(user.getId(), List.of());
+            registerUserForBreakoutSessions(user, userRankings, currentBreakoutSessions, existingParticipations, newParticipations, sessionParticipationCounts);
         }
 
-        participationRepository.saveAll(participations);
+        participationRepository.saveAll(newParticipations);
     }
 }
