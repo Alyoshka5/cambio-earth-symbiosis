@@ -45,7 +45,7 @@
                     <span class="ranking-name" th:text="${user.firstName + ' ' + user.lastName}">Name</span>
                 </div>
 
-                <div class="ranking-points" th:text="${(user.points == null ? 0 : user.points) + user.numberOfLikedPosts}">100</div>
+                <div class="ranking-points" th:text="${user.points == null ? 0 : user.points}">100</div>
                 <div class="ranking-rank" th:text="${stat.index + 1}">1</div>
             </div>
 
@@ -55,7 +55,7 @@
 
                 <span class="ranking-divider" th:if="${currentUser != null}">•</span>
                 <span th:if="${currentUser != null}">Points:</span>
-                <strong th:if="${currentUser != null}" th:text="${(currentUser.points == null ? 0 : currentUser.points) + currentUser.numberOfLikedPosts}">0</strong>
+                <strong th:if="${currentUser != null}" th:text="${currentUser.points == null ? 0 : currentUser.points}">0</strong>
             </div>
         </div>
     </div>
