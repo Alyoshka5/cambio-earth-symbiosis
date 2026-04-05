@@ -648,6 +648,50 @@
     </div>
 
     <script>
+        // Date formatting function for sessions with start and end times
+        function formatSessionDateTime(startDateTime, endDateTime) {
+            if (!startDateTime || startDateTime === 'Time TBA') return 'Time TBA';
+            
+            try {
+                const startDate = new Date(startDateTime);
+                
+                if (isNaN(startDate.getTime())) return startDateTime;
+                
+                const year = startDate.getFullYear();
+                const month = String(startDate.getMonth() + 1).padStart(2, '0');
+                const day = String(startDate.getDate()).padStart(2, '0');
+                
+                const startHours = String(startDate.getHours()).padStart(2, '0');
+                const startMinutes = String(startDate.getMinutes()).padStart(2, '0');
+                
+                let endTimeFormatted = '';
+                if (endDateTime) {
+                    const endDate = new Date(endDateTime);
+                    if (!isNaN(endDate.getTime())) {
+                        const endHours = String(endDate.getHours()).padStart(2, '0');
+                        const endMinutes = String(endDate.getMinutes()).padStart(2, '0');
+                        endTimeFormatted = ` - ${endHours}:${endMinutes}`;
+                    }
+                }
+                
+                return `${year} - ${month} - ${day}: ${startHours}:${startMinutes}${endTimeFormatted}`;
+                
+            } catch (error) {
+                return startDateTime;
+            }
+        }
+
+        // Helper function to escape HTML and prevent XSS
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
         const searchInput   = document.getElementById('searchInput');
         const filterRow     = document.getElementById('filterRow');
         const grid          = document.getElementById('participantsGrid');
@@ -778,10 +822,10 @@
                     html += `
                         <div class="session-list-item" data-session-id="${session.id}">
                             <div class="session-info">
-                                <div class="session-title">${session.title}</div>
-                                <div class="session-time">${session.startDateTime || 'Time TBA'}</div>
+                                <div class="session-title">${escapeHtml(session.title)}</div>
+                                <div class="session-time">${formatSessionDateTime(session.startDateTime, session.endDateTime)}</div>
                             </div>
-                            <button class="add-session-btn" onclick="addUserToSession(${userId}, ${session.id}, '${session.title.replace(/'/g, "\\'")}')">Add</button>
+                            <button class="add-session-btn" onclick="addUserToSession(${userId}, ${session.id}, '${escapeHtml(session.title).replace(/'/g, "\\'")}')">Add</button>
                         </div>
                     `;
                 });
@@ -810,10 +854,10 @@
                     html += `
                         <div class="session-list-item" data-session-id="${session.id}">
                             <div class="session-info">
-                                <div class="session-title">${session.title}</div>
-                                <div class="session-time">${session.startDateTime || 'Time TBA'}</div>
+                                <div class="session-title">${escapeHtml(session.title)}</div>
+                                <div class="session-time">${formatSessionDateTime(session.startDateTime, session.endDateTime)}</div>
                             </div>
-                            <button class="remove-session-btn" onclick="removeUserFromSession(${userId}, ${session.id}, '${session.title.replace(/'/g, "\\'")}')">Remove</button>
+                            <button class="remove-session-btn" onclick="removeUserFromSession(${userId}, ${session.id}, '${escapeHtml(session.title).replace(/'/g, "\\'")}')">Remove</button>
                         </div>
                     `;
                 });

@@ -1,0 +1,91 @@
+[33m6f50b49[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeat/remove-or-add-user-to-session[m[33m)[m HEAD@{0}: reset: moving to ORIG_HEAD
+[33ma7b51b5[m[33m ([m[1;31morigin/feat/remove-or-add-user-to-session[m[33m)[m HEAD@{1}: checkout: moving from main to feat/remove-or-add-user-to-session
+[33m2c5800f[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m HEAD@{2}: pull origin main: Fast-forward
+[33m6f50b49[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeat/remove-or-add-user-to-session[m[33m)[m HEAD@{3}: checkout: moving from feat/remove-or-add-user-to-session to main
+[33ma7b51b5[m[33m ([m[1;31morigin/feat/remove-or-add-user-to-session[m[33m)[m HEAD@{4}: commit: added review requests
+[33m0bcc36a[m HEAD@{5}: Branch: renamed refs/heads/feat/remove-user to refs/heads/feat/remove-or-add-user-to-session
+[33m0bcc36a[m HEAD@{7}: commit: remove and add users from sessions
+[33m6f50b49[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeat/remove-or-add-user-to-session[m[33m)[m HEAD@{8}: checkout: moving from feat/set-user-as-admin to feat/remove-user
+[33m843c7e7[m[33m ([m[1;31morigin/feat/set-user-as-admin[m[33m, [m[1;32mfeat/set-user-as-admin[m[33m)[m HEAD@{9}: checkout: moving from feat/remove-user to feat/set-user-as-admin
+[33m6f50b49[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeat/remove-or-add-user-to-session[m[33m)[m HEAD@{10}: checkout: moving from main to feat/remove-user
+[33m6f50b49[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeat/remove-or-add-user-to-session[m[33m)[m HEAD@{11}: checkout: moving from feat/set-user-as-admin to main
+[33m843c7e7[m[33m ([m[1;31morigin/feat/set-user-as-admin[m[33m, [m[1;32mfeat/set-user-as-admin[m[33m)[m HEAD@{12}: commit: add user as admin from participants list
+[33m3b7a68b[m HEAD@{13}: checkout: moving from main to feat/set-user-as-admin
+[33m6f50b49[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeat/remove-or-add-user-to-session[m[33m)[m HEAD@{14}: checkout: moving from feat/set-user-as-admin to main
+[33m3b7a68b[m HEAD@{15}: checkout: moving from main to feat/set-user-as-admin
+[33m6f50b49[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeat/remove-or-add-user-to-session[m[33m)[m HEAD@{16}: pull origin main: Fast-forward
+[33m9cf5b8f[m HEAD@{17}: checkout: moving from feat/set-user-as-admin to main
+[33m3b7a68b[m HEAD@{18}: commit: admin can set user as admin from participants list
+[33m9cf5b8f[m HEAD@{19}: checkout: moving from main to feat/set-user-as-admin
+[33m9cf5b8f[m HEAD@{20}: pull origin main: Fast-forward
+[33mae5a6de[m HEAD@{21}: checkout: moving from feat/auth-redirect to main
+[33mcc0f601[m[33m ([m[1;31morigin/feat/auth-redirect[m[33m, [m[1;32mfeat/auth-redirect[m[33m)[m HEAD@{22}: commit: user redirects to auth/login path if they access a forbidden path
+[33mae5a6de[m HEAD@{23}: checkout: moving from main to feat/auth-redirect
+[33mae5a6de[m HEAD@{24}: reset: moving to origin/main
+[33mae5a6de[m HEAD@{25}: reset: moving to origin/main
+[33m99d0819[m HEAD@{26}: reset: moving to HEAD
+[33m99d0819[m HEAD@{27}: checkout: moving from feat/redirect-user to main
+[33m2d45f82[m[33m ([m[1;32mfeat/redirect-user[m[33m)[m HEAD@{28}: commit: dont look here
+[33mdf6e551[m[33m ([m[1;31morigin/test/Iteration-two[m[33m, [m[1;32mtest/Iteration-two[m[33m)[m HEAD@{29}: checkout: moving from test/Iteration-two to feat/redirect-user
+[33mdf6e551[m[33m ([m[1;31morigin/test/Iteration-two[m[33m, [m[1;32mtest/Iteration-two[m[33m)[m HEAD@{30}: commit: THE TESTS
+[33me025614[m HEAD@{31}: commit: more test files
+[33m8593d32[m HEAD@{32}: commit: Test files
+[33m1a2d797[m[33m ([m[1;32mfeature/navigation-bar[m[33m)[m HEAD@{33}: checkout: moving from feature/navigation-bar to test/Iteration-two
+[33m1a2d797[m[33m ([m[1;32mfeature/navigation-bar[m[33m)[m HEAD@{34}: commit: logout button on breakout page bug fix
+[33m5393c24[m HEAD@{35}: commit: fixed logout button
+[33mda2a7e3[m HEAD@{36}: pull origin main: Fast-forward
+[33mf8754f4[m HEAD@{37}: commit: changed name from navigation.css and navigation.html to sidebar.css and sidebar.html
+[33m7e92480[m HEAD@{38}: pull origin main: Fast-forward
+[33ma01e92a[m HEAD@{39}: commit: Implemented navigation bar for both desktop and mobile
+[33m99d0819[m HEAD@{40}: checkout: moving from main to feature/navigation-bar
+[33m99d0819[m HEAD@{41}: pull origin main: Fast-forward
+[33m1340f86[m[33m ([m[1;32mfeature/user-breakout-session-registration[m[33m)[m HEAD@{42}: checkout: moving from feature/navigation-bar to main
+[33m99d0819[m HEAD@{43}: pull origin main: Fast-forward
+[33m1340f86[m[33m ([m[1;32mfeature/user-breakout-session-registration[m[33m)[m HEAD@{44}: checkout: moving from main to feature/navigation-bar
+[33m1340f86[m[33m ([m[1;32mfeature/user-breakout-session-registration[m[33m)[m HEAD@{45}: checkout: moving from feature/navigation-bar to main
+[33m1340f86[m[33m ([m[1;32mfeature/user-breakout-session-registration[m[33m)[m HEAD@{46}: checkout: moving from main to feature/navigation-bar
+[33m1340f86[m[33m ([m[1;32mfeature/user-breakout-session-registration[m[33m)[m HEAD@{47}: pull origin main: Fast-forward
+[33m1d15d8a[m HEAD@{48}: checkout: moving from feature/user-breakout-session-registration to main
+[33m1340f86[m[33m ([m[1;32mfeature/user-breakout-session-registration[m[33m)[m HEAD@{49}: pull origin main: Fast-forward
+[33mecd940e[m[33m ([m[1;31morigin/feature/user-breakout-session-registration[m[33m)[m HEAD@{50}: commit: User sign-ups are now being saved into the database
+[33m2ea0373[m HEAD@{51}: pull origin main: Fast-forward
+[33m5735910[m HEAD@{52}: pull origin feature/user-breakout-session-registration: Fast-forward
+[33m330143a[m[33m ([m[1;32mbackup-before-reset[m[33m)[m HEAD@{53}: reset: moving to 330143a
+[33m1d15d8a[m HEAD@{54}: reset: moving to ORIG_HEAD
+[33m5735910[m HEAD@{55}: checkout: moving from main to feature/user-breakout-session-registration
+[33m1d15d8a[m HEAD@{56}: revert: Revert "Merge pull request #34 from Alyoshka5/feature/user-breakout-session-registration"
+[33m378c54d[m HEAD@{57}: pull origin main: Fast-forward
+[33m6a03a64[m[33m ([m[1;32mfeature/auth-redirect[m[33m)[m HEAD@{58}: checkout: moving from feature/auth-redirect to main
+[33m6a03a64[m[33m ([m[1;32mfeature/auth-redirect[m[33m)[m HEAD@{59}: checkout: moving from main to feature/auth-redirect
+[33m6a03a64[m[33m ([m[1;32mfeature/auth-redirect[m[33m)[m HEAD@{60}: checkout: moving from main to main
+[33m6a03a64[m[33m ([m[1;32mfeature/auth-redirect[m[33m)[m HEAD@{61}: checkout: moving from feature/user-breakout-session-registration to main
+[33m5735910[m HEAD@{62}: commit: Resolved merge conflicts and fixed repository methods
+[33m3e774c9[m HEAD@{63}: commit (merge): Resolved merge conflicts for breakout session registration feature
+[33m330143a[m[33m ([m[1;32mbackup-before-reset[m[33m)[m HEAD@{64}: checkout: moving from feature/user-breakout-session-registration to feature/user-breakout-session-registration
+[33m330143a[m[33m ([m[1;32mbackup-before-reset[m[33m)[m HEAD@{65}: reset: moving to HEAD
+[33m330143a[m[33m ([m[1;32mbackup-before-reset[m[33m)[m HEAD@{66}: checkout: moving from feature/user-breakout-session-registration to feature/user-breakout-session-registration
+[33m330143a[m[33m ([m[1;32mbackup-before-reset[m[33m)[m HEAD@{67}: reset: moving to HEAD
+[33m330143a[m[33m ([m[1;32mbackup-before-reset[m[33m)[m HEAD@{68}: checkout: moving from feature/user-breakout-session-registration to feature/user-breakout-session-registration
+[33m330143a[m[33m ([m[1;32mbackup-before-reset[m[33m)[m HEAD@{69}: checkout: moving from main to feature/user-breakout-session-registration
+[33m6a03a64[m[33m ([m[1;32mfeature/auth-redirect[m[33m)[m HEAD@{70}: checkout: moving from feature/user-breakout-session-registration to main
+[33m330143a[m[33m ([m[1;32mbackup-before-reset[m[33m)[m HEAD@{71}: commit: Add breakout session registration logic
+[33mb9d67df[m HEAD@{72}: pull origin feature/user-breakout-session-registration: Fast-forward
+[33m005379e[m HEAD@{73}: commit: implemented SessionController.java & SessionService.java
+[33m6a03a64[m[33m ([m[1;32mfeature/auth-redirect[m[33m)[m HEAD@{74}: merge main: Fast-forward
+[33m0cfc0d0[m HEAD@{75}: checkout: moving from main to feature/user-breakout-session-registration
+[33m6a03a64[m[33m ([m[1;32mfeature/auth-redirect[m[33m)[m HEAD@{76}: pull origin main: Fast-forward
+[33m0cfc0d0[m HEAD@{77}: checkout: moving from feature/user-breakout-session-registration to main
+[33m0cfc0d0[m HEAD@{78}: checkout: moving from main to feature/user-breakout-session-registration
+[33m0cfc0d0[m HEAD@{79}: checkout: moving from feature/user-breakout-session-registration to main
+[33m0cfc0d0[m HEAD@{80}: checkout: moving from main to feature/user-breakout-session-registration
+[33m0cfc0d0[m HEAD@{81}: checkout: moving from feature/implement-global-css to main
+[33m52a876f[m[33m ([m[1;32mfeature/implement-global-css[m[33m)[m HEAD@{82}: commit: Implemented global.css file and edited/simplified signup.css & login.css files
+[33m0cfc0d0[m HEAD@{83}: checkout: moving from main to feature/implement-global-css
+[33m0cfc0d0[m HEAD@{84}: reset: moving to origin/main
+[33m483dcf5[m HEAD@{85}: checkout: moving from feature/add-global-css to main
+[33m483dcf5[m HEAD@{86}: checkout: moving from main to feature/add-global-css
+[33m483dcf5[m HEAD@{87}: pull origin main: Fast-forward
+[33mc1eaf2c[m HEAD@{88}: checkout: moving from feat/breakout-room-preferences to main
+[33mab8bbf5[m[33m ([m[1;31morigin/feat/breakout-room-preferences[m[33m, [m[1;32mfeat/breakout-room-preferences[m[33m)[m HEAD@{89}: commit: feat: add breakout room preferences page
+[33mc1eaf2c[m HEAD@{90}: checkout: moving from main to feat/breakout-room-preferences
+[33mc1eaf2c[m HEAD@{91}: clone: from https://github.com/Alyoshka5/cambio-earth-symbiosis.git

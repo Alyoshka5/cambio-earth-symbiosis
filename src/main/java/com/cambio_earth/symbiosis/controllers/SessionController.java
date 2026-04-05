@@ -206,6 +206,7 @@ public class SessionController {
             sessionInfo.put("id", session.getId());
             sessionInfo.put("title", session.getTitle());
             sessionInfo.put("startDateTime", session.getStartDateTime() != null ? session.getStartDateTime().toString() : "TBA");
+            sessionInfo.put("endDateTime", session.getEndDateTime() != null ? session.getEndDateTime().toString() : null);
             response.add(sessionInfo);
         }
         
@@ -240,6 +241,7 @@ public class SessionController {
                 sessionInfo.put("id", session.getId());
                 sessionInfo.put("title", session.getTitle());
                 sessionInfo.put("startDateTime", session.getStartDateTime() != null ? session.getStartDateTime().toString() : "TBA");
+                sessionInfo.put("endDateTime", session.getEndDateTime() != null ? session.getEndDateTime().toString() : null);
                 response.add(sessionInfo);
             }
         }
