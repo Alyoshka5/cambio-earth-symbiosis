@@ -95,14 +95,18 @@ public class SessionService {
         Iterable<User> users = userRepository.findAll();
         List<Participation> participations = participationRepository.findAll();
         for (User user : users) {
-            for (Session session : mandatorySessions) {
-                Participation participation = new Participation(user, session);
-                if (!participations.contains(participation)) {
-                    participations.add(participation);
-                }
-            }
+            registerUserForMandatorySessions(user, mandatorySessions, participations);
         }
         participationRepository.saveAll(participations);
+    }
+
+    public void registerUserForMandatorySessions(User user, List<Session> mandatorySessions, List<Participation> participations) {
+        for (Session session : mandatorySessions) {
+            Participation participation = new Participation(user, session);
+            if (!participations.contains(participation)) {
+                participations.add(participation);
+            }
+        }
     }
 
     public void registerUsersForBreakoutSessions() {
@@ -131,53 +135,66 @@ public class SessionService {
         for (List<Session> currentBreakoutSessions : groupedBreakoutSessions) {
             Collections.shuffle(users); // Shuffle users to distribute priority fairly
             for (User user : users) {
-                // Find the user's rankings
-                List<BreakoutBlockRanking> userRankings = rankings.stream().filter(ranking -> ranking.getUser().getId().equals(user.getId()) && currentBreakoutSessions.contains(ranking.getSession())).toList();
-                boolean userRegistered = false;
-                
-                // Check if user is already registered for a session in the timeslot
-                for (Session session : currentBreakoutSessions) {
-                    if (participations.contains(new Participation(user, session))) {
-                        userRegistered = true;
-                        break;
-                    }
-                }
-                if (userRegistered) break;
-
-                // Register user based on ranking
-                for (BreakoutBlockRanking ranking : userRankings) {
-                    Integer sessionParticipationCount = sessionParticipationCounts.get(ranking.getSession());
-                    if (sessionParticipationCount < ranking.getSession().getCapacity()) {
-                        Participation participation = new Participation(user, ranking.getSession());
-                        participations.add(participation);
-                        sessionParticipationCounts.put(ranking.getSession(), sessionParticipationCount + 1);
-                        userRegistered = true;
-                        break;
-                    }
-                }
-
-                // Register user to least participated-in breakout session
-                if (!userRegistered) {
-                    Session leastParticipatedSession = currentBreakoutSessions.get(0);
-                    double minParticipationRatio = (double) sessionParticipationCounts.get(leastParticipatedSession) / leastParticipatedSession.getCapacity();
-                    for (Session session: currentBreakoutSessions) {
-                        double sessionParticipationRatio = (double) sessionParticipationCounts.get(session) / session.getCapacity();
-                        if (sessionParticipationRatio < minParticipationRatio) {
-                            leastParticipatedSession = session;
-                            minParticipationRatio = sessionParticipationRatio;
-                        }
-                    }
-                    if (sessionParticipationCounts.get(leastParticipatedSession) < leastParticipatedSession.getCapacity()) { // If false, then all sessions are at full capacity
-                        Participation participation = new Participation(user, leastParticipatedSession);
-                        participations.add(participation);
-                        sessionParticipationCounts.put(leastParticipatedSession, sessionParticipationCounts.get(leastParticipatedSession) + 1);
-                    } else {
-                        break; // Go to next group of breakout sessions since all current sessions are at full capacity
-                    }
-                }
+                boolean continueToNextUser = registerUserForBreakoutSessions(user, rankings, currentBreakoutSessions, participations, groupedBreakoutSessions, sessionParticipationCounts);
+                if (!continueToNextUser) break; // All current sessions at full capacity
             }
         }
 
         participationRepository.saveAll(participations);
+    }
+
+    public boolean registerUserForBreakoutSessions(
+        User user, List<BreakoutBlockRanking> rankings,
+        List<Session> currentBreakoutSessions,
+        List<Participation> participations,
+        List<List<Session>> groupedBreakoutSessions, 
+        Map<Session, Integer> sessionParticipationCounts
+    ) {
+        // Find the user's rankings
+        List<BreakoutBlockRanking> userRankings = rankings.stream().filter(ranking -> ranking.getUser().getId().equals(user.getId()) && currentBreakoutSessions.contains(ranking.getSession())).toList();
+        boolean userRegistered = false;
+        
+        // Check if user is already registered for a session in the timeslot
+        for (Session session : currentBreakoutSessions) {
+            if (participations.contains(new Participation(user, session))) {
+                userRegistered = true;
+                break;
+            }
+        }
+        if (userRegistered) return true;
+
+        // Register user based on ranking
+        for (BreakoutBlockRanking ranking : userRankings) {
+            Integer sessionParticipationCount = sessionParticipationCounts.get(ranking.getSession());
+            if (sessionParticipationCount < ranking.getSession().getCapacity()) {
+                Participation participation = new Participation(user, ranking.getSession());
+                participations.add(participation);
+                sessionParticipationCounts.put(ranking.getSession(), sessionParticipationCount + 1);
+                userRegistered = true;
+                break;
+            }
+        }
+
+        // Register user to least participated-in breakout session
+        if (!userRegistered) {
+            Session leastParticipatedSession = currentBreakoutSessions.get(0);
+            double minParticipationRatio = (double) sessionParticipationCounts.get(leastParticipatedSession) / leastParticipatedSession.getCapacity();
+            for (Session session: currentBreakoutSessions) {
+                double sessionParticipationRatio = (double) sessionParticipationCounts.get(session) / session.getCapacity();
+                if (sessionParticipationRatio < minParticipationRatio) {
+                    leastParticipatedSession = session;
+                    minParticipationRatio = sessionParticipationRatio;
+                }
+            }
+            if (sessionParticipationCounts.get(leastParticipatedSession) < leastParticipatedSession.getCapacity()) { // If false, then all sessions are at full capacity
+                Participation participation = new Participation(user, leastParticipatedSession);
+                participations.add(participation);
+                sessionParticipationCounts.put(leastParticipatedSession, sessionParticipationCounts.get(leastParticipatedSession) + 1);
+            } else {
+                return false; // Go to next group of breakout sessions since all current sessions are at full capacity
+            }
+        }
+
+        return true;
     }
 }
