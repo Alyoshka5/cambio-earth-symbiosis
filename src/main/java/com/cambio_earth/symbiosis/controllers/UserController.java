@@ -69,7 +69,7 @@ public class UserController {
         }
 
         if (!registerUserDto.getPassword().equals(registerUserDto.getConfirmPassword())) {
-            model.addAttribute("error", "Passwords must match.");
+            model.addAttribute("confirmPasswordError", "Passwords must match.");
             return "signUp";
         }
 

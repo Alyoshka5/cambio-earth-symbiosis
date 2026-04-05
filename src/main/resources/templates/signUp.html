@@ -55,14 +55,17 @@
 
             <div class="mb-3">
                 <label class="form-label" for="input-pass">Password</label>
-                <input type="password" class="input-pass form-control" name="password">
+                <input id="password" class="form-control" type="password" name="password" placeholder="Password">
                 <p class="password-error" style="display: none;">Must enter a password</p>
+                <p id="password-error" style="color: #ff6b6b; font-size: 12px; display: none;">
+                     Password must be at least 8 characters and include uppercase, lowercase, and a number.
+                </p>
             </div>
 
             <div class="mb-3">
-                <label class="form-label" for="input-pass">Confirm Password</label>
+                <label class="form-label" for="input-confirm-pass">Confirm Password</label>
                 <input type="password" class="input-confirm-pass form-control" name="confirmPassword">
-                <p class="confirm-password-error" style="display: none;">Passwords must match</p>
+                <p th:if="${confirmPasswordError}" th:text="${confirmPasswordError}" class="confirm-password-error"></p>
             </div>
 
             <button type="submit" class="btn btn-primary btn-cont">Continue</button>
@@ -71,6 +74,22 @@
                 Already have an account? <a href="/auth/login">Log in</a>
             </p>
         </form>
+
+        <script>
+        document.querySelector("form").addEventListener("submit", function(e) {
+            const password = document.getElementById("password").value;
+            const error = document.getElementById("password-error");
+
+            const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+            if (!regex.test(password)) {
+                e.preventDefault(); // stop form submission
+                error.style.display = "block";
+            } else {
+                error.style.display = "none";
+            }
+        });
+        </script>
 
         <script>
             const form = document.querySelector("form");
