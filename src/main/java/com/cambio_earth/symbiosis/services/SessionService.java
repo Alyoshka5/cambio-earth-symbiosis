@@ -197,4 +197,34 @@ public class SessionService {
 
         return true;
     }
+
+    public void registerUserAfterLaunch(User user) {
+        // Data setup
+        List<Session> mandatorySessions = sessionRepository.findByIsBreakoutFalse();
+        List<Participation> participations = new ArrayList<>();
+        List<BreakoutBlockRanking> rankings = new ArrayList<>();
+        
+        // Group sessions by the dateStartTime property
+        List<Session> breakoutSessions = getBreakoutSessions();
+        List<List<Session>> groupedBreakoutSessions = breakoutSessions.stream()
+            .collect(Collectors.groupingBy(Session::getStartDateTime))
+            .values()
+            .stream()
+            .collect(Collectors.toList());
+
+        // Calculate how many users are already registered for each sessions (should be 0 but could have been manually added)
+        Map<Session, Integer> sessionParticipationCounts = new HashMap<>();
+        for (Session breakoutSession : breakoutSessions) {
+            Integer sessionParticipationCount = participations.stream().filter(participation -> participation.getSession().getId().equals(breakoutSession.getId())).toList().size();
+            sessionParticipationCounts.put(breakoutSession, sessionParticipationCount);
+        }
+
+        // Register user
+        registerUserForMandatorySessions(user, mandatorySessions, participations);
+        for (List<Session> currentBreakoutSessions : groupedBreakoutSessions) {
+            registerUserForBreakoutSessions(user, rankings, currentBreakoutSessions, participations, groupedBreakoutSessions, sessionParticipationCounts);
+        }
+
+        participationRepository.saveAll(participations);
+    }
 }

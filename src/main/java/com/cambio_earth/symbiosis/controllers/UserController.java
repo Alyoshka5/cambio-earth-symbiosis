@@ -25,6 +25,7 @@ import com.cambio_earth.symbiosis.models.UserRepository;
 import com.cambio_earth.symbiosis.services.AuthenticationService;
 import com.cambio_earth.symbiosis.services.EventService;
 import com.cambio_earth.symbiosis.services.JwtService;
+import com.cambio_earth.symbiosis.services.SessionService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,6 +35,8 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 public class UserController {
     
+    private final SessionService sessionService;
+
     @Autowired
     UserRepository userRepository;
     
@@ -42,11 +45,12 @@ public class UserController {
     private final PasswordEncoder passwordEncoder;
     private final EventService eventService;
 
-    public UserController(JwtService jwtService, AuthenticationService authenticationService, PasswordEncoder passwordEncoder, EventService eventService) {
+    public UserController(JwtService jwtService, AuthenticationService authenticationService, PasswordEncoder passwordEncoder, EventService eventService, SessionService sessionService) {
         this.jwtService = jwtService;
         this.authenticationService = authenticationService;
         this.passwordEncoder = passwordEncoder;
         this.eventService = eventService;
+        this.sessionService = sessionService;
     }
 
     @GetMapping("/")
@@ -126,8 +130,9 @@ public class UserController {
 
     @PostMapping("/auth/verify")
     public String verifyCode(Model model,
-                            @ModelAttribute VerifyUserDto verifyUserDto,
-                            HttpServletResponse response) {
+        @ModelAttribute VerifyUserDto verifyUserDto,
+        HttpServletResponse response
+    ) {
         try {
             authenticationService.verifyUser(verifyUserDto);
 
@@ -140,6 +145,10 @@ public class UserController {
                 cookie.setHttpOnly(true);
                 cookie.setPath("/");
                 response.addCookie(cookie);
+
+                if (eventService.isEventLaunched()) {
+                    sessionService.registerUserAfterLaunch(user);
+                }
 
                 return "redirect:/breakout";
             }
