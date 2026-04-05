@@ -8,6 +8,25 @@ const modalCreatedAt = document.querySelector('#modal-created-at');
 const postIdInput = document.querySelector('#post-id-input');
 const deleteForm = document.querySelector('#delete-post-form');
 
+function formatPostDate(dateString) {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString;
+
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const month = months[date.getMonth()];
+    const day = date.getDate();
+    const year = date.getFullYear();
+
+    let hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    if (hours === 0) hours = 12;
+
+    return `${month} ${day}, ${year} • ${hours}:${minutes} ${ampm}`;
+}
+
 posts.forEach(post => post.addEventListener('click', () => {
     // Add post info to modal
     const postData = JSON.parse(post.dataset.post);
@@ -15,7 +34,8 @@ posts.forEach(post => post.addEventListener('click', () => {
     modalTitle.textContent = postData.title;
     modalLikes.textContent = postData.likes;
     modalCaption.textContent = postData.caption;
-    modalCreatedAt.textContent = postData.createdAt;
+    // Use formatted date
+    modalCreatedAt.textContent = formatPostDate(postData.createdAt);
     postIdInput.value = postData.id;
     if (deleteForm) {
         deleteForm.action = `/posts/delete/${postData.id}`;
