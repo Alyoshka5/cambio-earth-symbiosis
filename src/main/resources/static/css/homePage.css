@@ -375,14 +375,16 @@ body {
 }
 
 .post-like-icon {
-    width: 18px;
-    height: 18px;
+    width: 24px;
+    height: 24px;
     display: inline-block;
     background: url('/images/heart-outline-icon.svg') center/contain no-repeat;
+    filter: invert();
 }
 
 .post-like-icon.liked {
     background: url('/images/heart-filled-icon.svg') center/contain no-repeat;
+    filter: none;
 }
 
 .post-like-text {
