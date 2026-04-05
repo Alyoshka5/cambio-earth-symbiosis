@@ -1,11 +1,14 @@
 package com.cambio_earth.symbiosis;
 import com.cambio_earth.symbiosis.controllers.PostController;
 
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -140,9 +143,13 @@ public class PostControllerTest {
     @Test
     void testLikePost_Success() {
         when(authenticationService.getUserFromRequest(request)).thenReturn(testUser);
-        doNothing().when(postService).toggleLike(1L, testUser.getId());
+        when(postService.toggleLike(1L, testUser.getId())).thenReturn(testPost);
 
-        postController.likePost(request, 1L);
+        Map<String, Object> result = postController.likePost(request, 1L);
+
+        assertTrue((Boolean) result.get("success"));
+        assertEquals(testPost.getLikedBy().size(), result.get("likes"));
+        assertEquals(testPost.getLikedBy().contains(testUser), result.get("liked"));
 
         verify(postService, times(1)).toggleLike(1L, testUser.getId());
     }
@@ -178,12 +185,13 @@ public class PostControllerTest {
 
     @Test
     void testHomePage_DisplaysPosts() {
-        
-        when(postRepository.findAll()).thenReturn(java.util.Arrays.asList(testPost));
+        when(authenticationService.getUserFromRequest(request)).thenReturn(testUser);
+        when(postRepository.findAllByOrderByCreatedAtDesc()).thenReturn(List.of(testPost));
 
         String result = postController.showHomePage(model, request);
 
         assertEquals("homePage", result);
-        verify(model).addAttribute(eq("posts"), anyList());
+        verify(model).addAttribute("currUser", testUser);
+        verify(model).addAttribute(eq("posts"), any());
     }
 }
