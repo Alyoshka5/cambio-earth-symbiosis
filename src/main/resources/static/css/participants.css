@@ -90,16 +90,6 @@ body {
     position: relative;
 }
 
-.search-icon {
-    position: absolute;
-    left: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 1rem;
-    pointer-events: none;
-    opacity: 0.5;
-}
-
 .search-input {
     width: 100%;
     background: rgba(43, 57, 48, 0.96);
