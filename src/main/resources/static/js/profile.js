@@ -1,3 +1,5 @@
+document.addEventListener("DOMContentLoaded", function () {
+
 const posts = document.querySelectorAll('.post');
 const modalPostImg = document.querySelector('#modal-post-img');
 const modalTitle = document.querySelector('#modal-title');
@@ -8,20 +10,38 @@ const modalCreatedAt = document.querySelector('#modal-created-at');
 const postIdInput = document.querySelector('#post-id-input');
 const deleteForm = document.querySelector('#delete-post-form');
 
+function formatPostDate(dateString) {
+    const trimmed = dateString.substring(0, 23);
+    const date = new Date(trimmed);
+    if (isNaN(date.getTime())) return dateString;
+
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const month = months[date.getMonth()];
+    const day = date.getDate();
+    const year = date.getFullYear();
+
+    let hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const ampm = hours >= 12 ? 'p.m.' : 'a.m.';
+    hours = hours % 12;
+    if (hours === 0) hours = 12;
+
+    return `${month} ${day}, ${year} • ${hours}:${minutes} ${ampm}`;
+}
+
 posts.forEach(post => post.addEventListener('click', () => {
-    // Add post info to modal
     const postData = JSON.parse(post.dataset.post);
     modalPostImg.src = postData.img;
     modalTitle.textContent = postData.title;
     modalLikes.textContent = postData.likes;
     modalCaption.textContent = postData.caption;
-    modalCreatedAt.textContent = postData.createdAt;
+    modalCreatedAt.textContent = formatPostDate(postData.createdAt);
     postIdInput.value = postData.id;
     if (deleteForm) {
         deleteForm.action = `/posts/delete/${postData.id}`;
     }
 
-    // Set like button
     modalLikeButton.dataset.liked = !postData.liked;
     updateLikeButton(!postData.liked);
 }));
@@ -32,7 +52,6 @@ modalLikeButton.addEventListener('click', async () => {
     const likes = Number(modalLikes.textContent);
     modalLikes.textContent = liked ? likes - 1 : likes + 1;
 
-    // Update like on server
     const postId = Number(postIdInput.value);
     try {
         await fetch(`/posts/${postId}/like`, {
@@ -42,7 +61,6 @@ modalLikeButton.addEventListener('click', async () => {
             }
         });
 
-        // Update post data on data-post attribute
         posts.forEach(post => {
             const postData = JSON.parse(post.dataset.post);
             if (postData.id === postId) {
@@ -66,3 +84,5 @@ function updateLikeButton(liked) {
         modalLikeButton.classList.remove('white-filter');
     }
 }
+
+}); 
