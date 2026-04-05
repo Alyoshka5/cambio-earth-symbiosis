@@ -25,6 +25,7 @@ import com.cambio_earth.symbiosis.models.UserRepository;
 import com.cambio_earth.symbiosis.services.AuthenticationService;
 import com.cambio_earth.symbiosis.services.EventService;
 import com.cambio_earth.symbiosis.services.JwtService;
+import com.cambio_earth.symbiosis.services.RankingService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,12 +42,14 @@ public class UserController {
     private final AuthenticationService authenticationService;
     private final PasswordEncoder passwordEncoder;
     private final EventService eventService;
+    private final RankingService rankingService;
 
-    public UserController(JwtService jwtService, AuthenticationService authenticationService, PasswordEncoder passwordEncoder, EventService eventService) {
+    public UserController(JwtService jwtService, AuthenticationService authenticationService, PasswordEncoder passwordEncoder, EventService eventService, RankingService rankingService) {
         this.jwtService = jwtService;
         this.authenticationService = authenticationService;
         this.passwordEncoder = passwordEncoder;
         this.eventService = eventService;
+        this.rankingService = rankingService;
     }
 
     @GetMapping("/")
@@ -210,6 +213,14 @@ public class UserController {
 
         if (currUser == null || profileOwner == null) {
             return "redirect:/auth/login";
+        }
+
+        try {
+            List<User> rankedUsers = rankingService.getRankedUsers();
+            int userRank = rankingService.getUserRank(profileOwner, rankedUsers);
+            model.addAttribute("userRank", userRank);
+        } catch (Exception e) {
+            model.addAttribute("userRank", null);
         }
 
         List<Post> userPosts = profileOwner.getPosts();
