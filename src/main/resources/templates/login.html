@@ -28,13 +28,14 @@
             
             <p th:if="${error}" th:text="${error}" style="color:red;"></p>
 
-            <div class="mb-3">
-                <label class="form-label">Enter your email:</label>
+            
+            <div class="form-group">
+                <label for="email">Email</label>
                 <input class="form-control" type="text" name="email" placeholder="email@domain.com">
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">Enter your password:</label>
+            <div class="form-group">
+                <label for="password">Password</label>
                 <input class="form-control" type="password" name="password" placeholder="Password">
             </div>
 
