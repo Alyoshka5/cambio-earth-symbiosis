@@ -180,6 +180,10 @@ public class Session implements Comparable<Session> {
         return String.join(", ", speakers);
     }
 
+    public int getNumberOfParticipants() {
+        return participations.size();
+    }
+
     // Comparable
     @Override
     public int compareTo(Session otherSession) {

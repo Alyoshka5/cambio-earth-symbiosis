@@ -26,7 +26,7 @@ public class RankingController {
 
     @GetMapping("/rankings")
     public String showRankings(HttpServletRequest request, Model model) {
-        User currUser = authenticationService.getUserFromRequest(request);
+        User curUser = authenticationService.getUserFromRequest(request);
 
         List<User> rankedUsers = new ArrayList<>();
         try {
@@ -39,13 +39,11 @@ public class RankingController {
             return "ranking";
         }
 
-        List<User> topUsers = rankedUsers.subList(0, Math.min(10, rankedUsers.size()));
+        model.addAttribute("users", rankedUsers);
 
-        model.addAttribute("users", topUsers);
-
-        if (currUser != null) {
-            int rank = rankingService.getUserRank(currUser, rankedUsers);
-            model.addAttribute("currentUser", currUser);
+        if (curUser != null) {
+            int rank = rankingService.getUserRank(curUser, rankedUsers);
+            model.addAttribute("currentUser", curUser);
             model.addAttribute("rank", rank);
         } else {
             model.addAttribute("currentUser", null);

@@ -34,6 +34,14 @@ public class PostService {
                 post.getLikedBy().remove(user);
             } else {
                 post.getLikedBy().add(user);
+
+                if (!user.getLikePointAwardedPosts().contains(post)) {
+                    user.setPoints(user.getPoints() + 1);
+                    System.out.println("User: " + user.getUsername() + " now has points: " + user.getPoints());
+                    user.getLikePointAwardedPosts().add(post);
+                    userRepository.save(user);
+                    System.out.println("Saved user points to database");
+                }
             }
 
             return postRepository.save(post);
