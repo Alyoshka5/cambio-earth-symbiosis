@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ranking - Symbiosis</title>
+
+    <link rel="stylesheet" href="/css/global.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/ranking.css">
+</head>
+<body>
+<div th:replace="fragments/sidebar :: sidebar"></div>
+
+<main class="page-layout">
+
+    <nav class="topbar">
+        <a href="/home" class="topbar-brand">Symbiosis</a>
+    </nav>
+
+    <div class="page-shell">
+        <div class="page-header ranking-page-header">
+            <h1 class="page-title">Ranking</h1>
+        </div>
+
+        <p th:if="${errorMessage != null}" th:text="${errorMessage}"></p>
+
+        
+
+        <div class="participant-card ranking-card">
+            <div class="ranking-row ranking-header">
+                <div>Participant</div>
+                <div>Points</div>
+                <div>Rank</div>
+            </div>
+
+            <div th:if="${users != null}" th:each="user, stat : ${users}" class="ranking-row">
+                <div class="participant-cell">
+                    <div class="participant-avatar"
+                         th:text="${#strings.substring(user.firstName,0,1).toUpperCase()}">
+                        A
+                    </div>
+                    <span class="ranking-name" th:text="${user.firstName + ' ' + user.lastName}">Name</span>
+                </div>
+
+                <div class="ranking-points" th:text="${user.points}">100</div>
+                <div class="ranking-rank" th:text="${stat.index + 1}">1</div>
+            </div>
+        </div>
+
+        <div class="ranking-current-user">
+            <span>Your Rank:</span>
+            <strong th:text="${rank}">N/A</strong>
+
+            <span class="ranking-divider" th:if="${currentUser != null}">•</span>
+
+            <span th:if="${currentUser != null}">Points:</span>
+            <strong th:if="${currentUser != null}" th:text="${currentUser.points}">0</strong>
+        </div>
+    </div>
+</main>
+</body>
+</html>
