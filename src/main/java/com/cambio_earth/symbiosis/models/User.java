@@ -18,6 +18,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -73,6 +75,14 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CompletedMissions> missionsComplete = new ArrayList<>(); 
 
+    @ManyToMany
+    @JoinTable(
+        name = "liked_points_awarded",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "post_id")
+    )
+    private Set<Post> likePointAwardedPosts = new HashSet<>();
+
     private Long points = (long)0;
 
     // Constructors
@@ -98,6 +108,14 @@ public class User implements UserDetails {
 
     public String getLastName() { return lastName; }
     public void setLastName(String lastName) { this.lastName = lastName; }
+
+    public Set<Post> getLikePointAwardedPosts() {
+        return likePointAwardedPosts;
+    }
+
+    public void setLikePointAwardedPosts(Set<Post> likePointAwardedPosts) {
+        this.likePointAwardedPosts = likePointAwardedPosts;
+    }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }

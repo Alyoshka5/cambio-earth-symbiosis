@@ -1,19 +1,28 @@
 package com.cambio_earth.symbiosis.controllers;
-import org.springframework.stereotype.Controller;
-
-import com.cambio_earth.symbiosis.models.*;
-
-import jakarta.servlet.http.HttpServletRequest;
-import com.cambio_earth.symbiosis.services.AuthenticationService;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.cambio_earth.symbiosis.models.CompletedMissions;
+import com.cambio_earth.symbiosis.models.CompletedMissionsRepository;
+import com.cambio_earth.symbiosis.models.Mission;
+import com.cambio_earth.symbiosis.models.MissionRepository;
+import com.cambio_earth.symbiosis.models.MissionType;
+import com.cambio_earth.symbiosis.models.MissionViewModel;
+import com.cambio_earth.symbiosis.models.User;
+import com.cambio_earth.symbiosis.models.UserRepository;
+import com.cambio_earth.symbiosis.services.AuthenticationService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class MissionController {
