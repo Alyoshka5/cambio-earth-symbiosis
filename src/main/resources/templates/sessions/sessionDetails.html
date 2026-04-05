@@ -113,17 +113,19 @@
             </div>
 
             <div id="speakers-container">
-                <div class="speakers-grid" th:if="${eventSession.speakers != null and !eventSession.speakers.isEmpty()}">
+                <div class="speakers-grid"
+                    th:if="${eventSession.speakers != null and !eventSession.speakers.isEmpty()}">
                     <div class="speaker-card" th:each="speaker : ${eventSession.speakers}">
                         <div class="speaker-name" th:text="${speaker}">Speaker Name</div>
                     </div>
                 </div>
+
+                <p class="empty-state"
+                th:if="${eventSession.speakers == null or eventSession.speakers.isEmpty()}">
+                    No speakers listed yet
+                </p>
             </div>
 
-            <p class="empty-state"
-               th:if="${eventSession.speakers == null or eventSession.speakers.isEmpty()}">
-                No speakers listed yet.
-            </p>
 
             <div id="participants-container" style="display:none">
                 <div class="participants-grid" th:if="${eventSession.participations != null and !eventSession.participations.isEmpty()}">
