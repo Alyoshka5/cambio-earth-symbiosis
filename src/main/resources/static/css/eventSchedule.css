@@ -348,6 +348,25 @@ main {
     opacity: 1;
 }
 
+#launch-loading {
+    text-align: center;
+    padding: 8px 0 4px;
+    position: relative;
+}
+ 
+#launch-loading .spinner-border {
+    color: var(--accent);
+    margin-bottom: 16px;
+}
+ 
+#launch-loading p {
+    font-size: 1rem;
+    color: var(--sage);
+    margin: 0;
+    font-weight: 300;
+    line-height: 1.6;
+}
+
 
 /* -- Media queries -- */
 @media (max-width: 768px) {
