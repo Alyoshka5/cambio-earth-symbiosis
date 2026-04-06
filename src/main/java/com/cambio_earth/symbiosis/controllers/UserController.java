@@ -317,7 +317,7 @@ public class UserController {
         User currUser = authenticationService.getUserFromRequest(request);
         if (currUser == null) return "redirect:/auth/login";
     
-        List<User> participants = userRepository.findAll();
+        List<User> participants = userRepository.findByEnabled(true);
     
         model.addAttribute("currentUser", currUser);
         model.addAttribute("participants", participants);
