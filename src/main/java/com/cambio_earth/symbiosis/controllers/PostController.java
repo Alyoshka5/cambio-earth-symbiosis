@@ -125,7 +125,6 @@ public class PostController {
         }
 
         Post updatedPost = postService.toggleLike(postId, user.getId());
-        
 
         if (updatedPost == null) {
             response.put("success", false);
@@ -134,9 +133,8 @@ public class PostController {
         }
 
         response.put("success", true);
-        response.put("likes", updatedPost.getLikedBy().size());
-        response.put("liked", updatedPost.getLikedBy().contains(user));
-
+        response.put("likes", postRepository.countLikes(postId));
+        response.put("liked", postRepository.existsLike(postId, user.getId()));
         return response;
     }
 
