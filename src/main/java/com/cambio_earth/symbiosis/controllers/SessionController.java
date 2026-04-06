@@ -31,6 +31,7 @@ import com.cambio_earth.symbiosis.services.AuthenticationService;
 import com.cambio_earth.symbiosis.services.SessionService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 public class SessionController {
@@ -56,8 +57,13 @@ public class SessionController {
     @Autowired
     private UserRepository userRepository;
 
+    private boolean hasSubmittedPreferences(User user) {
+        List<BreakoutBlockRanking> rankings = breakoutBlockRankingRepository.findByUser(user);
+        return rankings != null && !rankings.isEmpty();
+    }
+
     @GetMapping("/breakout")
-    public String getBreakoutPreferencesPage(HttpServletRequest request, Model model) {
+    public String getBreakoutPreferencesPage(HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
         User user = authenticationService.getUserFromRequest(request);
         if (user == null) {
             return "redirect:/auth/login";
@@ -66,6 +72,11 @@ public class SessionController {
         List<LaunchEvent> events = launchEventRepository.findAll();
         if (!events.isEmpty() && events.get(0).isStarted()) {
             return "redirect:/home";
+        }
+        
+        if (hasSubmittedPreferences(user)) {
+            redirectAttributes.addFlashAttribute("info", "You have already submitted your preferences.");
+            return "redirect:/sessions/thankYou";
         }
         
         List<Session> breakoutSessions = sessionService.getBreakoutSessions();
@@ -130,11 +141,16 @@ public class SessionController {
     }
 
     @GetMapping("/sessions/thankYou")
-    public String getThankYouPage(HttpServletRequest request, Model model) {
+    public String getThankYouPage(HttpServletRequest request, Model model, HttpServletResponse response) {
         User user = authenticationService.getUserFromRequest(request);
         if (user == null) {
             return "redirect:/auth/login";
         }
+        
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Expires", "0");
+        
         model.addAttribute("user", user);
         return "sessions/thankYou";
     }

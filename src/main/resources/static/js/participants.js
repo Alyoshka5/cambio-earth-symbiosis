@@ -1,7 +1,61 @@
-const searchInput = document.getElementById('searchInput');
-const filterRow = document.getElementById('filterRow');
-const grid = document.getElementById('participantsGrid');
-const noResults = document.getElementById('noResultsMsg');
+// Date formatting function for sessions with start and end times
+// Format: "Apr 5, 2026 • 5:23 pm"
+function formatSessionDateTime(startDateTime, endDateTime) {
+    if (!startDateTime || startDateTime === 'Time TBA') return 'Time TBA';
+    
+    try {
+        const startDate = new Date(startDateTime);
+        
+        if (isNaN(startDate.getTime())) return startDateTime;
+        
+        // Format: "Apr 5, 2026 • 5:23 pm"
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const month = months[startDate.getMonth()];
+        const day = startDate.getDate();
+        const year = startDate.getFullYear();
+        
+        let hours = startDate.getHours();
+        const minutes = startDate.getMinutes().toString().padStart(2, '0');
+        const ampm = hours >= 12 ? 'pm' : 'am';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // Convert 0 to 12
+        
+        let formatted = `${month} ${day}, ${year} • ${hours}:${minutes} ${ampm}`;
+        
+        // Add end time if available
+        if (endDateTime) {
+            const endDate = new Date(endDateTime);
+            if (!isNaN(endDate.getTime())) {
+                let endHours = endDate.getHours();
+                const endMinutes = endDate.getMinutes().toString().padStart(2, '0');
+                const endAmpm = endHours >= 12 ? 'pm' : 'am';
+                endHours = endHours % 12;
+                endHours = endHours ? endHours : 12;
+                formatted += ` – ${endHours}:${endMinutes} ${endAmpm}`;
+            }
+        }
+        
+        return formatted;
+    } catch (error) {
+        return startDateTime;
+    }
+}
+
+// Helper function to escape HTML and prevent XSS
+function escapeHtml(str) {
+    if (!str) return '';
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+const searchInput   = document.getElementById('searchInput');
+const filterRow     = document.getElementById('filterRow');
+const grid          = document.getElementById('participantsGrid');
+const noResults     = document.getElementById('noResultsMsg');
 let cards = [];
 
 function updateCards() {
@@ -55,7 +109,7 @@ function applyFilters() {
     }
 }
 
-document.addEventListener('click', function () {
+document.addEventListener('click', function() {
     document.querySelectorAll('.dropdown-menu').forEach(menu => {
         menu.classList.remove('show');
     });
@@ -113,31 +167,31 @@ async function loadUserAddSessions(userId, userName) {
     modalTitle.innerText = 'Add ' + userName + ' to Session';
     modalBody.innerHTML = '<div class="no-sessions">Loading available sessions...</div>';
     modal.style.display = 'block';
-
+    
     try {
         const response = await fetch('/sessions/user/' + userId + '/available-sessions');
         const sessions = await response.json();
-
-        if (!sessions || sessions.length === 0) {
+        
+        if (sessions.length === 0) {
             modalBody.innerHTML = '<div class="no-sessions">No available sessions to add</div>';
             return;
         }
-
+        
         let html = '';
         sessions.forEach(session => {
+            const timeDisplay = formatSessionDateTime(session.startDateTime, session.endDateTime);
             html += `
                 <div class="session-list-item" data-session-id="${session.id}">
                     <div class="session-info">
-                        <div class="session-title">${session.title}</div>
-                        <div class="session-time">${session.timeDisplay || 'Time TBA'}</div>
+                        <div class="session-title">${escapeHtml(session.title)}</div>
+                        <div class="session-time">${escapeHtml(timeDisplay)}</div>
                     </div>
-                    <button class="add-session-btn" onclick="addUserToSession(${userId}, ${session.id}, '${session.title.replace(/'/g, "\\'")}')">Add</button>
+                    <button class="add-session-btn" onclick="addUserToSession(${userId}, ${session.id}, '${escapeHtml(session.title).replace(/'/g, "\\'")}')">Add</button>
                 </div>
             `;
         });
         modalBody.innerHTML = html;
     } catch (error) {
-        console.error('Error:', error);
         modalBody.innerHTML = '<div class="no-sessions">Error loading sessions</div>';
     }
 }
@@ -146,36 +200,36 @@ async function loadUserRemoveSessions(userId, userName) {
     modalTitle.innerText = 'Remove ' + userName + ' from Session';
     modalBody.innerHTML = '<div class="no-sessions">Loading registered sessions...</div>';
     modal.style.display = 'block';
-
+    
     try {
         const response = await fetch('/sessions/user/' + userId + '/sessions');
         const sessions = await response.json();
-
-        if (!sessions || sessions.length === 0) {
+        
+        if (sessions.length === 0) {
             modalBody.innerHTML = '<div class="no-sessions">No sessions registered</div>';
             return;
         }
-
+        
         let html = '';
         sessions.forEach(session => {
+            const timeDisplay = formatSessionDateTime(session.startDateTime, session.endDateTime);
             html += `
                 <div class="session-list-item" data-session-id="${session.id}">
                     <div class="session-info">
-                        <div class="session-title">${session.title}</div>
-                        <div class="session-time">${session.timeDisplay || 'Time TBA'}</div>
+                        <div class="session-title">${escapeHtml(session.title)}</div>
+                        <div class="session-time">${escapeHtml(timeDisplay)}</div>
                     </div>
-                    <button class="remove-session-btn" onclick="removeUserFromSession(${userId}, ${session.id}, '${session.title.replace(/'/g, "\\'")}')">Remove</button>
+                    <button class="remove-session-btn" onclick="removeUserFromSession(${userId}, ${session.id}, '${escapeHtml(session.title).replace(/'/g, "\\'")}')">Remove</button>
                 </div>
             `;
         });
         modalBody.innerHTML = html;
     } catch (error) {
-        console.error('Error:', error);
         modalBody.innerHTML = '<div class="no-sessions">Error loading sessions</div>';
     }
 }
 
-window.addUserToSession = async function (userId, sessionId, sessionTitle) {
+window.addUserToSession = async function(userId, sessionId, sessionTitle) {
     try {
         const response = await fetch('/sessions/participants/' + userId + '/add/' + sessionId, {
             method: 'POST',
@@ -192,7 +246,7 @@ window.addUserToSession = async function (userId, sessionId, sessionTitle) {
     }
 };
 
-window.removeUserFromSession = async function (userId, sessionId, sessionTitle) {
+window.removeUserFromSession = async function(userId, sessionId, sessionTitle) {
     try {
         const response = await fetch('/sessions/participants/' + userId + '/remove/' + sessionId, {
             method: 'POST',

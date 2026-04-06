@@ -1,6 +1,5 @@
 package com.cambio_earth.symbiosis.controllers;
 
-
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +32,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-
 @Controller
 public class UserController {
    
@@ -45,7 +43,6 @@ public class UserController {
     private final PasswordEncoder passwordEncoder;
     private final EventService eventService;
 
-
     public UserController(JwtService jwtService, AuthenticationService authenticationService, PasswordEncoder passwordEncoder, EventService eventService) {
         this.jwtService = jwtService;
         this.authenticationService = authenticationService;
@@ -53,35 +50,29 @@ public class UserController {
         this.eventService = eventService;
     }
 
-
     @GetMapping("/")
     public String home() {
         return "redirect:/auth/login";
     }
-
 
     @GetMapping("/auth/signup")
     public String getSignUpPage() {
         return "signUp";
     }
 
-
     @PostMapping("/auth/signup")
     public String register(@ModelAttribute RegisterUserDto registerUserDto, Model model) {
         String email = registerUserDto.getEmail();
-
 
         if (email == null || !email.matches("^[A-Za-z0-9._%+-]+@cambioearth\\.com$")) {
             model.addAttribute("error", "Not Valid Information.");
             return "signUp";
         }
 
-
         if (!registerUserDto.getPassword().equals(registerUserDto.getConfirmPassword())) {
             model.addAttribute("error", "Passwords must match.");
             return "signUp";
         }
-
 
         try {
             authenticationService.signup(registerUserDto);
@@ -92,16 +83,13 @@ public class UserController {
         }
     }
 
-
     @GetMapping("/auth/login")
     public String getLoginPage(HttpServletResponse response, @RequestParam(required = false) String logout) {
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Expires", "0");
-       
         return "login";
     }
-
 
     @PostMapping("/auth/login")
     public String authenticate(@ModelAttribute LoginUserDto loginUserDto,
@@ -110,7 +98,6 @@ public class UserController {
         try {
             User authenticatedUser = authenticationService.authenticate(loginUserDto);
             String jwtToken = jwtService.generateToken(authenticatedUser);
-
 
             Cookie cookie = new Cookie("jwt-token", jwtToken);
             cookie.setHttpOnly(true);
@@ -122,7 +109,6 @@ public class UserController {
                 return "redirect:/home";
             }
 
-
             return "redirect:/breakout";
         } catch (RuntimeException e) {
             model.addAttribute("error", "Invalid email or password.");
@@ -131,13 +117,11 @@ public class UserController {
         }
     }
 
-
     @GetMapping("/auth/verify")
     public String getVerificationPage(Model model, @RequestParam(name = "email", required = false) String email) {
         model.addAttribute("email", email);
         return "verificationCode";
     }
-
 
     @PostMapping("/auth/verify")
     public String verifyCode(Model model,
@@ -146,22 +130,18 @@ public class UserController {
         try {
             authenticationService.verifyUser(verifyUserDto);
 
-
             Optional<User> optionalUser = userRepository.findByEmail(verifyUserDto.getEmail());
             if (optionalUser.isPresent()) {
                 User user = optionalUser.get();
                 String jwtToken = jwtService.generateToken(user);
-
 
                 Cookie cookie = new Cookie("jwt-token", jwtToken);
                 cookie.setHttpOnly(true);
                 cookie.setPath("/");
                 response.addCookie(cookie);
 
-
                 return "redirect:/breakout";
             }
-
 
             return "redirect:/auth/login";
         } catch (RuntimeException e) {
@@ -171,11 +151,9 @@ public class UserController {
         }
     }
 
-
     @PostMapping("/auth/resend")
     public String resendVerificationCode(Model model, @RequestParam String email) {
         model.addAttribute("email", email);
-
 
         try {
             authenticationService.resendVerificationCode(email);
@@ -184,7 +162,6 @@ public class UserController {
             return "verificationCode";
         }
     }
-
 
     @PostMapping("/auth/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response) {
@@ -211,10 +188,8 @@ public class UserController {
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Expires", "0");
-       
         return "logout";
     }
-
 
     @GetMapping("/profile/{uid}")
     public String getProfilePage(@PathVariable Long uid, HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -225,15 +200,12 @@ public class UserController {
         User currUser = authenticationService.getUserFromRequest(request);
         User profileOwner = userRepository.findById(uid).orElse(null);
 
-
         if (currUser == null || profileOwner == null) {
             return "redirect:/auth/login";
         }
 
-
         List<Post> userPosts = profileOwner.getPosts();
         userPosts.sort(Comparator.comparing(Post::getCreatedAt));
-
 
         if (currUser.getRole().equals(Role.ADMIN) || currUser.getId().equals(uid)) {
             model.addAttribute("currUserCanDeletePosts", true);
@@ -243,10 +215,8 @@ public class UserController {
         model.addAttribute("profileOwner", profileOwner);
         model.addAttribute("posts", userPosts);
 
-
         return "profile";
     }
-
 
     @GetMapping("/profile")
     public String getCurrentUserProfilePage(HttpServletRequest request, Model model) {
@@ -254,35 +224,28 @@ public class UserController {
         return "redirect:/profile/" + currUser.getId();
     }
 
-
     @GetMapping("/profile/edit")
     public String getProfileEditForm(HttpServletRequest request, Model model) {
         User currUser = authenticationService.getUserFromRequest(request);
-
 
         if (currUser == null) {
             return "redirect:/auth/login";
         }
 
-
         model.addAttribute("user", currUser);
         return "profileEditForm";
     }
 
-
     @PostMapping("/profile/edit")
     public String saveProfileInfo(HttpServletRequest request, Model model, ProfileDto profileDto) {
         User currUser = authenticationService.getUserFromRequest(request);
-
 
         if (currUser == null) {
             System.out.println("TRUE");
             return "redirect:/auth/login";
         }
 
-
         boolean validChanges = true;
-
 
         String firstName = profileDto.getFirstName();
         if (firstName.length() < 2 || firstName.length() > 100) {
@@ -291,14 +254,12 @@ public class UserController {
         }
         currUser.setFirstName(firstName);
 
-
         String lastName = profileDto.getLastName();
         if (lastName.length() < 2 || lastName.length() > 100) {
             model.addAttribute("lastNameError", "Last name must be between 2 and 100 characters");
             validChanges = false;
         }
         currUser.setLastName(lastName);
-
 
         if (!profileDto.getCurrentPassword().equals("") || !profileDto.getNewPassword().equals("") || !profileDto.getConfirmNewPassword().equals("")) {
             LoginUserDto authenticationDto = new LoginUserDto();
@@ -323,7 +284,6 @@ public class UserController {
             }
         }
 
-
         if (validChanges) {
             userRepository.save(currUser);
             return "redirect:/profile";
@@ -333,18 +293,16 @@ public class UserController {
         }
     }
    
-   @GetMapping("/navigation")
+    @GetMapping("/navigation")
     public String getNavigationPage(HttpServletRequest request, Model model) {
         User currUser = authenticationService.getUserFromRequest(request);
         if (currUser == null) return "redirect:/auth/login";
-
 
         model.addAttribute("currentUser", currUser);
         model.addAttribute("user", currUser);
         model.addAttribute("isAdmin", currUser.getRole() == Role.ADMIN);
         return "maps";
     }
-
 
     @GetMapping("/participants")
     public String getParticipantsPage(HttpServletRequest request, Model model) {
@@ -359,7 +317,6 @@ public class UserController {
    
         return "participants";
     }
-
 
     @PostMapping("/participants/{userId}/set-admin")
     @ResponseBody

@@ -23,6 +23,7 @@ body {
     margin: 0 auto;
 }
 
+/* -- Top bar -- */
 .topbar-back {
     display: flex;
     align-items: center;
@@ -42,6 +43,7 @@ body {
     line-height: 1;
 }
 
+/* ── Header ── */
 .page-header {
     display: flex;
     justify-content: space-between;
@@ -119,6 +121,7 @@ body {
     box-shadow: 0 0 0 3px rgba(168, 197, 160, 0.08);
 }
 
+/* ── Filter tabs ── */
 .filter-row {
     display: flex;
     gap: 8px;
@@ -145,6 +148,7 @@ body {
     color: var(--white);
 }
 
+/* ── Participant grid ── */
 .participants-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -152,12 +156,16 @@ body {
 }
 
 .participant-card {
-    position: relative;
     background: rgba(43, 57, 48, 0.96);
     border: 1px solid rgba(168, 197, 160, 0.14);
     border-radius: 18px;
+    padding: 20px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
     transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    text-decoration: none;
 }
 
 .participant-card:hover {
@@ -382,6 +390,7 @@ body {
     gap: 14px;
 }
 
+/* Avatar circle with initials */
 .participant-avatar {
     width: 52px;
     height: 52px;
@@ -397,6 +406,7 @@ body {
     text-transform: uppercase;
 }
 
+/* Give admins a distinct accent ring */
 .participant-avatar.admin-avatar {
     background: linear-gradient(135deg, #7a9e6e, #3a4f2c);
     box-shadow: 0 0 0 2px rgba(168, 197, 160, 0.45);
@@ -426,6 +436,7 @@ body {
     text-overflow: ellipsis;
 }
 
+/* Role badge */
 .role-badge {
     display: inline-flex;
     align-items: center;
@@ -452,6 +463,7 @@ body {
     color: var(--sage);
 }
 
+/* View profile link at card bottom */
 .card-footer-link {
     display: flex;
     align-items: center;
@@ -478,6 +490,7 @@ body {
     transform: translateX(4px);
 }
 
+/* ── Empty state ── */
 .empty-state {
     background: rgba(58, 79, 44, 0.25);
     border: 1px dashed rgba(168, 197, 160, 0.25);
@@ -494,6 +507,7 @@ body {
     margin-bottom: 10px;
 }
 
+/* ── No-results (JS driven) ── */
 .no-results-msg {
     display: none;
     color: var(--sage);
@@ -502,6 +516,7 @@ body {
     font-size: 0.95rem;
 }
 
+/* ── Responsive ── */
 @media (max-width: 768px) {
     .page-layout {
         margin-left: 0;
