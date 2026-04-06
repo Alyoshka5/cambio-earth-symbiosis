@@ -125,6 +125,7 @@ public class PostController {
         }
 
         Post updatedPost = postService.toggleLike(postId, user.getId());
+        
 
         if (updatedPost == null) {
             response.put("success", false);
