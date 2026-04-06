@@ -51,6 +51,23 @@ main {
     background: var(--accent);
 }
 
+.topbar-back {
+    font-size: 0.82rem;
+    color: var(--sage);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+}
+
+.topbar-back:hover { color: var(--white); }
+
+.back-arrow {
+    font-size: 1rem;
+    line-height: 1;
+}
+
 .page-subtitle {
     color: var(--sage);
     font-size: 0.95rem;
