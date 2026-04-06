@@ -94,7 +94,17 @@
                 </div>
             </div>
 
-            <div class="section-heading">About This Session</div>
+            <div class="session-title-header">
+                <div class="section-heading">About This Session</div>
+                <div class="capacity-badge" th:if="${eventSession.breakout}">
+                    <span class="capacity-label">Attendees:</span>
+                        <span th:text="${eventSession.getNumberOfParticipants}">0</span>
+                        /
+                        <span th:text="${eventSession.capacity}">N/A</span>
+                    </span>
+                </div>
+            </div>
+
             <div class="description-block"
                  th:if="${eventSession.description != null and !#strings.isEmpty(eventSession.description)}"
                  th:text="${eventSession.description}">
@@ -113,17 +123,19 @@
             </div>
 
             <div id="speakers-container">
-                <div class="speakers-grid" th:if="${eventSession.speakers != null and !eventSession.speakers.isEmpty()}">
+                <div class="speakers-grid"
+                    th:if="${eventSession.speakers != null and !eventSession.speakers.isEmpty()}">
                     <div class="speaker-card" th:each="speaker : ${eventSession.speakers}">
                         <div class="speaker-name" th:text="${speaker}">Speaker Name</div>
                     </div>
                 </div>
+
+                <p class="empty-state"
+                th:if="${eventSession.speakers == null or eventSession.speakers.isEmpty()}">
+                    No speakers listed yet
+                </p>
             </div>
 
-            <p class="empty-state"
-               th:if="${eventSession.speakers == null or eventSession.speakers.isEmpty()}">
-                No speakers listed yet.
-            </p>
 
             <div id="participants-container" style="display:none">
                 <div class="participants-grid" th:if="${eventSession.participations != null and !eventSession.participations.isEmpty()}">

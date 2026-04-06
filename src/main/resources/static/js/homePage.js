@@ -27,3 +27,40 @@ document.addEventListener('click', function(event) {
         }
     }
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    const likeButtons = document.querySelectorAll(".post-like-btn");
+
+    likeButtons.forEach(button => {
+        button.addEventListener("click", async function () {
+            const postId = this.dataset.postId;
+            const icon = this.querySelector(".post-like-icon");
+            const text = this.querySelector(".post-like-text");
+
+            try {
+                const response = await fetch(`/posts/${postId}/like`, {
+                    method: "POST",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    text.textContent = `${data.likes} likes`;
+
+                    if (data.liked) {
+                        icon.classList.add("liked");
+                    } else {
+                        icon.classList.remove("liked");
+                    }
+                } else {
+                    console.error(data.message);
+                }
+            } catch (error) {
+                console.error("Failed to toggle like:", error);
+            }
+        });
+    });
+});

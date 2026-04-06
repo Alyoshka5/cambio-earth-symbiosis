@@ -125,17 +125,11 @@ public class Post {
     }
 
     // Helper methods
-    public String toJSON(User user) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mma, MMM dd");
-        String formattedCreatedAt = createdAt.format(formatter);
-        if (formattedCreatedAt.charAt(0) == '0') {
-            formattedCreatedAt = formattedCreatedAt.substring(1);
-        }
-        formattedCreatedAt = formattedCreatedAt.replaceAll("[.]", "");
+   public String toJSON(User user) {
+    String formattedCreatedAt = createdAt.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
+    String json = "{\"id\": %d, \"title\": \"%s\", \"caption\": \"%s\", \"img\": \"%s\", \"likes\": %d, \"createdAt\": \"%s\", \"liked\": %b}";
 
-        String json = "{\"id\": %d, \"title\": \"%s\", \"caption\": \"%s\", \"img\": \"%s\", \"likes\": %d, \"createdAt\": \"%s\", \"liked\": %b}";
-
-        return String.format(json, id, title, caption, img, likedBy.size(), formattedCreatedAt, likedBy.contains(user));
-    }
+    return String.format(json, id, title, caption, img, likedBy.size(), formattedCreatedAt, likedBy.contains(user));
+}
 }

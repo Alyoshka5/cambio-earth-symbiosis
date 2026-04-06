@@ -50,6 +50,10 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
 
+            <div th:if="${#lists.isEmpty(posts)}" class="no-posts">
+                No posts posted
+            </div>
+
             <!-- Posts -->
             <section class="container-fluid">
                 <div class="row">

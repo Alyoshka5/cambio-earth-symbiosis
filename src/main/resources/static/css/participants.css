@@ -84,6 +84,7 @@ body {
     color: var(--white);
 }
 
+/* ── Search bar ── */
 .search-wrap {
     margin-bottom: 24px;
     position: relative;

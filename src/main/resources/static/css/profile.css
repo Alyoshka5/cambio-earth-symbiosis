@@ -88,6 +88,14 @@ h2 {
     align-self: flex-end;
 }
 
+.no-posts {
+    text-align: center;
+    margin-top: 40px;
+    opacity: 0.7;
+    font-style: italic;
+    font-size: 16px;
+}
+
 .delete-post-btn {
     background: transparent;
     color: var(--danger);
@@ -144,6 +152,7 @@ h2 {
 
 #modal-like-icon:hover {
     cursor: pointer;
+    opacity: 0.9;
 }
 
 .white-filter {
