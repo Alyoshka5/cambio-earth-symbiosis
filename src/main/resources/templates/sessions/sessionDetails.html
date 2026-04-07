@@ -14,7 +14,35 @@
     <link href="/css/sessionDetails.css" rel="stylesheet">
     <script src="/js/sessionDetails.js" defer></script>
 
-    <title th:text="${eventSession.title} + ' | Symbiosis'">Session Details | Symbiosis</title>
+    <title th:text="${eventSession.title} + ' — Symbiosis'">Session — Symbiosis</title>
+
+    <style>
+        /* Align participant cards and hide remove button by default */
+        .participants-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            width: 100%;
+        }
+        .participants-name {
+            flex: 1;
+        }
+        .participants-card form {
+            margin: 0;
+            display: flex;
+        }
+        .btn-danger {
+            white-space: nowrap;
+            /* Hidden by default, but keeps space in layout */
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+        }
+        /* Show remove button when hovering over the whole participant card */
+        .participants-card:hover .btn-danger {
+            opacity: 1;
+        }
+    </style>
 </head>
 
 <body>
@@ -141,6 +169,7 @@
                 <div class="participants-grid" th:if="${eventSession.participations != null and !eventSession.participations.isEmpty()}">
                     <div class="participants-card" th:each="participant : ${eventSession.participations}">
                         <div class="participants-name" th:text="${participant.user.firstName + ' ' + participant.user.lastName}">[Participant Name]</div>
+                        <!-- Remove button only for admin, and hidden until hover -->
                         <form th:if="${isAdmin}"
                             th:action="@{/remove/{uid}/fromSession/{sid}(uid=${participant.user.id}, sid=${eventSession.id})}"
                             method="post">
