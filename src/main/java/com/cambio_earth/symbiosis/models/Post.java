@@ -132,11 +132,16 @@ public class Post {
     }
 
     // Helper methods
-   public String toJSON(User user) {
-    String formattedCreatedAt = createdAt.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + "Z";
+    public String toJSON(User user) {
+        String formattedCreatedAt = createdAt.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + "Z";
 
-    String json = "{\"id\": %d, \"title\": \"%s\", \"caption\": \"%s\", \"img\": \"%s\", \"likes\": %d, \"createdAt\": \"%s\", \"liked\": %b}";
+        String json = "{\"id\": %d, \"title\": \"%s\", \"caption\": \"%s\", \"img\": \"%s\", \"likes\": %d, \"createdAt\": \"%s\", \"liked\": %b}";
 
-    return String.format(json, id, title, caption, img, likedBy.size(), formattedCreatedAt, likedBy.contains(user));
-}
+        return String.format(json, id, title, caption, img, likedBy.size(), formattedCreatedAt, likedBy.contains(user));
+    }
+
+    public String getCreatedAtIso() {
+        if (this.createdAt == null) return "";
+        return this.createdAt.format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME) + "Z";
+    }
 }
