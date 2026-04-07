@@ -232,7 +232,8 @@ public class UserController {
         }
 
         List<Post> userPosts = profileOwner.getPosts();
-        userPosts.sort(Comparator.comparing(Post::getCreatedAt));
+        // FIX: Sort posts in reverse chronological order (newest first)
+        userPosts.sort(Comparator.comparing(Post::getCreatedAt).reversed());
 
         boolean canDelete = currUser.getRole().equals(Role.ADMIN) || currUser.getId().equals(uid);
         model.addAttribute("currUserCanDeletePosts", canDelete);
