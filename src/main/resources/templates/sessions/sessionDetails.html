@@ -15,6 +15,27 @@
     <script src="/js/sessionDetails.js" defer></script>
 
     <title th:text="${eventSession.title} + ' — Symbiosis'">Session — Symbiosis</title>
+
+    <!-- Fix alignment of remove buttons -->
+    <style>
+        .participants-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            width: 100%;
+        }
+        .participants-name {
+            flex: 1;
+        }
+        .participants-card form {
+            margin: 0;
+            display: flex;
+        }
+        .btn-danger {
+            white-space: nowrap;
+        }
+    </style>
 </head>
 
 <body>
