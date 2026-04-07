@@ -23,6 +23,12 @@ main {
     padding: 48px 24px 80px;
 }
 
+.header {
+    display: flex;   
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
 .divider {
     height: 1px;
     background-color: var(--accent);
@@ -39,7 +45,46 @@ h2 {
     font-family: 'DM Sans', sans-serif;
     font-size: 1.25rem;
     opacity: 0.75;
-    margin-bottom: 20px;
+}
+
+/* ── Rank badge ── */
+.rank-badge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(58, 79, 66, 0.5);
+    border: 1px solid rgba(200,217,110,0.25);
+    border-radius: 16px;
+    padding: 14px 22px;
+    flex-shrink: 0;
+    margin-top: 8px;
+}
+
+.rank-icon {
+    font-size: 1.3rem;
+    color: var(--accent);
+    line-height: 1;
+}
+
+.rank-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.rank-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--sage);
+}
+
+.rank-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    color: var(--accent);
+    line-height: 1;
 }
 
 /* -- Buttons -- */
