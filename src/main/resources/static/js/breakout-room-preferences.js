@@ -130,8 +130,43 @@ if (registerForm) {
                 container.appendChild(rankInput);
             }
         });
+        
+        // Set flag BEFORE submitting
+        sessionStorage.setItem('breakoutSubmitted', 'true');
     });
 }
+
+// Prevent back button from showing the breakout page after submission
+(function() {
+    // Check if we're on the breakout page
+    if (window.location.pathname === '/breakout') {
+        // Check sessionStorage to see if user just submitted
+        const justSubmitted = sessionStorage.getItem('breakoutSubmitted');
+        
+        if (justSubmitted === 'true') {
+            // Clear the flag and redirect to thank you page
+            sessionStorage.removeItem('breakoutSubmitted');
+            window.location.replace('/sessions/thankYou');
+            return;
+        }
+        
+        // Also handle when user comes back via back button after page load
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted || (performance.getEntriesByType && performance.getEntriesByType('navigation')[0].type === 'back_forward')) {
+                const submitted = sessionStorage.getItem('breakoutSubmitted');
+                if (submitted === 'true') {
+                    sessionStorage.removeItem('breakoutSubmitted');
+                    window.location.replace('/sessions/thankYou');
+                }
+            }
+        });
+    }
+    
+    // On the thank you page, set a flag that user has submitted
+    if (window.location.pathname === '/sessions/thankYou') {
+        sessionStorage.setItem('breakoutSubmitted', 'true');
+    }
+})();
 
 // Add debug info to see what's being submitted
 console.log("Breakout preferences JS loaded");

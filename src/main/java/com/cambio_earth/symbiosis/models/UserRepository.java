@@ -16,4 +16,5 @@ public interface UserRepository extends CrudRepository<User, Long>{
      Optional<User> findByVerificationCode(String verificationCode);
      @Query("SELECT u FROM User u JOIN u.posts p WHERE p.id = :postId")
      Optional<User> findByPostId(@Param("postId") Long postId);
+     List<User> findByEnabled(boolean enabled);
 }
