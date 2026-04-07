@@ -1,4 +1,3 @@
-/* 1. Global Layout & Background */
 :root {
     --forest:      #2b3930;
     --forest-mid:  #3a4f42;
@@ -38,24 +37,31 @@ body {
     margin: 0;
 }
 
-/* Cambio logo */
+
+
+/* =========================
+   Logo & Title
+========================= */
+
 .cambio-logo {
     width: 300px;
     margin-bottom: 50px;
 }
 
-/* "Symbiosis" Title */
 h1 {
-    display: block;
     font-size: clamp(2rem, 5vw, 3rem);
     font-weight: 500;
-    font-family: 'DM Serif Display', serif;
+    font-family: 'Serif Display', serif;
     color: var(--white);
     line-height: 1.15;
     margin: 0 0 40px;
 }
 
-/* Form Container Styling */
+
+/* =========================
+   Form Container
+========================= */
+
 form {
     width: 100%;
     max-width: 400px;
@@ -72,25 +78,40 @@ form {
     max-width: 500px;
 }
 
-/* Login subheader */
+/* =========================
+   Section Heading
+========================= */
+
 .section-heading {
     font-size: 1.5rem;
     font-weight: 700;
-    letter-spacing: 2.5px;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
     color: var(--accent);
     margin-bottom: 14px;
     text-align: center;
 }
 
-/* Form labels */
+
+/* =========================
+   Input Fields
+========================= */
+
+.mb-3 {
+    margin-bottom: 1.2rem;
+}
+
+/* SHOW LABELS (this was your bug fix) */
+.mb-3 label {
+    display: block;
+}
+
 .form-label {
     font-size: 1rem;
     font-weight: 400;
     color: var(--sage);
     margin-bottom: 6px;
     letter-spacing: 0.3px;
-    margin-left: 5px;
 }
 
 .form-label span.required {
@@ -98,64 +119,72 @@ form {
     margin-left: 3px;
 }
 
-/* Input fields */
-.form-control,
-.form-select {
+
+/* Input styling */
+.form-control {
     background-color: rgba(26, 36, 32, 0.7) !important;
-    border: 1px solid rgba(168,197,160,0.2) !important;
     color: var(--white) !important;
-    border-radius: 10px !important;
-    padding: 11px 14px !important;
-    font-family: 'DM Sans', sans-serif !important;
+    border: 1px solid rgba(168, 197, 156, 0.2) !important;
+    border-radius: 12px !important;
+    padding: 14px !important;
+    font-family: 'Sans', sans-serif !important;
 
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.form-control:focus,
-.form-select:focus {
+/* Focus effect */
+.form-control:focus {
     border-color: var(--accent) !important;
-    box-shadow: 0 0 0 3px rgba(200,217,110,0.12) !important;
+    box-shadow: 0 0 0 3px rgba(200, 227, 196, 0.12) !important;
     outline: none !important;
     background-color: rgba(26, 36, 32, 0.9) !important;
 }
 
+/* Placeholder */
 .form-control::placeholder {
-    color: rgba(168,197,160,0.4) !important;
+    color: rgba(168,197,156,0.4) !important;
 }
 
-/* Continue button */
+
+/* =========================
+   Button
+========================= */
+
 .btn-cont {
     background: var(--accent);
-    color: var(--bark);
+    color: var(--dark);
     border: none;
-    border-radius: 10px;
-    padding: 12px 32px;
-    font-family: 'DM Sans', sans-serif;
+    border-radius: 12px;
+    padding: 14px 32px;
+    font-family: 'Sans', sans-serif;
     font-size: 0.9rem;
     font-weight: 700;
     letter-spacing: 0.3px;
     cursor: pointer;
+
     transition: opacity 0.2s, transform 0.15s;
+
     display: block;
     margin: 0 auto;
 }
 
 .btn-cont:hover {
-    opacity: 0.88;
+    opacity: 0.9;
     transform: translateY(-1px);
 }
 
-/* 4. Input Field Styling */
-.mb-3 label {
-    display: none; /* Hiding labels to match the minimalist placeholder style */
+.btn-cont:active {
+    transform: translateY(0);
 }
+
+
+/* =========================
+   Error Message
+========================= */
 
 .error-message {
     color: #ff6b6b;
     font-size: 0.9rem;
     margin-bottom: 12px;
     text-align: center;
-}
-.btn-cont:active {
-    transform: translateY(0);
 }
