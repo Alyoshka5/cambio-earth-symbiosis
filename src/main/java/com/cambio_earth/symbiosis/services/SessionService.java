@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -54,7 +55,7 @@ public class SessionService {
         Collections.sort(sessions);
         
         // Group sessions by date
-        Map<String, List<Session>> scheduleDays = new HashMap<>();
+        Map<String, List<Session>> scheduleDays = new LinkedHashMap<>();
         if (!sessions.isEmpty()) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE-MMM dd");
             
@@ -70,7 +71,7 @@ public class SessionService {
             
             List<Session> daySessions = new ArrayList<>();
             for (Session session: sessions) {
-                if (session.getStartDateTime() == null && session.getEndDateTime() == null) continue;
+                if (session.getStartDateTime() == null || session.getEndDateTime() == null) continue;
                 if (prevDateTime.toLocalDate().equals(session.getStartDateTime().toLocalDate())) {
                     daySessions.add(session);
                 } else {
