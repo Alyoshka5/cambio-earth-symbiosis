@@ -26,27 +26,24 @@ public class PostService {
         Optional<User> optionalUser = userRepository.findById(userId);
         Optional<Post> optionalPost = postRepository.findById(postId.intValue());
 
-        if (optionalUser.isPresent() && optionalPost.isPresent()) {
-            Post post = optionalPost.get();
-            User user = optionalUser.get();
-
-            if (post.getLikedBy().contains(user)) {
-                post.getLikedBy().remove(user);
-            } else {
-                post.getLikedBy().add(user);
-
-                if (!user.getLikePointAwardedPosts().contains(post)) {
-                    user.setPoints(user.getPoints() + 1);
-                    System.out.println("User: " + user.getUsername() + " now has points: " + user.getPoints());
-                    user.getLikePointAwardedPosts().add(post);
-                    userRepository.save(user);
-                    System.out.println("Saved user points to database");
-                }
-            }
-
-            return postRepository.save(post);
+        if (optionalUser.isEmpty() || optionalPost.isEmpty()) {
+            return null;
         }
 
-        return null;
+        User user = optionalUser.get();
+
+        int deleted = postRepository.deleteLike(postId, userId);
+
+        if (deleted == 0) {
+            postRepository.insertLike(postId, userId);
+
+            int awarded = postRepository.insertLikePointAward(postId, userId);
+            if (awarded > 0) {
+                user.setPoints(user.getPoints() + 1);
+                userRepository.save(user);
+            }
+        }
+
+        return postRepository.findById(postId.intValue()).orElse(null);
     }
 }

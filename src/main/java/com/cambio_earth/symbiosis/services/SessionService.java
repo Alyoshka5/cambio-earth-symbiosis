@@ -52,13 +52,7 @@ public class SessionService {
         if (user.getRole().equals(Role.ADMIN)) {
             sessions = sessionRepository.findAll();
         } else {
-            sessions = new ArrayList<>();
-            for (Participation participation : participations) {
-                Optional<Session> optionalSession = sessionRepository.findById(participation.getSession().getId());
-                if (optionalSession.isPresent()) {
-                    sessions.add(optionalSession.get());
-                }
-            }
+            sessions = getUserRegisteredSessions(user);
         }
 
         Collections.sort(sessions);
@@ -86,6 +80,18 @@ public class SessionService {
         }
 
         return scheduleDays;
+    }
+
+    public List<Session> getUserRegisteredSessions(User user) {
+        List<Participation> participations = participationRepository.findByUserId(user.getId());
+        List<Session> sessions = new ArrayList<>();
+        for (Participation participation : participations) {
+            Optional<Session> optionalSession = sessionRepository.findById(participation.getSession().getId());
+            if (optionalSession.isPresent()) {
+                sessions.add(optionalSession.get());
+            }
+        }
+        return sessions;
     }
 
     public List<Session> getBreakoutSessions() {
