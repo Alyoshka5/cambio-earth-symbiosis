@@ -75,7 +75,7 @@
             } else if (path.startsWith("/maps")) {
                 document.getElementById("nav-navigation")?.classList.add("sidebar-active");
                 document.getElementById("mobile-nav-navigation")?.classList.add("sidebar-active");
-            } else if (path === "/profile/" + currentUserId) {
+            } else if (path === "/profile/" + currentUserId || path === '/profile/edit') {
                 document.getElementById("nav-profile")?.classList.add("sidebar-active");
                 document.getElementById("mobile-nav-profile")?.classList.add("sidebar-active");
             }
