@@ -14,7 +14,7 @@
     <link href="/css/sessionDetails.css" rel="stylesheet">
     <script src="/js/sessionDetails.js" defer></script>
 
-    <title th:text="${eventSession.title} + ' — Symbiosis'">Session — Symbiosis</title>
+    <title th:text="${eventSession.title} + ' | Symbiosis'">Session | Symbiosis</title>
 
     <style>
         /* Align participant cards and hide remove button by default */
@@ -34,13 +34,153 @@
         }
         .btn-danger {
             white-space: nowrap;
-            /* Hidden by default, but keeps space in layout */
             opacity: 0;
             transition: opacity 0.2s ease-in-out;
         }
-        /* Show remove button when hovering over the whole participant card */
         .participants-card:hover .btn-danger {
             opacity: 1;
+        }
+
+        /* MODAL STYLES - EXACTLY MATCHING MAPS.CSS */
+        .modal-backdrop-custom {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-backdrop-custom.open {
+            display: flex;
+        }
+
+        .modal-box {
+            background: var(--forest-mid, #3a4f42);
+            border: 1px solid rgba(168, 197, 160, 0.18);
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 440px;
+            width: 90%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-box h3 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.5rem;
+            color: var(--white, #ffffff);
+            margin: 0 0 12px;
+        }
+
+        .modal-box p {
+            color: var(--sage, #a8c5a0);
+            font-size: 0.9rem;
+            margin: 0 0 24px;
+        }
+
+        /* Symmetrical Button Width Fix - EXACTLY MATCHING MAPS.CSS */
+        .modal-actions {
+            display: flex !important;
+            justify-content: space-between !important;
+            gap: 20px !important;
+            width: 100%;
+            margin-top: 2rem;
+        }
+
+        /* Force the Cancel button AND the Form to take up exactly 50% of the space */
+        .modal-actions > button,
+        .modal-actions > form {
+            flex: 1 !important;
+            display: flex !important;
+            margin: 0 !important;
+        }
+
+        /* Make both buttons fill their 50% containers completely */
+        .modal-actions .btn-outline-sage,
+        .modal-actions .btn-danger-soft,
+        .modal-actions button {
+            width: 100% !important;
+            padding: 12px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            white-space: nowrap;
+        }
+
+        /* Button styles matching maps.css */
+        .btn-outline-sage {
+            background: transparent;
+            color: var(--sage, #a8c5a0);
+            border: 1px solid rgba(168, 197, 160, 0.35);
+            border-radius: 10px;
+            padding: 7px 18px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: border-color 0.2s, color 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-outline-sage:hover {
+            border-color: rgba(168, 197, 160, 0.65);
+            color: var(--white, #ffffff);
+        }
+
+        .btn-danger-soft {
+            background: transparent;
+            color: var(--danger, #e07070);
+            border: 1px solid rgba(224, 112, 112, 0.35);
+            border-radius: 10px;
+            padding: 7px 18px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .btn-danger-soft:hover {
+            border-color: rgba(224, 112, 112, 0.65);
+            background: rgba(224, 112, 112, 0.08);
+        }
+
+        /* Toast notification styles */
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #2b3930;
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.9rem;
+            z-index: 2100;
+            animation: slideIn 0.3s ease;
+            border-left: 4px solid #c8d96e;
+        }
+
+        .toast-notification.error {
+            border-left-color: #e07070;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
     </style>
 </head>
@@ -113,12 +253,9 @@
                     <a th:href="@{/admin/sessions/{id}/edit(id=${eventSession.id})}" class="btn-edit">
                         ✏ Edit Session
                     </a>
-                    <form th:action="@{/admin/sessions/{id}/delete(id=${eventSession.id})}" method="post" style="margin:0">
-                        <button type="submit" class="btn-delete"
-                            onclick="return confirm('Delete this session? This cannot be undone.')">
-                            Delete
-                        </button>
-                    </form>
+                    <button type="button" class="btn-delete" onclick="openDeleteModal()">
+                        Delete
+                    </button>
                 </div>
             </div>
 
@@ -167,18 +304,14 @@
 
             <div id="participants-container" style="display:none">
                 <div class="participants-grid" th:if="${eventSession.participations != null and !eventSession.participations.isEmpty()}">
-                    <div class="participants-card" th:each="participant : ${eventSession.participations}">
+                    <div class="participants-card" th:each="participant : ${eventSession.participations}" th:id="'participant-card-' + ${participant.user.id}">
                         <div class="participants-name" th:text="${participant.user.firstName + ' ' + participant.user.lastName}">[Participant Name]</div>
-                        <!-- Remove button only for admin, and hidden until hover -->
-                        <form th:if="${isAdmin}"
-                            th:action="@{/remove/{uid}/fromSession/{sid}(uid=${participant.user.id}, sid=${eventSession.id})}"
-                            method="post">
-                            <button type="submit"
-                                class="btn btn-sm btn-danger ms-2"
-                                onclick="return confirm('Remove this participant from the session?')">
-                                Remove
-                            </button>
-                        </form>
+                        <button type="button" class="btn btn-sm btn-danger ms-2 remove-participant-btn" 
+                            th:data-user-id="${participant.user.id}"
+                            th:data-session-id="${eventSession.id}"
+                            th:data-participant-name="${participant.user.firstName + ' ' + participant.user.lastName}">
+                            Remove
+                        </button>
                     </div>
                 </div>
 
@@ -190,6 +323,32 @@
 
         </div>
 
+    </div>
+
+    <!-- Delete Session Confirmation Modal - Matching Maps Modal Style -->
+    <div class="modal-backdrop-custom" id="deleteSessionModal">
+        <div class="modal-box">
+            <h3>Delete Session?</h3>
+            <p>This will permanently remove "<span th:text="${eventSession.title}">this session</span>".</p>
+            <div class="modal-actions">
+                <button class="btn-outline-sage" onclick="closeDeleteModal()">Cancel</button>
+                <form id="deleteSessionForm" th:action="@{/admin/sessions/{id}/delete(id=${eventSession.id})}" method="post">
+                    <button type="submit" class="btn-danger-soft">Confirm Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Remove Participant Confirmation Modal - Matching Maps Modal Style -->
+    <div class="modal-backdrop-custom" id="removeParticipantModal">
+        <div class="modal-box">
+            <h3>Remove Participant?</h3>
+            <p id="removeParticipantMessage">This will remove this participant from the session.</p>
+            <div class="modal-actions">
+                <button class="btn-outline-sage" onclick="closeRemoveParticipantModal()">Cancel</button>
+                <button type="button" class="btn-danger-soft" id="confirmRemoveBtn">Confirm Remove</button>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
