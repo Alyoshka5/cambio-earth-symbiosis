@@ -24,8 +24,18 @@
 
         <main>
             <section>
-                <h1 th:text="${profileOwner.firstName} + ' ' + ${profileOwner.lastName}">Profile</h1>
-                <h2 th:text="${profileOwner.email}"></h2>
+                <header class="header">
+                    <div>
+                        <h1 th:text="${profileOwner.firstName} + ' ' + ${profileOwner.lastName}">profile</h1>
+                        <h2 th:text="${profileOwner.email}"></h2>
+                    </div>
+                    <div class="rank-badge">
+                        <div class="rank-info">
+                            <span class="rank-label">Rank</span>
+                            <span class="rank-value" th:text="${userRank != null ? userRank : 'N/A'}">0</span>
+                        </div>
+                    </div>
+                </header>
                 <div class="header-button-container">
                     <form th:if="${profileOwner.id == currentUser.id}" action="/profile/edit" method="get">
                         <button class="btn-secondary">Edit Profile</button>
