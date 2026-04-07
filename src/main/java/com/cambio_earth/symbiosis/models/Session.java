@@ -187,6 +187,7 @@ public class Session implements Comparable<Session> {
     // Comparable
     @Override
     public int compareTo(Session otherSession) {
+        if (this.getStartDateTime() == null || otherSession.getStartDateTime() == null) return 0;
         return this.getStartDateTime().compareTo(otherSession.getStartDateTime());
     }
 }

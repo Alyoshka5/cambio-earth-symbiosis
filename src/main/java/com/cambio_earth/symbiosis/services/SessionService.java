@@ -38,34 +38,39 @@ public class SessionService {
     
     @Autowired
     BreakoutBlockRankingRepository rankingRepository;
-        
-    @Autowired
-    private LauanchEventRepository launchEventRepository;
 
     @Autowired
     private SessionRepository sessionRepository;
 
     // retrieve schedule of sessions grouped by day
     public Map<String, List<Session>> getUserSchedule(User user) {
-        List<Participation> participations = participationRepository.findByUserId(user.getId());
         List<Session> sessions;
         if (user.getRole().equals(Role.ADMIN)) {
             sessions = sessionRepository.findAll();
         } else {
             sessions = getUserRegisteredSessions(user);
         }
-
+        
         Collections.sort(sessions);
-
+        
         // Group sessions by date
         Map<String, List<Session>> scheduleDays = new HashMap<>();
         if (!sessions.isEmpty()) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE-MMM dd");
-
-            LocalDateTime prevDateTime = sessions.get(0).getStartDateTime();
-
+            
+            // Get first start datetime that isn't null
+            LocalDateTime prevDateTime = null;
+            for (Session session : sessions) {
+                if (session.getStartDateTime() != null && session.getEndDateTime() != null) {
+                    prevDateTime = session.getStartDateTime();
+                    break;
+                }
+            }
+            if (prevDateTime == null) return scheduleDays;
+            
             List<Session> daySessions = new ArrayList<>();
             for (Session session: sessions) {
+                if (session.getStartDateTime() == null && session.getEndDateTime() == null) continue;
                 if (prevDateTime.toLocalDate().equals(session.getStartDateTime().toLocalDate())) {
                     daySessions.add(session);
                 } else {
