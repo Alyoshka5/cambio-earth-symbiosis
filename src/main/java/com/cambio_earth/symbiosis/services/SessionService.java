@@ -70,7 +70,7 @@ public class SessionService {
             
             List<Session> daySessions = new ArrayList<>();
             for (Session session: sessions) {
-                if (session.getStartDateTime() == null && session.getEndDateTime() == null) continue;
+                if (session.getStartDateTime() == null || session.getEndDateTime() == null) continue;
                 if (prevDateTime.toLocalDate().equals(session.getStartDateTime().toLocalDate())) {
                     daySessions.add(session);
                 } else {
