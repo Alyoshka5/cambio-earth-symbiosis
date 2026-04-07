@@ -155,7 +155,7 @@ public class PostController {
                 return "redirect:/home";
             } 
             else {
-                redirectAttributes.addFlashAttribute("deleteErr", "Could not delete post. Post doesn't exist");
+                redirectAttributes.addFlashAttribute("deleteErr", "Could not delete post. Post not found exist");
                 if (redirectTo.equals("/profile")) {
                     redirectUrl = "redirect:/profile/" + user.getId();
                 }
@@ -168,9 +168,20 @@ public class PostController {
         }
 
         try {
+            // Clear the liked_points_awarded table rows for this post
+            for (User u : unwantedPost.getLikePointAwardedByUsers()) {
+                u.getLikePointAwardedPosts().remove(unwantedPost);
+                userRepository.save(u);
+            }
+
+            // Clear the post in the post_likes table
+            unwantedPost.getLikedBy().clear();
+            postRepository.save(unwantedPost);
+
+            // Delete the post 
             postRepository.delete(unwantedPost);
         } catch (Exception e) {
-            model.addAttribute("deleteErr", "Could not delete post: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("deleteErr", "Could not delete post: " + e.getMessage());
             return redirectUrl;
         }
 

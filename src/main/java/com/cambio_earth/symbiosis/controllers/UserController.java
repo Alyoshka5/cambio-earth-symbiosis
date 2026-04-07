@@ -234,9 +234,8 @@ public class UserController {
         List<Post> userPosts = profileOwner.getPosts();
         userPosts.sort(Comparator.comparing(Post::getCreatedAt));
 
-        if (currUser.getRole().equals(Role.ADMIN) || currUser.getId().equals(uid)) {
-            model.addAttribute("currUserCanDeletePosts", true);
-        }
+        boolean canDelete = currUser.getRole().equals(Role.ADMIN) || currUser.getId().equals(uid);
+        model.addAttribute("currUserCanDeletePosts", canDelete);
        
         model.addAttribute("currentUser", currUser);
         model.addAttribute("profileOwner", profileOwner);

@@ -40,6 +40,9 @@ public class Post {
     )
     private Set<User> likedBy = new HashSet<>();
 
+    @ManyToMany(mappedBy = "likePointAwardedPosts")
+    private Set<User> likePointAwardedByUsers = new HashSet<>();
+
     // Constructors
     public Post() {}
 
@@ -89,6 +92,10 @@ public class Post {
 
     public Set<User> getLikedBy() {
         return this.likedBy;
+    }
+
+    public Set<User> getLikePointAwardedByUsers() {
+        return this.likePointAwardedByUsers;
     }
 
     // Setters

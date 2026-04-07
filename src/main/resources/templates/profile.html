@@ -86,7 +86,7 @@
                             </div>
                             <p id="modal-caption"></p>
                             <p id="modal-created-at"></p>
-                            <form th:if="${currUserCanDeletePosts}" id="delete-post-form" action="/posts/delete/0" method="post" class="delete-post-form">
+                            <form th:if="${currUserCanDeletePosts}" id="delete-post-form" action="/home" method="post" class="delete-post-form">
                                 <input id="redirect-Url" type="hidden" name="redirectUrl" value="/profile">
                                 <button type="submit" class="delete-post-btn">Delete post</button>
                             </form>
