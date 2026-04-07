@@ -82,7 +82,6 @@ public class User implements UserDetails {
         inverseJoinColumns = @JoinColumn(name = "post_id")
     )
     private Set<Post> likePointAwardedPosts = new HashSet<>();
-
     private Long points = (long)0;
 
     // Constructors
@@ -177,5 +176,22 @@ public class User implements UserDetails {
     // Helper functions
     public int getNumberOfLikedPosts() { return likedPosts.size(); }
     public int getNumberOfPostsCreated() { return posts.size(); }
+
+    public Set<Post> getLikePointAwardedPosts() {
+    return likePointAwardedPosts;
+    }
+
+    public void setLikePointAwardedPosts(Set<Post> likePointAwardedPosts) {
+        this.likePointAwardedPosts = likePointAwardedPosts;
+    }
+
+    public boolean hasAwardedLikePointsFor(Post post) {
+        return likePointAwardedPosts.stream()
+                .anyMatch(p -> p.getId().equals(post.getId()));
+    }
+
+    public void markLikePointsAwardedFor(Post post) {
+        likePointAwardedPosts.add(post);
+    }
 }
 

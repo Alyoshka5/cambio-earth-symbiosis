@@ -32,10 +32,33 @@ document.addEventListener("DOMContentLoaded", function () {
     const likeButtons = document.querySelectorAll(".post-like-btn");
 
     likeButtons.forEach(button => {
-        button.addEventListener("click", async function () {
+        button.addEventListener("click", async function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            if (this.dataset.loading === "true") {
+                return;
+            }
+
+            this.dataset.loading = "true";
+            this.disabled = true;
+
             const postId = this.dataset.postId;
             const icon = this.querySelector(".post-like-icon");
             const text = this.querySelector(".post-like-text");
+
+            const wasLiked = this.dataset.liked === "true";
+            const currentLikes = parseInt(text.textContent) || 0;
+
+            if (wasLiked) {
+                icon.classList.remove("liked");
+                text.textContent = `${Math.max(0, currentLikes - 1)} likes`;
+                this.dataset.liked = "false";
+            } else {
+                icon.classList.add("liked");
+                text.textContent = `${currentLikes + 1} likes`;
+                this.dataset.liked = "true";
+            }
 
             try {
                 const response = await fetch(`/posts/${postId}/like`, {
@@ -52,14 +75,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     if (data.liked) {
                         icon.classList.add("liked");
+                        this.dataset.liked = "true";
                     } else {
                         icon.classList.remove("liked");
+                        this.dataset.liked = "false";
                     }
                 } else {
+                    if (wasLiked) {
+                        icon.classList.add("liked");
+                        text.textContent = `${currentLikes} likes`;
+                        this.dataset.liked = "true";
+                    } else {
+                        icon.classList.remove("liked");
+                        text.textContent = `${currentLikes} likes`;
+                        this.dataset.liked = "false";
+                    }
                     console.error(data.message);
                 }
             } catch (error) {
+                if (wasLiked) {
+                    icon.classList.add("liked");
+                    text.textContent = `${currentLikes} likes`;
+                    this.dataset.liked = "true";
+                } else {
+                    icon.classList.remove("liked");
+                    text.textContent = `${currentLikes} likes`;
+                    this.dataset.liked = "false";
+                }
                 console.error("Failed to toggle like:", error);
+            } finally {
+                this.dataset.loading = "false";
+                this.disabled = false;
             }
         });
     });
