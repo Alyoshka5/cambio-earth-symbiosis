@@ -50,7 +50,7 @@ public class Post {
         img = imgInput;
         title = titleInput;
         caption = captionInput;
-        createdAt = LocalDateTime.now();
+        createdAt = java.time.LocalDateTime.now(java.time.ZoneOffset.UTC);
     }
 
     public Post(User userInput, String imgInput, String titleInput, String captionInput) {
@@ -58,7 +58,7 @@ public class Post {
         img = imgInput;
         title = titleInput;
         caption = captionInput;
-        createdAt = LocalDateTime.now();
+        createdAt = java.time.LocalDateTime.now(java.time.ZoneOffset.UTC);
     }
 
     // Getters
@@ -133,7 +133,7 @@ public class Post {
 
     // Helper methods
    public String toJSON(User user) {
-    String formattedCreatedAt = createdAt.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+    String formattedCreatedAt = createdAt.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + "Z";
 
     String json = "{\"id\": %d, \"title\": \"%s\", \"caption\": \"%s\", \"img\": \"%s\", \"likes\": %d, \"createdAt\": \"%s\", \"liked\": %b}";
 

@@ -11,23 +11,29 @@ const postIdInput = document.querySelector('#post-id-input');
 const deleteForm = document.querySelector('#delete-post-form');
 
 function formatPostDate(dateString) {
-    const trimmed = dateString.substring(0, 23);
-    const date = new Date(trimmed);
-    if (isNaN(date.getTime())) return dateString;
+    // Append 'Z' if not present to ensure JS treats it as UTC
+    const date = new Date(dateString.endsWith('Z') ? dateString : dateString + 'Z');
+    
+    const options = {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+    };
 
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const month = months[date.getMonth()];
-    const day = date.getDate();
-    const year = date.getFullYear();
+    let rawString = date.toLocaleString('en-US', options);
+    const lastCommaIndex = rawString.lastIndexOf(',');
 
-    let hours = date.getHours();
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    const ampm = hours >= 12 ? 'p.m.' : 'a.m.';
-    hours = hours % 12;
-    if (hours === 0) hours = 12;
+    let formattedDate = (
+        rawString.substring(0, lastCommaIndex) + 
+        ' •' + 
+        rawString.substring(lastCommaIndex + 1)
+    ).toLowerCase();
 
-    return `${month} ${day}, ${year} • ${hours}:${minutes} ${ampm}`;
+    formattedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+    return formattedDate;
 }
 
 posts.forEach(post => post.addEventListener('click', () => {
