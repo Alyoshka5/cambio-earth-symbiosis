@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
@@ -29,6 +28,7 @@ import com.cambio_earth.symbiosis.models.UserRepository;
 import com.cambio_earth.symbiosis.services.AuthenticationService;
 import com.cambio_earth.symbiosis.services.EventService;
 import com.cambio_earth.symbiosis.services.JwtService;
+import com.cambio_earth.symbiosis.services.RankingService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -46,6 +46,9 @@ public class UserControllerTest {
     
     @Mock
     private EventService eventService;
+    
+    @Mock
+    private RankingService rankingService;
 
     @Mock
     private Model model;
@@ -69,7 +72,7 @@ public class UserControllerTest {
     @BeforeEach
     void setUp() {
 
-        userController = new UserController(jwtService, authenticationService, passwordEncoder, eventService);
+        userController = new UserController(jwtService, authenticationService, passwordEncoder, eventService, rankingService);
 
         try {
             java.lang.reflect.Field userRepoField = UserController.class.getDeclaredField("userRepository");
