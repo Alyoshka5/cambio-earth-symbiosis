@@ -264,6 +264,10 @@ body {
         padding: 0; 
     }
 
+    .home-shell {
+        padding: 36px 28px;
+    }
+
     .home-header {
         align-items: flex-start;
         gap: 12px;
