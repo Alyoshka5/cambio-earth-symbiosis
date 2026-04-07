@@ -29,6 +29,7 @@ import com.cambio_earth.symbiosis.models.UserRepository;
 import com.cambio_earth.symbiosis.services.AuthenticationService;
 import com.cambio_earth.symbiosis.services.EventService;
 import com.cambio_earth.symbiosis.services.JwtService;
+import com.cambio_earth.symbiosis.services.RankingService;
 import com.cambio_earth.symbiosis.services.SessionService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,6 +48,9 @@ public class UserControllerTest {
     
     @Mock
     private EventService eventService;
+    
+    @Mock
+    private RankingService rankingService;
 
     @Mock
     private SessionService sessionService;
@@ -73,7 +77,7 @@ public class UserControllerTest {
     @BeforeEach
     void setUp() {
 
-        userController = new UserController(jwtService, authenticationService, passwordEncoder, eventService, sessionService);
+        userController = new UserController(jwtService, authenticationService, passwordEncoder, eventService, sessionService, rankingService);
 
         try {
             java.lang.reflect.Field userRepoField = UserController.class.getDeclaredField("userRepository");

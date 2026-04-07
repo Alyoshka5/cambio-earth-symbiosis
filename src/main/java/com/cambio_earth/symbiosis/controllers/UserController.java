@@ -27,6 +27,7 @@ import com.cambio_earth.symbiosis.services.AuthenticationService;
 import com.cambio_earth.symbiosis.services.EventService;
 import com.cambio_earth.symbiosis.services.JwtService;
 import com.cambio_earth.symbiosis.services.RankingService;
+import com.cambio_earth.symbiosis.services.SessionService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,11 +48,19 @@ public class UserController {
     private final EventService eventService;
     private final RankingService rankingService;
 
-    public UserController(JwtService jwtService, AuthenticationService authenticationService, PasswordEncoder passwordEncoder, EventService eventService, RankingService rankingService) {
+    public UserController(
+        JwtService jwtService, 
+        AuthenticationService authenticationService, 
+        PasswordEncoder passwordEncoder, 
+        EventService eventService, 
+        SessionService sessionService, 
+        RankingService rankingService) 
+    {
         this.jwtService = jwtService;
         this.authenticationService = authenticationService;
         this.passwordEncoder = passwordEncoder;
         this.eventService = eventService;
+        this.sessionService = sessionService;
         this.rankingService = rankingService;
     }
 
