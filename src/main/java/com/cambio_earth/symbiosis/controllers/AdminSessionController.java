@@ -44,7 +44,7 @@ public class AdminSessionController {
     @Autowired
     ParticipationRepository participationRepository;
 
-    AdminSessionController(SessionService sessionService, EventService eventService) {
+    public AdminSessionController(SessionService sessionService, EventService eventService) {
         this.sessionService = sessionService;
         this.eventService = eventService;
     }
@@ -121,13 +121,13 @@ public class AdminSessionController {
         if (date != null && !date.isBlank() && startTime != null && !startTime.isBlank()) {
             session.setStartDateTime(LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(startTime)));
         } else {
-            session.setStartDateTime(LocalDateTime.now());
+            session.setStartDateTime(null);
         }
 
         if (date != null && !date.isBlank() && endTime != null && !endTime.isBlank()) {
             session.setEndDateTime(LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(endTime)));
         } else {
-            session.setEndDateTime(LocalDateTime.now());
+            session.setEndDateTime(null);
         }
 
         session.setBreakout(formSessionData.isBreakout());

@@ -64,6 +64,13 @@ public class UserController {
         this.rankingService = rankingService;
     }
 
+    private static final String PASSWORD_REGEX =
+        "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&.#_^+=\\-])[A-Za-z\\d@$!%*?&.#_^+=\\-]{8,}$";
+
+    private boolean isValidPassword(String password) {
+        return password != null && password.matches(PASSWORD_REGEX);
+    }
+
     @GetMapping("/")
     public String home() {
         return "redirect:/auth/login";
@@ -288,26 +295,50 @@ public class UserController {
         }
         currUser.setLastName(lastName);
 
-        if (!profileDto.getCurrentPassword().equals("") || !profileDto.getNewPassword().equals("") || !profileDto.getConfirmNewPassword().equals("")) {
-            LoginUserDto authenticationDto = new LoginUserDto();
-            authenticationDto.setEmail(currUser.getEmail());
-            authenticationDto.setPassword(profileDto.getCurrentPassword());
-            try {
-                authenticationService.authenticate(authenticationDto);
-                if (profileDto.getNewPassword().length() >= 8) {
-                    if (profileDto.getNewPassword().equals(profileDto.getConfirmNewPassword())) {
-                        currUser.setPassword(passwordEncoder.encode(profileDto.getNewPassword()));
-                    } else {
-                        model.addAttribute("confirmNewPasswordError", "Passwords must match");
-                        validChanges = false;
-                    }
-                } else {
-                    model.addAttribute("newPasswordError", "Password must be at least 8 characters long");
+        String currentPassword = profileDto.getCurrentPassword();
+        String newPassword = profileDto.getNewPassword();
+        String confirmNewPassword = profileDto.getConfirmNewPassword();
+
+        boolean tryingToChangePassword =
+                (currentPassword != null && !currentPassword.isBlank()) ||
+                (newPassword != null && !newPassword.isBlank()) ||
+                (confirmNewPassword != null && !confirmNewPassword.isBlank());
+
+        if (tryingToChangePassword) {
+            if (currentPassword == null || currentPassword.isBlank()) {
+                model.addAttribute("currentPasswordError", "Current password is required");
+                validChanges = false;
+            }
+
+            if (newPassword == null || newPassword.isBlank()) {
+                model.addAttribute("newPasswordError", "New password is required");
+                validChanges = false;
+            } else if (!isValidPassword(newPassword)) {
+                model.addAttribute("newPasswordError",
+                        "Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character.");
+                validChanges = false;
+            }
+
+            if (confirmNewPassword == null || confirmNewPassword.isBlank()) {
+                model.addAttribute("confirmNewPasswordError", "Please confirm your new password");
+                validChanges = false;
+            } else if (!newPassword.equals(confirmNewPassword)) {
+                model.addAttribute("confirmNewPasswordError", "Passwords must match");
+                validChanges = false;
+            }
+
+            if (validChanges) {
+                LoginUserDto authenticationDto = new LoginUserDto();
+                authenticationDto.setEmail(currUser.getEmail());
+                authenticationDto.setPassword(currentPassword);
+
+                try {
+                    authenticationService.authenticate(authenticationDto);
+                    currUser.setPassword(passwordEncoder.encode(newPassword));
+                } catch (RuntimeException e) {
+                    model.addAttribute("currentPasswordError", "Incorrect Password");
                     validChanges = false;
                 }
-            } catch (RuntimeException e) {
-                model.addAttribute("currentPasswordError", "Incorrect Password");
-                validChanges = false;
             }
         }
 
