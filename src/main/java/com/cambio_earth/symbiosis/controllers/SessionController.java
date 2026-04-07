@@ -76,7 +76,9 @@ public class SessionController {
         
         if (hasSubmittedPreferences(user)) {
             redirectAttributes.addFlashAttribute("info", "You have already submitted your preferences.");
-            return "redirect:/sessions/thankYou";
+            if (user.getRole().equals(Role.USER)) {
+                return "redirect:/sessions/thankYou";
+            }
         }
         
         List<Session> breakoutSessions = sessionService.getBreakoutSessions();
@@ -152,6 +154,7 @@ public class SessionController {
         response.setHeader("Expires", "0");
         
         model.addAttribute("user", user);
+        model.addAttribute("isAdmin", user.getRole().equals(Role.ADMIN));
         return "sessions/thankYou";
     }
 
