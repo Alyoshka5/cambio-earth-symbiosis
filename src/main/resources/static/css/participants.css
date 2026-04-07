@@ -154,6 +154,7 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 16px;
+    margin-bottom: 50px;
 }
 
 .participant-card {
@@ -161,7 +162,7 @@ body {
     background: rgba(43, 57, 48, 0.96);
     border: 1px solid rgba(168, 197, 160, 0.14);
     border-radius: 18px;
-    padding: 20px 18px;
+    padding: 10px 9px;
     display: flex;
     flex-direction: column;
     gap: 14px;
