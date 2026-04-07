@@ -9,7 +9,8 @@ body {
     color: var(--cream);
     font-family: 'DM Sans', sans-serif;
     min-height: 100vh;
-    margin: 0; padding: 0;
+    margin: 0;
+    padding: 0;
 }
 
 .page-layout {
@@ -157,16 +158,12 @@ body {
 }
 
 .participant-card {
+    position: relative;
     background: rgba(43, 57, 48, 0.96);
     border: 1px solid rgba(168, 197, 160, 0.14);
     border-radius: 18px;
-    padding: 20px 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
     transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-    text-decoration: none;
 }
 
 .participant-card:hover {
@@ -185,7 +182,7 @@ body {
     position: absolute;
     top: 16px;
     right: 18px;
-    z-index: 10;
+    z-index: 100;
 }
 
 .menu-dots {
@@ -208,9 +205,8 @@ body {
 
 .dropdown-menu {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 4px);
     right: 0;
-    margin-top: 8px;
     background: rgba(43, 57, 48, 0.98);
     border: 1px solid rgba(168, 197, 160, 0.2);
     border-radius: 12px;
@@ -280,7 +276,7 @@ body {
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.7);
+    background-color: rgba(0, 0, 0, 0.7);
 }
 
 .modal-content {
