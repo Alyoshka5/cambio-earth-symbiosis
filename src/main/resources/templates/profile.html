@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="/css/profile.css">
     <link rel="stylesheet" href="/css/sidebar.css">
     <script src="/js/profile.js" defer></script>
-    <title>Profile — Symbiosis</title>
+    <title>Profile | Symbiosis</title>
 </head>
 
 <body>
@@ -21,12 +21,11 @@
             <a href="/home" class="topbar-brand">Symbiosis</a>
         </nav>
 
-        
         <main>
             <!-- User info and logout -->
             <section>
-                <h1 th:text="${profileOwner.firstName} + ' ' + ${profileOwner.lastName}">profile</h1>
-                <h2 th:text="${profileOwner.email}"></h2>
+                <h1 th:text="${profileOwner.firstName} + ' ' + ${profileOwner.lastName}">Profile Name</h1>
+                <h2 th:text="${profileOwner.email}">email@example.com</h2>
                 <div class="header-button-container">
                     <form th:if="${profileOwner.id == currentUser.id}" action="/profile/edit" method="get">
                         <button class="btn-secondary">Edit Profile</button>
@@ -44,30 +43,39 @@
                 <strong>Error! </strong> <span th:text="${deleteErr}"></span>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
+            
             <!-- Success message -->
             <div th:if="${successful}" class="alert alert-warning alert-dismissible fade show" role="alert">
                 <strong>Success! </strong> <span th:text="${successful}"></span>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
 
+            <!-- No posts message -->
             <div th:if="${#lists.isEmpty(posts)}" class="no-posts">
-                No posts posted
+                <p>No posts yet</p>
             </div>
 
-            <!-- Posts -->
-            <section class="container-fluid">
+            <!-- Posts grid -->
+            <section class="container-fluid" th:unless="${#lists.isEmpty(posts)}">
                 <div class="row">
-                    <img th:each="post: ${posts}" th:src="${post.img}" alt="User post" class="post col-4" th:data-post="${post.toJSON(currentUser)}" data-bs-toggle="modal" data-bs-target="#modal">
+                    <img th:each="post: ${posts}" 
+                         th:src="${post.img}" 
+                         alt="User post" 
+                         class="post col-4" 
+                         th:data-post="${post.toJSON(currentUser)}" 
+                         data-bs-toggle="modal" 
+                         data-bs-target="#modal">
                 </div>
             </section>
         </main>
 
+        <!-- Modal for viewing post details -->
         <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content-container">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="modal-title"></h1>
+                            <h1 class="modal-title fs-5" id="modal-title">Post Details</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">

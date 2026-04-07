@@ -3,19 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Participants - Symbiosis</title>
+    <title>Participants | Symbiosis</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" defer></script>
 
-    <!-- Global + sidebar theme -->
     <link rel="stylesheet" href="/css/global.css">
     <link rel="stylesheet" href="/css/sidebar.css">
     <link rel="stylesheet" href="/css/participants.css">
-
-    <script src="/js/participants.js" defer></script>
     
+    <script src="/js/participants.js" defer></script>
 </head>
 
 <body>
@@ -30,8 +28,6 @@
         </nav>
 
         <div class="page-shell">
-
-            <!-- Header -->
             <div class="page-header">
                 <div class="page-title-wrap">
                     <h1>Participants</h1>
@@ -42,7 +38,6 @@
                 </div>
             </div>
 
-            <!-- Search -->
             <div class="search-wrap">
                 <input
                     type="text"
@@ -53,72 +48,71 @@
                 >
             </div>
 
-            <!-- Filter tabs (only admins see the "Admins only" tab) -->
             <div class="filter-row" id="filterRow">
                 <button class="filter-tab active" data-filter="all">All</button>
                 <button class="filter-tab" data-filter="user" th:if="${isAdmin}">Users</button>
                 <button class="filter-tab" data-filter="admin" th:if="${isAdmin}">Admins</button>
             </div>
 
-            <!-- Participant grid -->
             <div class="participants-grid" id="participantsGrid">
-
-                <!-- Each card is a link to that user's profile -->
-                <a
-                    th:each="p : ${participants}"
-                    th:href="@{'/profile/' + ${p.id}}"
-                    class="participant-card"
-                    th:attr="
-                        data-name=${p.firstName + ' ' + p.lastName},
-                        data-email=${p.email},
-                        data-role=${p.role.toString().toLowerCase()}
-                    "
-                >
-                    <div class="card-top">
-                        <div class="participant-avatar"
-                             th:classappend="${p.role.toString() == 'ADMIN'} ? ' admin-avatar' : ''"
-                             th:text="${p.firstName != null and !#strings.isEmpty(p.firstName)} ? ${#strings.substring(p.firstName,0,1)} : 'U'">
-                            U
-                        </div>
-
-                        <div class="participant-info">
-                            <h3 class="participant-name"
-                                th:text="${p.firstName + ' ' + p.lastName}">
-                                Full Name
-                            </h3>
-                            <p class="participant-email" th:text="${p.email}">
-                                email@example.com
-                            </p>
+                <div th:each="p : ${participants}" class="participant-card" th:attr="data-user-id=${p.id}, data-user-role=${p.role.toString().toLowerCase()}, data-user-name=${p.firstName + ' ' + p.lastName}">
+                    <div class="card-menu" th:if="${isAdmin and p.role.toString() != 'ADMIN'}">
+                        <button class="menu-dots" onclick="event.stopPropagation()">⋮</button>
+                        <div class="dropdown-menu">
+                            <button class="dropdown-item set-admin" onclick="event.stopPropagation()">Set as Admin</button>
+                            <div class="dropdown-divider"></div>
+                            <button class="dropdown-item add-session" onclick="event.stopPropagation()">Add to Session</button>
+                            <button class="dropdown-item remove-session" onclick="event.stopPropagation()">Remove from Session</button>
                         </div>
                     </div>
-
-                    <!-- Role badge – only visible to admins -->
-                    <span th:if="${isAdmin}"
-                          class="role-badge"
-                          th:classappend="${p.role.toString() == 'ADMIN'} ? ' admin' : ' user'"
-                          th:text="${#strings.toLowerCase(p.role.toString())}">
-                        user
-                    </span>
-
-                    <div class="card-footer-link">
-                        <span>View profile</span>
-                        <span class="arrow-icon">→</span>
-                    </div>
-                </a>
-
-                <!-- Empty state when no users exist at all -->
+                    <a th:href="@{'/profile/' + ${p.id}}" class="card-link">
+                        <div class="card-top">
+                            <div class="participant-avatar"
+                                 th:classappend="${p.role.toString() == 'ADMIN'} ? ' admin-avatar' : ''"
+                                 th:text="${p.firstName != null and !#strings.isEmpty(p.firstName)} ? ${#strings.substring(p.firstName,0,1)} : 'U'">
+                                U
+                            </div>
+                            <div class="participant-info">
+                                <h3 class="participant-name"
+                                    th:text="${p.firstName + ' ' + p.lastName}">
+                                    Full Name
+                                </h3>
+                                <p class="participant-email" th:text="${p.email}">
+                                    email@example.com
+                                </p>
+                            </div>
+                        </div>
+                        <span th:if="${isAdmin}"
+                              class="role-badge"
+                              th:classappend="${p.role.toString() == 'ADMIN'} ? ' admin' : ' user'"
+                              th:text="${#strings.toLowerCase(p.role.toString())}">
+                            user
+                        </span>
+                        <div class="card-footer-link">
+                            <span>View profile</span>
+                            <span class="arrow-icon">→</span>
+                        </div>
+                    </a>
+                </div>
                 <div class="empty-state" th:if="${participants == null or #lists.isEmpty(participants)}">
                     <h3>No participants yet</h3>
                     <p>Users will appear here once they join the community.</p>
                 </div>
-
             </div>
-
-            <!-- No-results message (shown via JS when search/filter yields nothing) -->
             <p class="no-results-msg" id="noResultsMsg">No participants match your search.</p>
-
         </div>
     </main>
 
+    <div id="sessionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">User's Sessions</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <div class="no-sessions">Loading...</div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
