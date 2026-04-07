@@ -159,7 +159,7 @@ public class Session implements Comparable<Session> {
 
     // Helper methods
     public String getTimeRange() {
-        return formatTime(startDateTime) + " - " + formatTime(endDateTime);
+        return (startDateTime != null ? formatTime(startDateTime) : "TBD") + " - " + (endDateTime != null ? formatTime(endDateTime) : "TBD");
     }
     
     private String formatTime(LocalDateTime dateTime) {
