@@ -42,6 +42,52 @@
                 </form>
             </header>
 
+            <section th:if="${isAdmin and missingDateTimeSessions != null and !missingDateTimeSessions.isEmpty()}" class="container">
+                <section class="container-fluid">
+                    <header class="day-header">
+                        <h2>Action Required</h2>
+                        <h3>TBD Schedule</h3>
+                    </header>
+                    
+                    <article th:each="eventSession : ${missingDateTimeSessions}" class="session row">
+                        <div class="time-range-container col-12 col-lg-3">
+                            <p class="time-range">
+                                <span th:text="${eventSession.startDateTime != null ? #temporals.format(eventSession.startDateTime, 'h:mm a') : 'TBD'}"></span>
+                                - 
+                                <span th:text="${eventSession.endDateTime != null ? #temporals.format(eventSession.endDateTime, 'h:mm a') : 'TBD'}"></span>
+                            </p>
+                            <div th:if="${isAdmin && adminRegisteredSessions.contains(eventSession)}" class="session-registered-badge">Registered</div>
+                        </div>
+                        
+                        <div class="schedule-card col-12 col-lg-9">
+                            <div>
+                                <header th:switch="${eventSession.isBreakout()}">
+                                    <div th:case="true">
+                                        <h4>Breakout Block</h4>
+                                        <h5 th:text="${eventSession.getTitle()}"></h5>
+                                        <div class="content-seperator"></div>
+                                    </div>
+                                    <div th:case="false">
+                                        <h4 th:text="${eventSession.getTitle()}"></h4>
+                                        <div class="content-seperator"></div>
+                                    </div>
+                                </header>
+                                <div class="info-container">
+                                    <img src="/images/location-icon.svg" alt="Location icon" class="icon">
+                                    <p th:text="${eventSession.getLocation() != null ? eventSession.getLocation() : 'TBD'}"></p>
+                                </div>
+                                <div th:if="${eventSession.getSpeakersString().length() > 0}" class="info-container">
+                                    <img src="/images/person-icon.svg" alt="Person icon" class="icon">
+                                    <div><p th:text="${eventSession.getSpeakersString()}"></p></div>
+                                </div>
+                                <a th:href="${'/sessions/' + eventSession.getId()}" class="card-link"><span class="card-link-span"></span></a>
+                            </div>
+                            <img src="/images/arrow-icon.svg" alt="Right arrow icon" class="icon arrow-icon">
+                        </div>
+                    </article>
+                </section>
+            </section>
+
             <section th:each="scheduleDay: ${schedule}" class="container">
                 <section class="container-fluid">
                     <header class="day-header">

@@ -196,7 +196,9 @@ public class SessionController {
         if (user.getRole().equals(Role.ADMIN)) {
             // Get list of sessions that admin user is registered for
             List<Session> adminRegisteredSessions = sessionService.getUserRegisteredSessions(user);
+            List<Session> missingDateTimeSessions = sessionService.getSessionsMissingDateTimes();
             model.addAttribute("adminRegisteredSessions", adminRegisteredSessions);
+            model.addAttribute("missingDateTimeSessions", missingDateTimeSessions);
         }
 
         List<LaunchEvent> events = launchEventRepository.findAll();
