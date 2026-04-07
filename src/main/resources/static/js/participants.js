@@ -109,23 +109,35 @@ function applyFilters() {
     }
 }
 
-document.addEventListener('click', function() {
-    document.querySelectorAll('.dropdown-menu').forEach(menu => {
-        menu.classList.remove('show');
-    });
+// Close dropdowns when clicking outside
+document.addEventListener('click', function(e) {
+    // Check if click was outside any dropdown menu and outside any menu-dots button
+    if (!e.target.closest('.dropdown-menu') && !e.target.closest('.menu-dots')) {
+        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+            menu.classList.remove('show');
+        });
+    }
 });
 
+// Handle three dots button clicks
 document.querySelectorAll('.menu-dots').forEach(button => {
     button.addEventListener('click', (e) => {
         e.stopPropagation();
         const dropdown = button.nextElementSibling;
+        
+        // Close all other dropdowns
         document.querySelectorAll('.dropdown-menu').forEach(menu => {
-            if (menu !== dropdown) menu.classList.remove('show');
+            if (menu !== dropdown) {
+                menu.classList.remove('show');
+            }
         });
+        
+        // Toggle current dropdown
         dropdown.classList.toggle('show');
     });
 });
 
+// Set as Admin functionality
 document.querySelectorAll('.set-admin').forEach(btn => {
     btn.addEventListener('click', async (e) => {
         e.stopPropagation();
@@ -148,14 +160,17 @@ document.querySelectorAll('.set-admin').forEach(btn => {
     });
 });
 
+// Modal functionality
 const modal = document.getElementById('sessionModal');
 const modalBody = document.getElementById('modalBody');
 const modalTitle = document.getElementById('modalTitle');
 const closeModal = document.querySelector('.close-modal');
 
-closeModal.addEventListener('click', () => {
-    modal.style.display = 'none';
-});
+if (closeModal) {
+    closeModal.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+}
 
 window.addEventListener('click', (e) => {
     if (e.target === modal) {
@@ -263,6 +278,7 @@ window.removeUserFromSession = async function(userId, sessionId, sessionTitle) {
     }
 };
 
+// Add to Session button handlers
 document.querySelectorAll('.add-session').forEach(btn => {
     btn.addEventListener('click', async (e) => {
         e.stopPropagation();
@@ -274,6 +290,7 @@ document.querySelectorAll('.add-session').forEach(btn => {
     });
 });
 
+// Remove from Session button handlers
 document.querySelectorAll('.remove-session').forEach(btn => {
     btn.addEventListener('click', async (e) => {
         e.stopPropagation();

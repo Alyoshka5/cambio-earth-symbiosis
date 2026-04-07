@@ -98,12 +98,12 @@ public class UserControllerTest {
         testPost1 = new Post();
         testPost1.setId(1L);
         testPost1.setUser(profileOwner);
-        testPost1.setCreatedAt(java.time.LocalDateTime.now()); // 🔥 FIX
+        testPost1.setCreatedAt(java.time.LocalDateTime.now()); 
 
         testPost2 = new Post();
         testPost2.setId(2L);
         testPost2.setUser(profileOwner);
-        testPost2.setCreatedAt(java.time.LocalDateTime.now()); // 🔥 FIX
+        testPost2.setCreatedAt(java.time.LocalDateTime.now()); 
     }
 
     @Test
