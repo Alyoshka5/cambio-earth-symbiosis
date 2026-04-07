@@ -35,7 +35,9 @@ import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class UserController {
-   
+    
+    private final SessionService sessionService;
+
     @Autowired
     UserRepository userRepository;
    
@@ -128,8 +130,9 @@ public class UserController {
 
     @PostMapping("/auth/verify")
     public String verifyCode(Model model,
-                            @ModelAttribute VerifyUserDto verifyUserDto,
-                            HttpServletResponse response) {
+        @ModelAttribute VerifyUserDto verifyUserDto,
+        HttpServletResponse response
+    ) {
         try {
             authenticationService.verifyUser(verifyUserDto);
 
@@ -142,6 +145,10 @@ public class UserController {
                 cookie.setHttpOnly(true);
                 cookie.setPath("/");
                 response.addCookie(cookie);
+
+                if (eventService.isEventLaunched()) {
+                    sessionService.registerUserAfterLaunch(user);
+                }
 
                 return "redirect:/breakout";
             }
