@@ -12,6 +12,8 @@ const emailBlankError = document.querySelector(".email-blank-error");
 const emailInvalidError = document.querySelector(".email-invalid-error");
 const passwordError = document.querySelector(".password-error");
 const confirmPasswordError = document.querySelector(".confirm-password-error");
+const passwordRuleError = document.querySelector(".password-rule-error");
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.#_^+=\-])[A-Za-z\d@$!%*?&.#_^+=\-]{8,}$/;
 
 function showError(element) {
     element.style.display = "block";
@@ -30,6 +32,7 @@ form.addEventListener("submit", function (event) {
     hideError(emailInvalidError);
     hideError(passwordError);
     hideError(confirmPasswordError);
+    hideError(passwordRuleError);
 
     if (firstNameInput.value.trim() === "") {
         showError(firstNameError);
@@ -51,6 +54,9 @@ form.addEventListener("submit", function (event) {
 
     if (passwordInput.value.trim() === "") {
         showError(passwordError);
+        hasError = true;
+    } else if (!passwordRegex.test(passwordInput.value)) {
+        showError(passwordRuleError);
         hasError = true;
     }
 

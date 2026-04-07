@@ -13,6 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="/css/global.css" rel="stylesheet">
     <link href="/css/profileEditForm.css" rel="stylesheet">
+    <script src="/js/profileEditForm.js" defer></script>
     
     <title>Edit Profile | Symbiosis</title>
 </head>
@@ -90,6 +91,7 @@
                             class="form-control"
                         >
                         <p class="error" th:text="${currentPasswordError}"></p>
+                        <p class="error client-current-password-error" style="display: none;">Current password is required</p>
                     </div>
 
                     <div class="mb-3">
@@ -103,6 +105,10 @@
                             class="form-control"
                         >
                         <p class="error" th:text="${newPasswordError}"></p>
+                        <p class="error client-new-password-error" style="display: none;">New password is required</p>
+                        <p class="error client-password-rule-error" style="display: none;">
+                            Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character
+                        </p>
                     </div>
 
                     <div class="mb-3">
@@ -116,6 +122,8 @@
                             class="form-control"
                         >
                         <p class="error" th:text="${confirmNewPasswordError}"></p>
+                        <p class="error client-confirm-password-error" style="display: none;">Please confirm your new password</p>
+                        <p class="error client-password-match-error" style="display: none;">Passwords must match</p>
                     </div>
 
                     <div class="form-actions">
