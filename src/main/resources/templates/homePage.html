@@ -3,23 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - Symbiosis</title>
+    <title>Home | Symbiosis</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="/js/homePage.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" defer></script>
-
-    <!-- Global + sidebar theme -->
     <link rel="stylesheet" href="/css/global.css">
     <link rel="stylesheet" href="/css/sidebar.css">
     <link rel="stylesheet" href="/css/homePage.css">
     
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" defer></script>
     <script src="/js/homePage.js" defer></script>
-
 </head>
-
 <body>
     <div th:replace="fragments/sidebar :: sidebar"></div>
 
@@ -34,7 +28,6 @@
                     <h1>Community Feed</h1>
                     <p>See what everyone is sharing with the Symbiosis community.</p>
                 </div>
-
                 <a href="/participants" class="participants-btn" title="Participants">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="participants-icon">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
@@ -42,53 +35,36 @@
                 </a>
             </div>
 
-            <!-- quick create post box -->
             <div class="quick-post-card">
                 <div class="quick-post-top">
-                    <div class="quick-avatar"
-                         th:text="${currUser != null and currUser.firstName != null and !#strings.isEmpty(currUser.firstName)} ? ${#strings.substring(currUser.firstName,0,1)} : 'U'">
-                        U
-                    </div>
-
-                    <a href="/posts/form" class="quick-post-input">
-                        Share something with the community...
-                    </a>
+                    <div class="quick-avatar" th:text="${currUser != null and currUser.firstName != null and !#strings.isEmpty(currUser.firstName)} ? ${#strings.substring(currUser.firstName,0,1)} : 'U'">U</div>
+                    <a href="/posts/form" class="quick-post-input">Share something with the community...</a>
                 </div>
             </div>
 
-            <!-- Error message -->
             <div th:if="${deleteErr}" class="alert alert-warning alert-dismissible fade show" role="alert">
                 <strong>Error! </strong> <span th:text="${deleteErr}"></span>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            <!-- Success message -->
+
             <div th:if="${successful}" class="alert alert-warning alert-dismissible fade show" role="alert">
                 <strong>Success! </strong> <span th:text="${successful}"></span>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
 
-            <!-- posts feed -->
             <section class="feed-list" th:if="${posts != null and !#lists.isEmpty(posts)}">
                 <article class="post-card" th:each="post : ${posts}">
                     <div class="post-card-header">
                         <div class="post-user">
-                            <div class="post-avatar"
-                                 th:text="${post.user != null and post.user.firstName != null and !#strings.isEmpty(post.user.firstName)} ? ${#strings.substring(post.user.firstName,0,1)} : 'U'">
-                                U
-                            </div>
-
+                            <div class="post-avatar" th:text="${post.user != null and post.user.firstName != null and !#strings.isEmpty(post.user.firstName)} ? ${#strings.substring(post.user.firstName,0,1)} : 'U'">U</div>
                             <div class="post-user-meta">
                                 <a th:if="${post.user != null}" th:href="@{'/profile/' + ${post.user.id}}" class="post-user-name">
                                     <h3 th:text="${post.user.firstName + ' ' + post.user.lastName}"></h3>
                                 </a>
                                 <h3 th:unless="${post.user != null}" class="post-user-name">Community Member</h3>
-                                <p th:text="${post.createdAt != null ? #temporals.format(post.createdAt, 'MMM d, yyyy • h:mm a') : 'Recently posted'}">
-                                    Recently posted
-                                </p>
+                                <p th:text="${post.createdAt != null ? #temporals.format(post.createdAt, 'MMM d, yyyy • h:mm a') : 'Recently posted'}">Recently posted</p>
                             </div>
                         </div>
-
-                        <!-- Delete post option -->
                         <div class="post-menu-wrap" th:if="${currUserCanDeletePosts or (currUser != null and post.user != null and currUser.id == post.user.id)}">
                             <button class="post-menu post-menu-btn" onclick="togglePostMenu(this)" type="button">•••</button>
                             <div class="post-menu-dropdown">
@@ -98,38 +74,17 @@
                                 </form>
                             </div>
                         </div>
-
                     </div>
-
                     <h2 class="post-title" th:text="${post.title}">Post title</h2>
-
-                    <p class="post-caption"
-                       th:if="${post.caption != null and !#strings.isEmpty(post.caption)}"
-                       th:text="${post.caption}">
-                        Post caption goes here.
-                    </p>
-
+                    <p class="post-caption" th:if="${post.caption != null and !#strings.isEmpty(post.caption)}" th:text="${post.caption}">Post caption goes here.</p>
                     <div class="post-image-wrap" th:if="${post.img != null and !#strings.isEmpty(post.img)}">
-                        <img class="post-image"
-                             th:src="${post.img}"
-                             alt="Post image">
+                        <img class="post-image" th:src="${post.img}" alt="Post image">
                     </div>
-
                     <div class="post-footer">
-                        <button
-                            type="button"
-                            class="post-like-btn"
-                            th:attr="data-post-id=${post.id}, data-liked=${currUser != null and post.likedBy.contains(currUser)}"
-                        >
-                            <span
-                                class="post-like-icon"
-                                th:classappend="${currUser != null and post.likedBy.contains(currUser)} ? ' liked' : ''"
-                            ></span>
-                            <span class="post-like-text">
-                                <span th:text="${post.likedBy.size()}">0</span> likes
-                            </span>
+                        <button type="button" class="post-like-btn" th:attr="data-post-id=${post.id}, data-liked=${currUser != null and post.likedBy.contains(currUser)}">
+                            <span class="post-like-icon" th:classappend="${currUser != null and post.likedBy.contains(currUser)} ? ' liked' : ''"></span>
+                            <span class="post-like-text"><span th:text="${post.likedBy.size()}">0</span> likes</span>
                         </button>
-
                         <div class="post-actions">
                             <a th:href="@{'/profile/' + ${post.user.id}}">View profile</a>
                         </div>
@@ -137,7 +92,6 @@
                 </article>
             </section>
 
-            <!-- empty state -->
             <section class="empty-feed" th:if="${posts == null or #lists.isEmpty(posts)}">
                 <h3>No posts yet</h3>
                 <p>Be the first to share something with the community.</p>
