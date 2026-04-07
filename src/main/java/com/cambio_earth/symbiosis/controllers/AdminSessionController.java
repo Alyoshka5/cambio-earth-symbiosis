@@ -44,7 +44,7 @@ public class AdminSessionController {
     @Autowired
     ParticipationRepository participationRepository;
 
-    AdminSessionController(SessionService sessionService, EventService eventService) {
+    public AdminSessionController(SessionService sessionService, EventService eventService) {
         this.sessionService = sessionService;
         this.eventService = eventService;
     }
