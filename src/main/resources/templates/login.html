@@ -15,14 +15,16 @@
     <div class="form-card">
         <form th:action="@{/auth/login}" method="post">
             <legend class="section-heading">Login</legend>
-            <p th:if="${error}" th:text="${error}" style="color:red;"></p>
+            
+            <p th:if="${error}" th:text="${error}" class="error-message"></p>
+
             <div class="mb-3">
-                <label class="form-label">Enter your email:</label>
-                <input class="form-control" type="text" name="email" placeholder="email@domain.com">
+                <label class="form-label" for="input-email">Email</label>
+                <input class="form-control" type="text" id="input-email" name="email" placeholder="email@domain.com">
             </div>
             <div class="mb-3">
-                <label class="form-label">Enter your password:</label>
-                <input class="form-control" type="password" name="password" placeholder="Password">
+                <label class="form-label" for="input-pass">Password</label>
+                <input class="form-control" type="password" id="input-pass" name="password" placeholder="Password">
             </div>
             <button type="submit" class="btn-cont">Continue</button>
             <p style="margin-top: 16px; text-align: center; color: #cccccc; font-size: 0.9rem;">
