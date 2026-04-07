@@ -177,14 +177,6 @@ public class User implements UserDetails {
     public int getNumberOfLikedPosts() { return likedPosts.size(); }
     public int getNumberOfPostsCreated() { return posts.size(); }
 
-    public Set<Post> getLikePointAwardedPosts() {
-    return likePointAwardedPosts;
-    }
-
-    public void setLikePointAwardedPosts(Set<Post> likePointAwardedPosts) {
-        this.likePointAwardedPosts = likePointAwardedPosts;
-    }
-
     public boolean hasAwardedLikePointsFor(Post post) {
         return likePointAwardedPosts.stream()
                 .anyMatch(p -> p.getId().equals(post.getId()));
