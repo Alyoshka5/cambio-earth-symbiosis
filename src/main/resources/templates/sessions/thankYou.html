@@ -31,6 +31,9 @@
             Your breakout session preferences have been saved.<br>
             We'll see you there.
         </p>
+        <p th:if="${isAdmin == true}">
+            <a href="/breakout" class="return-button">Return to preferences</a>
+        </p>
         <hr class="divider">
     </div>
 </body>

@@ -213,6 +213,13 @@ h1 {
 
 .brand:hover { opacity: 1; }
 
+/* --- Return link --- */
+.return-button {
+    color: var(--accent);
+    text-decoration: none;
+    margin-bottom: 10px;
+}
+
 @media (max-width: 520px) {
     .card { padding: 40px 28px; }
     h1 { font-size: 1.8rem; }
