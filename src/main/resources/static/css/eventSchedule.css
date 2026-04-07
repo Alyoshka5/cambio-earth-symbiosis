@@ -373,6 +373,20 @@ main {
         margin-left: 0;
     }
 
+    .page-header {
+        flex-direction: column;
+        align-items: start;
+        margin-bottom: 30px;
+    }
+
+    .page-header {
+        width: fit-content;
+    }
+
+    .add-session-button {
+        margin: 15px 0 0 0;
+    }
+
     .session {
         flex-direction: column;
         gap: 8px;
