@@ -193,6 +193,12 @@ public class SessionController {
         model.addAttribute("schedule", schedule);
         model.addAttribute("isAdmin", user.getRole().equals(Role.ADMIN));
 
+        if (user.getRole().equals(Role.ADMIN)) {
+            // Get list of sessions that admin user is registered for
+            List<Session> adminRegisteredSessions = sessionService.getUserRegisteredSessions(user);
+            model.addAttribute("adminRegisteredSessions", adminRegisteredSessions);
+        }
+
         List<LaunchEvent> events = launchEventRepository.findAll();
         boolean eventNotLaunched = events.isEmpty() || !events.get(0).isStarted();
         model.addAttribute("eventNotLaunched", eventNotLaunched);

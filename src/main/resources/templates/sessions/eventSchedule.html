@@ -51,7 +51,10 @@
                         <h3 th:text="${scheduleDay.key.split('-')[1]}"></h3>
                     </header>
                     <article th:each="eventSession: ${scheduleDay.value}" class="session row">
-                        <p th:text="${eventSession.getTimeRange()}" class="time-range col-12 col-lg-3"></p>
+                        <div class="time-range-container col-12 col-lg-3">
+                            <p th:text="${eventSession.getTimeRange()}" class="time-range"></p>
+                            <div th:if="${isAdmin && adminRegisteredSessions.contains(eventSession)}" class="session-registered-badge">Registered</div>
+                        </div>
                         <div class="schedule-card col-12 col-lg-9">
                             <div>
                                 <header th:switch="${eventSession.isBreakout()}">
