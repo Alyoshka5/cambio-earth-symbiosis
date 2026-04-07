@@ -77,20 +77,18 @@
 
                 <div class="meta-row">
 
-                    <div class="meta-chip">
-                        <span class="chip-icon">🗓</span>
-                        <span th:if="${eventSession != null and eventSession.startDateTime != null}"
-                        th:text="${#temporals.format(eventSession.startDateTime, 'MMMM d, yyyy')}">
-                        January 1, 2025
+                    <div class="meta-chip" th:if="${eventSession != null and eventSession.startDateTime != null}">
+                        <span th:text="${#temporals.format(eventSession.startDateTime, 'MMMM d, yyyy')}">
+                        Date TBD
                         </span>
                     </div>
-                    <div class="meta-chip">
+                    <div class="meta-chip" th:if="${eventSession.startDateTime != null and eventSession.endDateTime != null}">
                         <span class="chip-icon"></span>
                         <span th:text="${#temporals.format(eventSession.startDateTime, 'h:mm a')} + ' – ' + ${#temporals.format(eventSession.endDateTime, 'h:mm a')}"></span>
                     </div>
-                    <div class="meta-chip" th:if="${eventSession.startDateTime == null}">
+                    <div class="meta-chip" th:if="${eventSession.startDateTime == null or eventSession.endDateTime == null}">
                         <span class="chip-icon">🗓</span>
-                        <span>Date TBD</span>
+                        <span>Time TBD</span>
                     </div>
 
                     <div class="meta-chip" th:if="${eventSession.location != null and !#strings.isEmpty(eventSession.location)}">
