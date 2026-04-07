@@ -31,6 +31,36 @@ document.addEventListener('click', function(event) {
 document.addEventListener("DOMContentLoaded", function () {
     const likeButtons = document.querySelectorAll(".post-like-btn");
 
+    document.querySelectorAll('.post-date').forEach(el => {
+        const utcDate = el.getAttribute('data-utc-date');
+        if (utcDate) {
+            // Append 'Z' if not present to ensure JS treats it as UTC
+            const date = new Date(utcDate.endsWith('Z') ? utcDate : utcDate + 'Z');
+            
+            const options = {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            };
+
+            let rawString = date.toLocaleString('en-US', options);
+            const lastCommaIndex = rawString.lastIndexOf(',');
+
+            let formattedDate = (
+                rawString.substring(0, lastCommaIndex) + 
+                ' •' + 
+                rawString.substring(lastCommaIndex + 1)
+            ).toLowerCase();
+
+            formattedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+            
+            el.innerText = formattedDate;
+        }
+    });
+
     likeButtons.forEach(button => {
         button.addEventListener("click", async function (event) {
             event.preventDefault();

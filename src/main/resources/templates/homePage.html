@@ -62,7 +62,7 @@
                                     <h3 th:text="${post.user.firstName + ' ' + post.user.lastName}"></h3>
                                 </a>
                                 <h3 th:unless="${post.user != null}" class="post-user-name">Community Member</h3>
-                                <p th:text="${post.createdAt != null ? #temporals.format(post.createdAt, 'MMM d, yyyy • h:mm a') : 'Recently posted'}">Recently posted</p>
+                                <p class="post-date" th:attr="data-utc-date=${post.createdAt}">Recently posted</p>
                             </div>
                         </div>
                         <div class="post-menu-wrap" th:if="${currUserCanDeletePosts or (currUser != null and post.user != null and currUser.id == post.user.id)}">
