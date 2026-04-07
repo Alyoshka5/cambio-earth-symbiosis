@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cambio_earth.symbiosis.dto.LoginUserDto;
 import com.cambio_earth.symbiosis.dto.ProfileDto;
@@ -33,10 +34,10 @@ import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class UserController {
-    
+   
     @Autowired
     UserRepository userRepository;
-    
+   
     private final JwtService jwtService;
     private final AuthenticationService authenticationService;
     private final PasswordEncoder passwordEncoder;
@@ -84,11 +85,9 @@ public class UserController {
 
     @GetMapping("/auth/login")
     public String getLoginPage(HttpServletResponse response, @RequestParam(required = false) String logout) {
-        // Add cache control headers to prevent back button access
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Expires", "0");
-        
         return "login";
     }
 
@@ -105,7 +104,7 @@ public class UserController {
             cookie.setPath("/");
             cookie.setMaxAge(3600);
             response.addCookie(cookie);
-            
+           
             if (eventService.isEventLaunched()) {
                 return "redirect:/home";
             }
@@ -166,45 +165,38 @@ public class UserController {
 
     @PostMapping("/auth/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response) {
-        // Clear the JWT cookie
         Cookie cookie = new Cookie("jwt-token", null);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setMaxAge(0);
         response.addCookie(cookie);
-        
-        // Invalidate session if exists
+       
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.invalidate();
         }
-        
-        // Add cache control headers
+       
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Expires", "0");
-        
-        // Redirect to logout page
+       
         return "redirect:/logout";
     }
-    
+   
     @GetMapping("/logout")
     public String logoutPage(HttpServletResponse response) {
-        // Add cache control headers to prevent back button access
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Expires", "0");
-        
         return "logout";
     }
 
     @GetMapping("/profile/{uid}")
     public String getProfilePage(@PathVariable Long uid, HttpServletRequest request, HttpServletResponse response, Model model) {
-        // Add cache control headers to prevent back button access
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Expires", "0");
-        
+       
         User currUser = authenticationService.getUserFromRequest(request);
         User profileOwner = userRepository.findById(uid).orElse(null);
 
@@ -218,7 +210,7 @@ public class UserController {
         if (currUser.getRole().equals(Role.ADMIN) || currUser.getId().equals(uid)) {
             model.addAttribute("currUserCanDeletePosts", true);
         }
-        
+       
         model.addAttribute("currentUser", currUser);
         model.addAttribute("profileOwner", profileOwner);
         model.addAttribute("posts", userPosts);
@@ -300,8 +292,8 @@ public class UserController {
             return "profileEditForm";
         }
     }
-    
-   @GetMapping("/navigation")
+   
+    @GetMapping("/navigation")
     public String getNavigationPage(HttpServletRequest request, Model model) {
         User currUser = authenticationService.getUserFromRequest(request);
         if (currUser == null) return "redirect:/auth/login";
@@ -322,7 +314,34 @@ public class UserController {
         model.addAttribute("currentUser", currUser);
         model.addAttribute("participants", participants);
         model.addAttribute("isAdmin", currUser.getRole() == Role.ADMIN);
-    
+   
         return "participants";
+    }
+
+    @PostMapping("/participants/{userId}/set-admin")
+    @ResponseBody
+    public java.util.Map<String, Object> setUserAsAdmin(@PathVariable Long userId, HttpServletRequest request) {
+        User currUser = authenticationService.getUserFromRequest(request);
+        java.util.Map<String, Object> response = new java.util.HashMap<>();
+       
+        if (currUser == null || currUser.getRole() != Role.ADMIN) {
+            response.put("success", false);
+            response.put("message", "Unauthorized");
+            return response;
+        }
+       
+        User targetUser = userRepository.findById(userId).orElse(null);
+        if (targetUser == null) {
+            response.put("success", false);
+            response.put("message", "User not found");
+            return response;
+        }
+       
+        targetUser.setRole(Role.ADMIN);
+        userRepository.save(targetUser);
+       
+        response.put("success", true);
+        response.put("message", "User set as admin successfully");
+        return response;
     }
 }

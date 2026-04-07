@@ -90,6 +90,16 @@ body {
     position: relative;
 }
 
+.search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    pointer-events: none;
+    opacity: 0.5;
+}
+
 .search-input {
     width: 100%;
     background: rgba(43, 57, 48, 0.96);
@@ -165,6 +175,216 @@ body {
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
 }
 
+.card-link {
+    text-decoration: none;
+    display: block;
+    padding: 20px 18px;
+}
+
+.card-menu {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    z-index: 10;
+}
+
+.menu-dots {
+    background: rgba(43, 57, 48, 0.96);
+    border: 1px solid rgba(168, 197, 160, 0.2);
+    border-radius: 8px;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--sage);
+    padding: 4px 8px;
+    line-height: 1;
+    transition: all 0.2s;
+}
+
+.menu-dots:hover {
+    background: rgba(58, 79, 44, 0.9);
+    color: var(--white);
+    border-color: rgba(168, 197, 160, 0.4);
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    background: rgba(43, 57, 48, 0.98);
+    border: 1px solid rgba(168, 197, 160, 0.2);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    display: none;
+    z-index: 1000;
+    min-width: 170px;
+    backdrop-filter: blur(8px);
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.dropdown-item {
+    width: 100%;
+    padding: 10px 16px;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    transition: background 0.2s;
+}
+
+.dropdown-item:hover {
+    background: rgba(168, 197, 160, 0.15);
+}
+
+.dropdown-item.set-admin {
+    color: #a8c5a0;
+}
+
+.dropdown-item.set-admin:hover {
+    background: rgba(168, 197, 160, 0.2);
+}
+
+.dropdown-item.add-session {
+    color: #4caf50;
+}
+
+.dropdown-item.add-session:hover {
+    background: rgba(76, 175, 80, 0.15);
+}
+
+.dropdown-item.remove-session {
+    color: #e74c3c;
+}
+
+.dropdown-item.remove-session:hover {
+    background: rgba(231, 76, 60, 0.15);
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: rgba(168, 197, 160, 0.2);
+    margin: 4px 0;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+}
+
+.modal-content {
+    background-color: rgba(43, 57, 48, 0.98);
+    margin: 10% auto;
+    padding: 0;
+    border: 1px solid rgba(168, 197, 160, 0.3);
+    border-radius: 20px;
+    width: 90%;
+    max-width: 500px;
+    backdrop-filter: blur(10px);
+}
+
+.modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(168, 197, 160, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-family: "DM Serif Display", serif;
+    color: var(--white);
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: var(--sage);
+}
+
+.close-modal:hover {
+    color: var(--white);
+}
+
+.modal-body {
+    padding: 20px 24px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.session-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid rgba(168, 197, 160, 0.1);
+}
+
+.session-info {
+    flex: 1;
+}
+
+.session-title {
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 4px;
+}
+
+.session-time {
+    font-size: 0.75rem;
+    color: var(--sage);
+}
+
+.add-session-btn {
+    background: rgba(76, 175, 80, 0.2);
+    border: 1px solid rgba(76, 175, 80, 0.3);
+    border-radius: 8px;
+    padding: 6px 12px;
+    color: #4caf50;
+    cursor: pointer;
+    font-size: 0.75rem;
+    transition: all 0.2s;
+}
+
+.add-session-btn:hover {
+    background: rgba(76, 175, 80, 0.4);
+}
+
+.remove-session-btn {
+    background: rgba(231, 76, 60, 0.2);
+    border: 1px solid rgba(231, 76, 60, 0.3);
+    border-radius: 8px;
+    padding: 6px 12px;
+    color: #e74c3c;
+    cursor: pointer;
+    font-size: 0.75rem;
+    transition: all 0.2s;
+}
+
+.remove-session-btn:hover {
+    background: rgba(231, 76, 60, 0.4);
+}
+
+.no-sessions {
+    text-align: center;
+    color: var(--sage);
+    padding: 40px;
+}
+
 .card-top {
     display: flex;
     align-items: center;
@@ -229,6 +449,7 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.04em;
     align-self: flex-start;
+    margin-top: 10px;
 }
 
 .role-badge.admin {
@@ -249,6 +470,7 @@ body {
     align-items: center;
     justify-content: space-between;
     padding-top: 10px;
+    margin-top: 10px;
     border-top: 1px solid rgba(168, 197, 160, 0.1);
     color: var(--sage);
     font-size: 0.85rem;
