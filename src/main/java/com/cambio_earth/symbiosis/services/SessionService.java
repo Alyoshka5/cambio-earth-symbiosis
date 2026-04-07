@@ -117,6 +117,13 @@ public class SessionService {
         participationRepository.saveAll(newParticipations);
     }
 
+    public List<Session> getSessionsMissingDateTimes() {
+        List<Session> sessions = sessionRepository.findAll();
+        return sessions.stream()
+            .filter(s -> s.getStartDateTime() == null || s.getEndDateTime() == null)
+            .collect(Collectors.toList());
+    }
+
     public void registerUserForMandatorySessions(User user, List<Session> mandatorySessions, Set<String> existingParticipations, List<Participation> newParticipations) {
         for (Session session : mandatorySessions) {
             if (!existingParticipations.contains(user.getId() + "_" + session.getId())) {
