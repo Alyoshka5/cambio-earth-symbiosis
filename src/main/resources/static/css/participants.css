@@ -155,13 +155,19 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 16px;
+    margin-bottom: 50px;
 }
 
 .participant-card {
-    position: relative;
+    width: min(auto, 100vw);
     background: rgba(43, 57, 48, 0.96);
     border: 1px solid rgba(168, 197, 160, 0.14);
     border-radius: 18px;
+    padding: 10px 9px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    position: relative;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
     transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -517,6 +523,10 @@ body {
 @media (max-width: 768px) {
     .page-layout {
         margin-left: 0;
+    }
+
+    .page-shell {
+        padding: 36px 30px;
     }
 
     .page-header {

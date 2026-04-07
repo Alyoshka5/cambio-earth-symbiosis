@@ -75,7 +75,7 @@ form {
     padding: 40px;
     backdrop-filter: blur(6px);
     width: 500px;
-    max-width: 500px;
+    max-width: 90vw;
 }
 
 /* =========================

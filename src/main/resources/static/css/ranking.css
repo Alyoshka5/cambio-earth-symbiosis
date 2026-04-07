@@ -203,20 +203,23 @@ body {
 
 @media (max-width: 980px) {
     .page-layout {
-        margin-left: 0;
         padding-bottom: 90px;
     }
-
+    
     .page-shell {
         padding: 24px 16px;
     }
-
+    
     .ranking-card {
         max-width: 100%;
     }
 }
 
 @media (max-width: 760px) {
+    .page-layout {
+        margin-left: 0;
+    }
+    
     .page-header {
         flex-direction: column;
         align-items: flex-start;
