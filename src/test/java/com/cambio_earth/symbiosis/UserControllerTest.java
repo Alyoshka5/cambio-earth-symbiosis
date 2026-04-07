@@ -22,6 +22,7 @@ import org.springframework.ui.Model;
 import com.cambio_earth.symbiosis.controllers.UserController;
 import com.cambio_earth.symbiosis.dto.LoginUserDto;
 import com.cambio_earth.symbiosis.dto.ProfileDto;
+import com.cambio_earth.symbiosis.dto.VerifyUserDto;
 import com.cambio_earth.symbiosis.models.Post;
 import com.cambio_earth.symbiosis.models.User;
 import com.cambio_earth.symbiosis.models.UserRepository;
@@ -29,6 +30,7 @@ import com.cambio_earth.symbiosis.services.AuthenticationService;
 import com.cambio_earth.symbiosis.services.EventService;
 import com.cambio_earth.symbiosis.services.JwtService;
 import com.cambio_earth.symbiosis.services.RankingService;
+import com.cambio_earth.symbiosis.services.SessionService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -49,6 +51,9 @@ public class UserControllerTest {
     
     @Mock
     private RankingService rankingService;
+
+    @Mock
+    private SessionService sessionService;
 
     @Mock
     private Model model;
@@ -72,7 +77,7 @@ public class UserControllerTest {
     @BeforeEach
     void setUp() {
 
-        userController = new UserController(jwtService, authenticationService, passwordEncoder, eventService, rankingService);
+        userController = new UserController(jwtService, authenticationService, passwordEncoder, eventService, sessionService, rankingService);
 
         try {
             java.lang.reflect.Field userRepoField = UserController.class.getDeclaredField("userRepository");
@@ -335,5 +340,49 @@ public class UserControllerTest {
 
         assertEquals("profileEditForm", result);
         verify(userRepository, never()).save(testUser);
+    }
+
+    @Test
+    void testSignupAfterLaunchRegistration_EventNotLaunched_DoNotRegisterUser() {
+        VerifyUserDto verifyUserDto = new VerifyUserDto();
+        verifyUserDto.setEmail("joem@gmail.com");
+        verifyUserDto.setFirst("1");
+        verifyUserDto.setSecond("1");
+        verifyUserDto.setThird("1");
+        verifyUserDto.setFourth("1");
+        verifyUserDto.setFifth("1");
+        verifyUserDto.setSixth("1");
+
+        User newUser = new User();
+        newUser.setEmail("joem@gmail.com");
+
+        when(userRepository.findByEmail(verifyUserDto.getEmail())).thenReturn(Optional.of(newUser));
+        when(eventService.isEventLaunched()).thenReturn(false);
+
+        userController.verifyCode(model, verifyUserDto, response);
+
+        verify(sessionService, never()).registerUserAfterLaunch(newUser);
+    }
+
+    @Test
+    void testSignupAfterLaunchRegistration_EventLaunched_RegisterUser() {
+        VerifyUserDto verifyUserDto = new VerifyUserDto();
+        verifyUserDto.setEmail("joem@gmail.com");
+        verifyUserDto.setFirst("1");
+        verifyUserDto.setSecond("1");
+        verifyUserDto.setThird("1");
+        verifyUserDto.setFourth("1");
+        verifyUserDto.setFifth("1");
+        verifyUserDto.setSixth("1");
+
+        User newUser = new User();
+        newUser.setEmail("joem@gmail.com");
+
+        when(userRepository.findByEmail(verifyUserDto.getEmail())).thenReturn(Optional.of(newUser));
+        when(eventService.isEventLaunched()).thenReturn(true);
+
+        userController.verifyCode(model, verifyUserDto, response);
+
+        verify(sessionService).registerUserAfterLaunch(newUser);
     }
 }
