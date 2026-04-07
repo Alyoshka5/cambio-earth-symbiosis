@@ -279,10 +279,15 @@ body {
     background: var(--forest-mid);
     border: 1px solid rgba(168,197,160,0.18);
     border-radius: 16px;
-    padding: 32px;
-    max-width: 400px;
+    padding: 32px; /* Ensure this is equal on all sides */
+    max-width: 440px; /* Slightly wider looks better for these buttons */
     width: 90%;
     text-align: center;
+    
+    /* Added this to help children layout */
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
 }
 
 .modal-box h3 {
@@ -298,7 +303,33 @@ body {
     margin: 0 0 24px;
 }
 
-.modal-actions { display: flex; gap: 12px; justify-content: center; }
+/* --- Symmetrical Button Width Fix --- */
+.modal-actions {
+    display: flex !important;
+    justify-content: space-between !important;
+    gap: 20px !important; /* Space between buttons */
+    width: 100%;
+    margin-top: 2rem;
+}
+
+/* Force the Cancel button AND the Form to take up exactly 50% of the space */
+.modal-actions > button, 
+.modal-actions > form {
+    flex: 1 !important;
+    display: flex !important;
+    margin: 0 !important;
+}
+
+/* Make both buttons fill their 50% containers completely */
+.modal-actions .btn-outline-sage,
+.modal-actions .btn-danger-soft {
+    width: 100% !important; /* This makes them equal width */
+    padding: 12px 0;        /* Vertical padding only, width is handled above */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    white-space: nowrap;
+}
 
 /* ── Lightbox ── */
 .lightbox {
