@@ -261,7 +261,7 @@ body {
 @media (max-width: 768px) {
     .home-layout {
         margin-left: 0;
-        padding: 24px 16px 96px 16px;
+        padding: 0; 
     }
 
     .home-header {
