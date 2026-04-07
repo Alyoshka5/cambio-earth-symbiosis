@@ -157,6 +157,7 @@ body {
 }
 
 .participant-card {
+    width: min(auto, 100vw);
     background: rgba(43, 57, 48, 0.96);
     border: 1px solid rgba(168, 197, 160, 0.14);
     border-radius: 18px;
@@ -521,6 +522,10 @@ body {
 @media (max-width: 768px) {
     .page-layout {
         margin-left: 0;
+    }
+
+    .page-shell {
+        padding: 36px 30px;
     }
 
     .page-header {
