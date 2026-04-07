@@ -3,79 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Map</title>
+    <title>Edit Map | Symbiosis</title>
 
-    <!-- Bootstrap & Fonts -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
-
-    <!-- Global & Sidebar Styles -->
     <link rel="stylesheet" href="/css/global.css">
     <link rel="stylesheet" href="/css/sidebar.css">
     <link rel="stylesheet" href="/css/editMap.css">
-
-    <script src="/js/editMap.js" defer></script>
     
+    <script src="/js/editMap.js" defer></script>
 </head>
 <body>
+    <div th:replace="fragments/sidebar :: sidebar"></div>
 
-<!-- Sidebar fragment -->
-<div th:replace="fragments/sidebar :: sidebar"></div>
+    <main class="maps-layout">
+        <nav class="topbar">
+            <a href="/home" class="topbar-brand">Symbiosis</a>
+        </nav>
 
-<main class="maps-layout">
-     <nav class="topbar">
-        <a href="/home" class="topbar-brand">Symbiosis</a>
-    </nav>
-    <div class="maps-container">
-        <div class="page-header">
-            <h1>Edit Map</h1>
+        <div class="maps-container">
+            <div class="page-header">
+                <h1>Edit Map</h1>
+            </div>
+
+            <div th:if="${error}" class="flash-error" th:text="${error}"></div>
+
+            <div class="form-card">
+                <form th:action="@{'/maps/' + ${map.id} + '/edit'}" method="post">
+                    <div class="form-group">
+                        <label>Replace Map File</label>
+                        <label for="file" class="file-upload-area" id="fileLabel">
+                            <div class="file-upload-text">Click to replace file (optional)</div>
+                            <p class="file-hint">PDF, JPEG, or PNG</p>
+                            <input type="file" id="file" accept=".pdf,.jpg,.jpeg,.png" style="display:none" onchange="handleFileSelected(this)">
+                        </label>
+                        <p class="current-file">Current type: <span th:text="${map.fileType}">image/jpeg</span></p>
+                        <p class="file-name-display" id="fileNameDisplay"></p>
+                        <p id="uploadStatus" style="font-size:0.82rem; color: var(--sage); margin-top:6px;"></p>
+                        <input type="hidden" id="imgUrlField" name="fileUrl">
+                        <input type="hidden" id="fileType" name="fileType">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="title">Map Title</label>
+                        <input type="text" id="title" name="title" th:value="${map.title}" placeholder="e.g. Conference Centre Overview">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="floorLevel">Floor Level</label>
+                        <input type="text" id="floorLevel" name="floorLevel" th:value="${map.floorLevel}" placeholder="e.g. Floor 3, Main Lobby">
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-accent">Save Changes</button>
+                        <a th:href="@{/maps}" class="btn-ghost">Cancel</a>
+                    </div>
+                </form>
+            </div>
         </div>
-
-        <div th:if="${error}" class="flash-error" th:text="${error}"></div>
-
-        <div class="form-card">
-            <form th:action="@{'/maps/' + ${map.id} + '/edit'}" method="post">
-
-                <div class="form-group">
-                    <label>Replace Map File</label>
-                    <label for="file" class="file-upload-area" id="fileLabel">
-                        <div class="file-upload-text">Click to replace file (optional)</div>
-                        <p class="file-hint">PDF, JPEG, or PNG</p>
-                        <input type="file" id="file"
-                               accept=".pdf,.jpg,.jpeg,.png"
-                               style="display:none"
-                               onchange="handleFileSelected(this)">
-                    </label>
-                    <p class="current-file">Current type: <span th:text="${map.fileType}">image/jpeg</span></p>
-                    <p class="file-name-display" id="fileNameDisplay"></p>
-                    <p id="uploadStatus" style="font-size:0.82rem; color: var(--sage); margin-top:6px;"></p>
-
-                    <input type="hidden" id="imgUrlField" name="fileUrl">
-                    <input type="hidden" id="fileType" name="fileType">
-                </div>
-
-                <div class="form-group">
-                    <label for="title">Map Title</label>
-                    <input type="text" id="title" name="title"
-                           th:value="${map.title}"
-                           placeholder="e.g. Conference Centre Overview">
-                </div>
-
-                <div class="form-group">
-                    <label for="floorLevel">Floor Level</label>
-                    <input type="text" id="floorLevel" name="floorLevel"
-                           th:value="${map.floorLevel}"
-                           placeholder="e.g. Floor 3, Main Lobby">
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="btn-accent">Save Changes</button>
-                    <a th:href="@{/maps}" class="btn-ghost">Cancel</a>
-                </div>
-            </form>
-        </div>
-    </div>
-</main>
-
+    </main>
 </body>
 </html>
