@@ -262,8 +262,8 @@ public class UserControllerTest {
         profileDto.setFirstName("Joe");
         profileDto.setLastName("Macintosh");
         profileDto.setCurrentPassword("currentPassword");
-        profileDto.setNewPassword("newPassword");
-        profileDto.setConfirmNewPassword("newPassword");
+        profileDto.setNewPassword("newPassword123!");
+        profileDto.setConfirmNewPassword("newPassword123!");
 
         when(passwordEncoder.encode("currentPassword")).thenReturn("encryptedPassword");
 
@@ -287,8 +287,8 @@ public class UserControllerTest {
         profileDto.setFirstName("Joe");
         profileDto.setLastName("Macintosh");
         profileDto.setCurrentPassword("wrongPassword");
-        profileDto.setNewPassword("newPassword");
-        profileDto.setConfirmNewPassword("newPassword");
+        profileDto.setNewPassword("newPassword123!");
+        profileDto.setConfirmNewPassword("newPassword123!");
 
         LoginUserDto authenticationDto = new LoginUserDto();
         authenticationDto.setEmail("joem@gmail.com");
@@ -318,8 +318,8 @@ public class UserControllerTest {
         profileDto.setFirstName("Joe");
         profileDto.setLastName("Macintosh");
         profileDto.setCurrentPassword("currentPassword");
-        profileDto.setNewPassword("newPassword");
-        profileDto.setConfirmNewPassword("newMismatchedPassword");
+        profileDto.setNewPassword("newPassword123!");
+        profileDto.setConfirmNewPassword("newMismatchedPassword123!");
 
         LoginUserDto authenticationDto = new LoginUserDto();
         authenticationDto.setEmail("joem@gmail.com");
@@ -334,7 +334,6 @@ public class UserControllerTest {
         testUser.setPassword(passwordEncoder.encode("currentPassword"));
 
         when(authenticationService.getUserFromRequest(request)).thenReturn(testUser);
-        when(authenticationService.authenticate(any(LoginUserDto.class))).thenReturn(testUser);
 
         String result = userController.saveProfileInfo(request, model, profileDto);
 
