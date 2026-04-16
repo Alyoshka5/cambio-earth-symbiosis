@@ -334,7 +334,6 @@ public class UserControllerTest {
         testUser.setPassword(passwordEncoder.encode("currentPassword"));
 
         when(authenticationService.getUserFromRequest(request)).thenReturn(testUser);
-        when(authenticationService.authenticate(any(LoginUserDto.class))).thenReturn(testUser);
 
         String result = userController.saveProfileInfo(request, model, profileDto);
 
