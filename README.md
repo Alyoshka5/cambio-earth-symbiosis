@@ -1,5 +1,34 @@
 # Symbiosis — Cambio Earth Systems Event Socialization Platform
-### App name: Symbiosis
+
+## Setting Up the Project
+### Prerequisites
+Before starting, ensure that:
+- You have Java 21 installed
+- You have PostgreSQL 15+ running locally
+
+### Setup
+#### Clone the Repository
+- To clone the repository onto your local machine, run: 
+```
+git clone https://github.com/Alyoshka5/cambio-earth-symbiosis
+cd cambio-earth-symbiosis
+``` 
+
+#### Run locally
+- Copy .env.example using `cp .env.example .env` and add your credentials for each variable
+- To start the application, run: 
+  - Mac/Linux: `./mvnw spring-boot:run`
+  - Windows: `.\mvnw.cmd spring-boot:run`
+- Open http://localhost:8080 in your browser
+
+#### Run on Render
+- If you set up a web service on Render linked to your fork, changes pushed to the main branch will automatically deploy. Ensure you add your .env variables to the Environment section in the Render Dashboard.
+
+#### Build for Production
+- To package the application into a runnable JAR file, run:
+  - Mac/Linux: `./mvnw clean package`
+  - Windows: `.\mvnw.cmd clean package`
+- The generated JAR file will be located in the /target directory
 
 ## Abstract
 The app ‘Symbiosis’ is for Cambio Earth Systems employees who attend the company’s Annual General Meeting (AGM). The AGM is a 1.5–2 day in-person conference held in Vancouver that brings together approximately 600–800 employees from around the world. Because this event gathers employees who rarely meet face-to-face, the app is designed specifically to enhance their experience during this large-scale corporate gathering by improving organization, engagement, and networking opportunities. These employees will use the application to rank breakout session preferences before the event, view their assigned sessions and room locations during the conference, access the event schedule, and navigate the hotel venue using a static map. In addition, they will engage with the app’s gamification features by posting photos, reacting to others’ posts and viewing a live leaderboard that updates as points are earned. Since the users are working professionals in a corporate environment, the app must be intuitive, mobile-friendly, and engaging while maintaining a professional tone. This app will also include event organizers and administrators who have elevated permissions that allow them to create and manage breakout sessions, assign participants to rooms based on ranked preferences, manually override assignments when necessary, upload session and speaker information, manage room logistics, and moderate content. 
